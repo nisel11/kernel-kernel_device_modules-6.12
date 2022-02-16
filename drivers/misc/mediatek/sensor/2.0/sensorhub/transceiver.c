@@ -637,13 +637,6 @@ static int transceiver_config(struct hf_device *hf_dev,
 			return -ENOMEM;
 		}
 		dev->state[sensor_type].config = cfg;
-	} else {
-		if (cfg->length != length) {
-			pr_err("length not equal to prev length\n");
-			mutex_unlock(&dev->config_lock);
-			return -EINVAL;
-
-		}
 	}
 	cfg->length = length;
 	memcpy(cfg->data, data, length);
