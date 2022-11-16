@@ -34,6 +34,9 @@
 #include "mtk_dump.h"
 #include "mtk_disp_bdg.h"
 #include "mtk_dsi.h"
+#ifdef CONFIG_DISP_ESD_NOTIFY_SUPPORT
+#include "mtk_disp_notify.h"
+#endif
 
 #define ESD_TRY_CNT 5
 #define ESD_CHK_TRY_CNT 5
@@ -768,6 +771,10 @@ int mtk_drm_esd_testing_process(struct mtk_drm_esd_ctx *esd_ctx, bool need_lock)
 		int recovery_flg = 0;
 		unsigned int crtc_idx = 0;
 		struct mtk_panel_ext *panel_ext;
+#ifdef CONFIG_DISP_ESD_NOTIFY_SUPPORT
+		int data_resume = MTK_DISP_EARLY_BLANK_UNBLANK;
+		int data_suspend = MTK_DISP_EARLY_BLANK_POWERDOWN;
+#endif
 
 		if (!esd_ctx) {
 			DDPPR_ERR("%s invalid ESD context, stop thread\n", __func__);
@@ -820,6 +827,9 @@ int mtk_drm_esd_testing_process(struct mtk_drm_esd_ctx *esd_ctx, bool need_lock)
 
 			DDPPR_ERR("[ESD%u]esd check fail, will do esd recovery. try=%d\n",
 				crtc_idx, i);
+#ifdef CONFIG_DISP_ESD_NOTIFY_SUPPORT
+			mtk_disp_notifier_call_chain(MTK_ERALY_NOTIFY_TP_EVENT_BLANK, &data_suspend);
+#endif
 			mtk_drm_esd_recover(crtc);
 			recovery_flg = 1;
 			mtk_crtc->recovery_flg = true;
@@ -841,6 +851,9 @@ int mtk_drm_esd_testing_process(struct mtk_drm_esd_ctx *esd_ctx, bool need_lock)
 			DDPPR_ERR("[ESD%u] esd recovery success\n", crtc_idx);
 			recovery_flg = 0;
 			atomic_set(&mtk_crtc->esd_notice_status, 0);
+#ifdef CONFIG_DISP_ESD_NOTIFY_SUPPORT
+			mtk_disp_notifier_call_chain(MTK_NOTIFY_TP_EVENT_BLANK, &data_resume);
+#endif
 		}
 		mtk_drm_trace_end("esd");
 

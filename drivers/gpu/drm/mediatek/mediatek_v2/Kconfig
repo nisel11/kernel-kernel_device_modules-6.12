@@ -91,6 +91,14 @@ config MTK_SE_SUPPORT
 	  you should enable this option. Otherwise, it can be left disabled to
 	  reduce the driver's footprint.
 
+config DISP_ESD_NOTIFY_SUPPORT
+    bool "enable medietak display esd recvy notification"
+    default n
+    help
+      To set display recvy notification support.
+      Some panel need LCM send notification for TP recover when LCD reset.
+      If unsure, set N.
+
 config PANEL_TP_ESD_RECOVERY
     bool "enable to esd recovery"
     default n
