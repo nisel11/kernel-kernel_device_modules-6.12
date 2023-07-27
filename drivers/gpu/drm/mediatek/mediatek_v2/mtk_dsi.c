@@ -532,6 +532,21 @@ module_param(underrun_cnt, uint, 0644);
 static struct drm_device *drm_dev;
 static enum dsi_cmd_verion dsi_cmd_ver;
 
+#ifdef PANEL_TP_ESD_RECOVERY
+static int tp_esd_recovery_flag = 0;
+int touch_set_esd_recovery_state(int state, int panel_idx)
+{
+        if (state == 1) {
+                tp_esd_recovery_flag = 1;
+        } else{
+                tp_esd_recovery_flag = 0;
+        }
+
+        return 0;
+}
+EXPORT_SYMBOL(touch_set_esd_recovery_state);
+#endif
+
 struct mtk_panel_ext *mtk_dsi_get_panel_ext(struct mtk_ddp_comp *comp);
 static void mtk_dsi_set_targetline(struct mtk_ddp_comp *comp,
 				struct cmdq_pkt *handle, unsigned int hactive);
@@ -6048,10 +6063,15 @@ static void mtk_output_dsi_enable(struct mtk_dsi *dsi,
 		to_mtk_crtc_state(crtc->state) : NULL;
 	unsigned int mode_id = mtk_state ?
 		mtk_state->prop_val[CRTC_PROP_DISP_MODE_IDX] : 0;
+
 	unsigned int mode_chg_index = 0;
 	struct mtk_drm_private *priv = (crtc && crtc->dev)
 		? crtc->dev->dev_private : NULL;
 	unsigned int crtc_idx;
+
+#ifdef PANEL_TP_ESD_RECOVERY
+	struct mtk_panel_ext *panel_ext = mtk_crtc->panel_ext;
+#endif
 
 	DDPINFO("%s +\n", __func__);
 
@@ -6075,6 +6095,11 @@ static void mtk_output_dsi_enable(struct mtk_dsi *dsi,
 	/* For fifo mon config need to config gce event */
 	if (priv->data->mmsys_id == MMSYS_MT6993)
 		mtk_dsi_gce_event_cfg(dsi, &dsi->ddp_comp, NULL);
+
+#ifdef PANEL_TP_ESD_RECOVERY
+	if (panel_ext && panel_ext->funcs && panel_ext->funcs->set_esd_recovery_flag)
+                panel_ext->funcs->set_esd_recovery_flag(tp_esd_recovery_flag);
+#endif
 
 	if (dsi->output_en) {
 		if (mtk_dsi_doze_status_change(dsi)) {

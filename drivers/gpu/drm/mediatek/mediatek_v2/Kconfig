@@ -91,4 +91,10 @@ config MTK_SE_SUPPORT
 	  you should enable this option. Otherwise, it can be left disabled to
 	  reduce the driver's footprint.
 
+config PANEL_TP_ESD_RECOVERY
+    bool "enable to esd recovery"
+    default n
+    help
+	  If lcm is error,need to recovery it
+
 source "$(KCONFIG_EXT_PREFIX)drivers/gpu/drm/mediatek/mediatek_v2/mtk_drm_edp/Kconfig"

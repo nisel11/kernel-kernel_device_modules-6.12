@@ -212,6 +212,10 @@ ccflags-y += -I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/mdp/
 ccflags-y += -DSHARE_WROT_SRAM
 endif
 
+ifeq ($(CONFIG_PANEL_TP_ESD_RECOVERY),y)
+ccflags-y += -DPANEL_TP_ESD_RECOVERY
+endif
+
 ccflags-$(CONFIG_MTK_CMDQ_MBOX_EXT) += -I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/cmdq/mailbox
 
 #ccflags-y += -DDRM_MMPATH
