@@ -27,6 +27,8 @@
 #define MAX_MODE_SWITCH_CMD_NUM 20
 #define MTK_MAX_PANEL 2
 
+#define DRM_DISPLAY_NAME_LEN 128
+
 struct mtk_dsi;
 struct cmdq_pkt;
 
@@ -653,6 +655,9 @@ struct mtk_panel_params {
 	unsigned int crop_width[MTK_MAX_PANEL];
 	unsigned int crop_height[MTK_MAX_PANEL];
 
+	u64 panel_ver;
+	char panel_name[DRM_DISPLAY_NAME_LEN];
+	char panel_supplier[DRM_DISPLAY_NAME_LEN];
 	/*vdo ltpo*/
 	unsigned int ltpo_vm_enable;
 	unsigned int ltpo_vm_minimum_fps;

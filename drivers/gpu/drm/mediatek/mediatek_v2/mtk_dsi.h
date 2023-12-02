@@ -208,6 +208,7 @@ struct mtk_dsi {
 	/* change te by ddic */
 	bool cur_panel_param_changed;
 	struct drm_display_mode max_vrefresh_mode;
+	bool moto_sysfs_add_done;
 };
 
 enum dsi_porch_type;
