@@ -3698,6 +3698,7 @@ static void process_dbg_opt(const char *opt)
 		mtk_drm_set_idle_check_interval(crtc, idle_check_interval);
 		DDPMSG("change idle interval to %llu ms\n",
 		       idle_check_interval);
+#if IS_ENABLED(CONFIG_MTK_DISP_DEBUG)
 	} else if (strncmp(opt, "idle_perf:", 10) == 0) {
 		/* on     -- enable idle performance monitor
 		 * off    -- disable idle performance monitor
@@ -3770,6 +3771,7 @@ static void process_dbg_opt(const char *opt)
 		}
 		DDPMSG("%s: idle_perf_aee:%ums\n", __func__, value);
 		mtk_drm_idlegmr_perf_aee_control(value);
+#endif
 	} else if (strncmp(opt, "idle_by_wb:", 11) == 0) {
 		int value;
 
