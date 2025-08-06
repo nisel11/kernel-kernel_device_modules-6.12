@@ -2080,6 +2080,12 @@ mgk_64_platform_device_user_modules = {
 
 
 def get_overlay_modules_list():
+    #if "moto" in DEFCONFIG_OVERLAYS:
+        #mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_f_usbnet:moto_f_usbnet")
+
+    #if "bogota" in DEFCONFIG_OVERLAYS:
+        #mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/sc8541_mmi:sc8541_mmi")
+
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
         mgk_64_platform_device_modules.update({"drivers/soc/mediatek/mtk-scpsys-mt6991-ivi.ko":"mt6991"})
