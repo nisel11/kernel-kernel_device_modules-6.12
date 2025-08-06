@@ -23,6 +23,18 @@ enum adc_channel {
 	ADC_CHANNEL_VOUT,
 };
 
+enum mmi_dvchg_mux_channel {
+	MMI_DVCHG_MUX_NONE,
+	MMI_DVCHG_MUX_CHG_OPEN,
+	MMI_DVCHG_MUX_OTG_OPEN,
+	MMI_DVCHG_MUX_CLOSE,
+	MMI_DVCHG_MUX_MANUAL_OPEN,
+#ifdef CONFIG_MOTO_CHANNEL_SWITCH
+	MMI_DVCHG_MUX_OTG_WLC_OPEN,
+#endif
+	MMI_DVCHG_MUX_DISABLE,
+};
+
 struct charger_properties {
 	const char *alias_name;
 };
@@ -161,6 +173,7 @@ struct charger_ops {
 	int (*set_vbusovp_alarm)(struct charger_device *dev, u32 uV);
 	int (*reset_vbusovp_alarm)(struct charger_device *dev);
 	int (*is_vbuslowerr)(struct charger_device *dev, bool *err);
+	int (*is_vbushigherr)(struct charger_device *dev, bool *err);
 	int (*init_chip)(struct charger_device *dev);
 	int (*enable_auto_trans)(struct charger_device *dev, bool en);
 	int (*set_auto_trans)(struct charger_device *dev, uint32_t uV, bool en);
@@ -170,7 +183,9 @@ struct charger_ops {
 	int (*enable_otg)(struct charger_device *dev, bool en);
 	int (*enable_discharge)(struct charger_device *dev, bool en);
 	int (*set_boost_current_limit)(struct charger_device *dev, u32 uA);
-
+	int (*is_enable_acdrv1)(struct charger_device *dev, bool en);
+	int (*is_enable_otg)(struct charger_device *dev, bool en);
+	int (*is_otg_enable)(struct charger_device *dev, bool *en);
 	/* charger type detection */
 	int (*enable_chg_type_det)(struct charger_device *dev, bool en);
 
@@ -223,6 +238,11 @@ struct charger_ops {
 
 	/* enable adc*/
 	int (*enable_adc)(struct charger_device *dev, bool en);
+
+	/* mux*/
+	int (*config_mux)(struct charger_device *dev,
+			enum mmi_dvchg_mux_channel typec_mos,
+			enum mmi_dvchg_mux_channel wls_mos);
 };
 
 static inline void *charger_dev_get_drvdata(
@@ -330,6 +350,12 @@ extern int charger_dev_enable_discharge(
 	struct charger_device *charger_dev, bool en);
 extern int charger_dev_set_boost_current_limit(
 	struct charger_device *charger_dev, u32 uA);
+extern int charger_dev_is_enable_acdrv1(
+	struct charger_device *chg_dev, bool en);
+extern int charger_dev_is_enable_otg(
+	struct charger_device *chg_dev, bool en);
+extern int charger_dev_is_otg_enable(
+	struct charger_device *chg_dev, bool *en);
 extern int charger_dev_get_zcv(
 	struct charger_device *charger_dev, u32 *uV);
 extern int charger_dev_run_aicl(
@@ -401,11 +427,14 @@ extern int charger_dev_set_ibatocp(struct charger_device *chg_dev, u32 uA);
 extern int charger_dev_set_vbatovp(struct charger_device *chg_dev, u32 uV);
 extern int charger_dev_set_vbatovp_alarm(struct charger_device *chg_dev,
 					 u32 uV);
+extern int charger_dev_config_mux(struct charger_device *chg_dev,
+	enum mmi_dvchg_mux_channel typec_mos, enum mmi_dvchg_mux_channel wls_mos);
 extern int charger_dev_reset_vbatovp_alarm(struct charger_device *chg_dev);
 extern int charger_dev_set_vbusovp_alarm(struct charger_device *chg_dev,
 					 u32 uV);
 extern int charger_dev_reset_vbusovp_alarm(struct charger_device *chg_dev);
 extern int charger_dev_is_vbuslowerr(struct charger_device *chg_dev, bool *err);
+extern int charger_dev_is_vbushigherr(struct charger_device *chg_dev, bool *err);
 extern int charger_dev_init_chip(struct charger_device *chg_dev);
 
 /* TypeC */

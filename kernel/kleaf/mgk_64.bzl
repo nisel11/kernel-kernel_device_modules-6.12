@@ -2084,7 +2084,6 @@ def get_overlay_modules_list():
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_f_usbnet:moto_f_usbnet")
 
     if "bogota" in DEFCONFIG_OVERLAYS:
-        #mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/sc8541_mmi:sc8541_mmi")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/regulator/ocp2138:ocp2138")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/aw99703:leds_aw99703")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/ktd3136:ktd3136_bl")
@@ -2092,6 +2091,7 @@ def get_overlay_modules_list():
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-dijing-ft8725-672-fhd-dphy-vdo-120hz".format(kernel_version))
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-tm-td4376-672-fhd-dphy-vdo-120hz".format(kernel_version))
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-txd-ili7807s-672-fhd-dphy-vdo-120hz".format(kernel_version))
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/sc8541_mmi:sc8541_mmi")
 
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
