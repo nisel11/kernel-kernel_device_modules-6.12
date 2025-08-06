@@ -179,6 +179,7 @@
 #include "mediatek/cust_mt6855_camera_v4l2.dtsi"
 
 /delete-node/ &camera_main_two_af_mtk;
+/delete-node/ &camera_main_af_mtk;
 
 &sound {
 	mediatek,spk-i2s = <3 0>;
