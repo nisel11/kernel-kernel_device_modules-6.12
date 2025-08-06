@@ -2092,6 +2092,7 @@ def get_overlay_modules_list():
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-tm-td4376-672-fhd-dphy-vdo-120hz".format(kernel_version))
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-txd-ili7807s-672-fhd-dphy-vdo-120hz".format(kernel_version))
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/sc8541_mmi:sc8541_mmi")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/nu2115a_mmi:nu2115a_mmi")
 
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
