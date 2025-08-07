@@ -18,6 +18,10 @@
 #include <sound/tlv.h>
 #include <sound/soc.h>
 #include <sound/core.h>
+#include <mtk-sp-spk-amp.h>
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+#include <aw87xxx.h>
+#endif
 
 #include "mt6369.h"
 #if IS_ENABLED(CONFIG_SND_SOC_MT6369_ACCDET)
@@ -5893,6 +5897,16 @@ static int mt6369_codec_probe(struct snd_soc_component *cmpnt)
 				       ARRAY_SIZE(mt6369_snd_vow_controls));
 
 	priv->hp_current_calibrate_val = get_hp_current_calibrate_val(priv);
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+	if (audiopa_get_type() == AUDIOPA_AW87564) {
+		ret = aw87xxx_add_codec_controls((void *)cmpnt);
+		pr_info("%s awinic\n", __func__);
+		if (ret < 0) {
+			pr_err("%s: awinic add_codec_controls failed, err %d\n",__func__, ret);
+			return ret;
+		}
+	}
+#endif
 
 	return mt6369_codec_init_reg(cmpnt);
 }

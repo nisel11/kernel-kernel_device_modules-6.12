@@ -15,6 +15,7 @@ config DEVICE_MODULES_SND_SOC_ALL_CODECS
 	imply DEVICE_MODULES_SND_SOC_HDMI_CODEC
 	imply SND_SOC_RT5512
 	imply SND_SOC_AW883XX
+	imply SND_SOC_AW87564
 	imply SND_SOC_TFA9874
         imply SND_SOC_RT5509
         imply SND_SOC_FS16XX
@@ -59,6 +60,12 @@ config SND_SOC_AW883XX
 	depends on I2C
 	help
 	  This option enables support for aw883xx series Smart PA.
+
+config SND_SOC_AW87564
+	tristate "SoC Audio for awinic AW87XXX Smart K PA"
+	depends on I2C
+	help
+	  This option enables support for AW87XXX Smart K PA.
 
 config SND_SOC_FS16XX
 	tristate "Foursemi speaker amplifier"
@@ -233,4 +240,11 @@ config SND_SOC_HFDA80X
 	help
 	  Config of hfda80x. It is a Smart amplifier
 	  It would be set to yes if device with HFDA801/HFDA803 on it.
+
+config SND_SOC_BOGOTA_MULTI_AUDIO_PA
+	tristate "SoC Audio for multi audio pa"
+	depends on I2C
+	help
+	  This option enables support for multi audio pa.
+
 endmenu

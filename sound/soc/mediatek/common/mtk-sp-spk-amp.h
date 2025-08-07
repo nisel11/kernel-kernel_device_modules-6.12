@@ -69,6 +69,13 @@ enum mtk_spk_type {
 	MTK_SPK_TYPE_NUM
 };
 
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+enum audiopa_type {
+	AUDIOPA_DEFAULT = 0,
+	AUDIOPA_AW87564,
+};
+#endif
+
 enum mtk_spk_i2s_type {
 	MTK_SPK_I2S_TYPE_INVALID = -1,
 	MTK_SPK_I2S_0,
@@ -104,6 +111,10 @@ enum mtk_spk_i2s_type {
 
 int mtk_spk_get_type(void);
 extern void mtk_spk_set_type(int spk_type);
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+int audiopa_get_type(void);
+extern void audiopa_set_type(int spk_type);
+#endif
 int mtk_spk_get_i2s_out_type(void);
 int mtk_spk_get_i2s_in_type(void);
 int mtk_ext_spk_get_status(void);

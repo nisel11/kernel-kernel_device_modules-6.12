@@ -43,6 +43,9 @@
 #define MTK_SPK_REF_NAME "Speaker Codec Ref"
 
 static unsigned int mtk_spk_type;
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+static unsigned int audiopa_type = AUDIOPA_DEFAULT;
+#endif
 static int mtk_spk_i2s_out = MTK_SPK_I2S_3, mtk_spk_i2s_in = MTK_SPK_I2S_0;
 static struct mtk_spk_i2c_ctrl mtk_spk_list[MTK_SPK_TYPE_NUM] = {
 	[MTK_SPK_NOT_SMARTPA] = {
@@ -125,6 +128,21 @@ void mtk_spk_set_type(int spk_type)
 	mtk_spk_type = spk_type;
 }
 EXPORT_SYMBOL(mtk_spk_set_type);
+
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+int audiopa_get_type(void)
+{
+	return audiopa_type;
+}
+EXPORT_SYMBOL(audiopa_get_type);
+
+void audiopa_set_type(int spk_type)
+{
+	audiopa_type = spk_type;
+	pr_err("audiopa type is %d, 1 is aw87564, 2 is fs1815\n",audiopa_type);
+}
+EXPORT_SYMBOL(audiopa_set_type);
+#endif
 
 int mtk_spk_get_i2s_out_type(void)
 {
