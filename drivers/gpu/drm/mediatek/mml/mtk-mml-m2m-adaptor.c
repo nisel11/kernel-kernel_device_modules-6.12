@@ -2029,7 +2029,7 @@ err_unlock_exit:
 	mutex_unlock(&ctx->config_mutex);
 err_buf_exit:
 	mml_trace_end();
-	mml_log("%s fail result %d task %p", __func__, result, task);
+	mml_log("[m2m]%s fail result %d task %p", __func__, result, task);
 	if (task) {
 		bool is_init_state = task->state == MML_TASK_INITIAL;
 
@@ -2039,12 +2039,12 @@ err_buf_exit:
 		cfg->await_task_cnt--;
 
 		if (is_init_state) {
-			mml_log("dec config %p and del", cfg);
+			mml_log("[m2m]dec config %p and del", cfg);
 
 			list_del_init(&cfg->entry);
 			ctx->config_cnt--;
 		} else
-			mml_log("dec config %p", cfg);
+			mml_log("[m2m]dec config %p", cfg);
 
 		mutex_unlock(&ctx->config_mutex);
 
