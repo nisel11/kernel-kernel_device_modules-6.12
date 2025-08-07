@@ -55,6 +55,7 @@ static struct device_attribute tcpc_device_attributes[] = {
 	TCPC_DEVICE_ATTR(alert_ratelimit, 0664),
 	TCPC_DEVICE_ATTR(vbus_level, 0444),
 	TCPC_DEVICE_ATTR(cc_high, 0444),
+	TCPC_DEVICE_ATTR(cc_orientation, S_IRUGO | S_IWUSR | S_IWGRP),
 #if IS_ENABLED(CONFIG_USB_POWER_DELIVERY)
 	TCPC_DEVICE_ATTR(pd_test, 0664),
 	TCPC_DEVICE_ATTR(caps_info, 0444),
@@ -69,6 +70,7 @@ enum {
 	TCPC_DESC_ALERT_RATELIMIT,
 	TCPC_TCPM_VBUS_LEVEL,
 	TCPC_TCPM_CC_HIGH,
+	TCPC_DESC_CC_POLA,
 #if IS_ENABLED(CONFIG_USB_POWER_DELIVERY)
 	TCPC_DESC_PD_TEST,
 	TCPC_DESC_CAP_INFO,
@@ -132,6 +134,12 @@ static ssize_t tcpc_show_property(struct device *dev,
 		ret = snprintf(buf, 256, "%d\n", tcpm_inquire_cc_high(tcpc));
 		if (ret < 0)
 			return ret;
+		break;
+	case TCPC_DESC_CC_POLA:
+		if (tcpm_inquire_cc_polarity(tcpc))
+		       snprintf(buf, 256, "%s\n", "CC2");
+		else
+		       snprintf(buf, 256, "%s\n", "CC1");
 		break;
 #if IS_ENABLED(CONFIG_USB_POWER_DELIVERY)
 	case TCPC_DESC_PD_TEST:

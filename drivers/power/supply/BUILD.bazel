@@ -54,6 +54,22 @@ SPLIT_TYPE_CHG_MODULES = [
 ]
 
 define_mgk_ddk_ko(
+    name = "moto_chg_tcmd",
+    srcs = [
+        "moto_chg_tcmd.c",
+    ],
+    hdrs = ["moto_chg_tcmd.h",],
+    includes = ["."],
+    copts = [
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/include",
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/power_throttling",
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/typec/tcpc/inc",
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/usb/usb20/",
+        "-I$(DEVICE_MODULES_PATH)/drivers/power/supply/ufcs",
+    ],
+)
+
+define_mgk_ddk_ko(
     name = "adapter_class",
     srcs = [
         "adapter_class.c",
@@ -79,6 +95,7 @@ define_mgk_ddk_ko(
         "mtk_battery.h",
         "mtk_battery_daemon.h",
         "mtk_gauge.h",
+        "moto_chg_tcmd.h",
     ],
     includes = ["."],
     ko_deps = [
@@ -139,6 +156,7 @@ define_mgk_ddk_ko(
         "mtk_charger.h",
         "mtk_charger_algorithm_class.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     includes = ["."],
     ko_deps = [
@@ -146,6 +164,7 @@ define_mgk_ddk_ko(
         ":charger_class",
         ":mtk_battery_manager",
         ":mtk_charger_algorithm_class",
+        ":moto_chg_tcmd",
     ],
     copts = [
         "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/include",
@@ -209,6 +228,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -236,6 +256,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -263,6 +284,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -290,6 +312,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -317,6 +340,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -344,6 +368,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -371,6 +396,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -398,6 +424,7 @@ define_mgk_ddk_ko(
     hdrs = glob([
         "mtk_charger.h",
         "mtk_smartcharging.h",
+        "moto_chg_tcmd.h",
     ]),
     ko_deps = [
         ":adapter_class",
@@ -449,6 +476,7 @@ define_mgk_ddk_ko(
         "mtk_battery_interface.c",
         "mtk_battery_table.h",
         "{}-gauge.c".format(gauge),
+        "moto_chg_tcmd.h",
     ],
     includes = ["."],
     ko_deps = [
@@ -475,6 +503,7 @@ define_mgk_ddk_ko(
         "mtk_battery_interface.c",
         "mtk_battery_table.h",
         "{}-gauge.c".format(gauge),
+        "moto_chg_tcmd.h",
     ],
     includes = ["."],
     ko_deps = [
