@@ -9,3 +9,6 @@
 ../vendor/mediatek/kernel_modules/task_turbo_cus
 #../vendor/mediatek/kernel_modules/perf_common_int
 ../vendor/mediatek/kernel_modules/perf_common_cus
+../motorola/kernel/modules/drivers/backlight/aw99703
+../motorola/kernel/modules/drivers/backlight/ktd3136
+../motorola/kernel/modules/drivers/regulator/ocp2138
