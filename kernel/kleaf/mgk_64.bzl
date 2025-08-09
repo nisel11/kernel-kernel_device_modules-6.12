@@ -2095,6 +2095,9 @@ def get_overlay_modules_list():
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/sc8541_mmi:sc8541_mmi")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/nu2115a_mmi:nu2115a_mmi")
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/power/supply:moto_chg_tcmd".format(kernel_version))
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/sensors:sensors_class")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/misc/sx937x:sx937x_sar")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/misc/awinic/sarsensor:awinic_sar")
 
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
