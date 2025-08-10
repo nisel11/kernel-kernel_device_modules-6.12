@@ -417,6 +417,7 @@ struct mmi_params {
 	int			target_usb;
 	struct notifier_block	chg_reboot;
 	int			min_therm_current_limit;
+	int			charge_rate;
 	bool			enable_mux;
 	struct mmi_mux_chan	mux_channel;
 	int			wls_switch_en;
@@ -507,6 +508,7 @@ struct mtk_charger {
 	int chr_type;
 	int usb_type;
 	int usb_state;
+	int pd_type;
 	int adapter_priority;
 	int en_cts_mode;
 

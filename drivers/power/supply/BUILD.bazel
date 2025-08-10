@@ -157,6 +157,7 @@ define_mgk_ddk_ko(
         "mtk_charger_algorithm_class.h",
         "mtk_smartcharging.h",
         "moto_chg_tcmd.h",
+        "mtk_pd_adapter.h",
     ]),
     includes = ["."],
     ko_deps = [
@@ -181,6 +182,7 @@ define_mgk_ddk_ko(
     srcs = [
         "mtk_pd_adapter.c",
     ],
+    hdrs = ["mtk_pd_adapter.h",],
     includes = ["."],
     ko_deps = [
         "//kernel_device_modules-{}/drivers/misc/mediatek/typec/tcpc:tcpc_class".format(kernel_version),
