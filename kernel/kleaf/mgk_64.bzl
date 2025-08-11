@@ -2089,6 +2089,7 @@ def get_overlay_modules_list():
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/aw99703:leds_aw99703")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/ktd3136:ktd3136_bl")
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-boe-icnl9922c-672-fhd-dphy-vdo-120hz".format(kernel_version))
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-dijing-ft8725-672-fhd-dphy-vdo-120hz".format(kernel_version))
 
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})

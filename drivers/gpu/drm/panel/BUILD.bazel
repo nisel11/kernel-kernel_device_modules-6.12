@@ -100,6 +100,7 @@ PANELS = [
     "panel-hx-nt37701-dphy-cmd",
     "panel-hx-nt37701-dphy-cmd-120hz",
     "dsi-panel-mot-boe-icnl9922c-672-fhd-dphy-vdo-120hz",
+    "dsi-panel-mot-dijing-ft8725-672-fhd-dphy-vdo-120hz",
 ]
 
 [define_mgk_ddk_ko(
