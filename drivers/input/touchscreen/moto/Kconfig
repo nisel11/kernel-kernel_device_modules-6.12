@@ -1,0 +1,42 @@
+#
+# motorola touchscreen driver configuration
+#
+config CHIPONE_MTK_CHECK_PANEL
+	bool "Support mtk panel check"
+	help
+		Say Y here if support mtk panel check.
+
+config CTS_INPUT_ENABLE_DOUBLE_TAP
+	bool "Support touch wake gesture feature"
+	help
+		Say Y here if support touch wake gesture feature.
+
+config CTS_LAST_TIME
+	bool "Support get the timestamp of last touch event"
+	help
+		Say Y here if need to get the timestamp of last touch event.
+
+config BOARD_USES_DOUBLE_TAP_CTRL
+	bool "Support touch wake gesture feature"
+	help
+		Say Y here if support touch wake gesture feature.
+
+config CHIPONE_LOG_CAPTURE
+	bool "Support ghost log capture"
+	help
+		Say Y here if support touch ghost log capture.
+
+config CHIPONE_FORCE_UP_ENABLE
+	bool "Support touch force up"
+	help
+		Say Y here if support touch force up.
+
+config MTK_PANEL_NOTIFICATIONS
+	bool "set mtk panel notofications"
+	help
+		Say Y here if support mtk panel notofications.
+
+config INPUT_CHIPONE_IC_NAME
+	string "set touch ic name"
+	help
+		This config is set as project name for touch to select configuration.
