@@ -113,10 +113,7 @@ static bool is_typec_adapter(struct mtk_charger *info)
 
 	rp = adapter_dev_get_property(info->adapter_dev[PD], TYPEC_RP_LEVEL);
 	cap_type = adapter_dev_get_property(info->adapter_dev[PD], CAP_TYPE);
-	if (cap_type == TA_DETECT_FAIL &&
-			rp != 500 &&
-			info->chr_type != POWER_SUPPLY_TYPE_USB &&
-			info->chr_type != POWER_SUPPLY_TYPE_USB_CDP)
+	if (cap_type == MTK_CAP_TYPE_UNKNOWN && rp != 500)
 		return true;
 
 	return false;
