@@ -717,10 +717,10 @@ static struct mtk_panel_params ext_params_30hz = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
 	// MMI_STOPSHIP https://gerrit.mot.com/#/c/2561727/
-	// .panel_ver = 1,
+	.panel_ver = 1,
 	// .panel_id = 0x92250208,
-	// .panel_name = "dijing_ft8725_vid_672_1080",
-	// .panel_supplier = "dijing",
+	.panel_name = "dijing_ft8725_vid_672_1080",
+	.panel_supplier = "dijing",
 	.lcm_index = 1,
 	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
 	// .hbm_type = HBM_MODE_RAMPING,
@@ -779,11 +779,11 @@ static struct mtk_panel_params ext_params_45hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-	// .panel_ver = 1,
+	.panel_ver = 1,
 	// MMI_STOPSHIP https://gerrit.mot.com/#/c/2561727/
 	// .panel_id = 0x92250208,
-	// .panel_name = "dijing_ft8725_vid_672_1080",
-	// .panel_supplier = "dijing",
+	.panel_name = "dijing_ft8725_vid_672_1080",
+	.panel_supplier = "dijing",
 	.lcm_index = 1,
 	// MMI_SSTOPSHIP -- https://gerrit.mot.com/#/c/2976056/
 	// .hbm_type = HBM_MODE_RAMPING,
@@ -842,11 +842,11 @@ static struct mtk_panel_params ext_params_60hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-	// .panel_ver = 1,
+	.panel_ver = 1,
 	// MMI_STOPSHIP https://gerrit.mot.com/#/c/2561727/
 	// .panel_id = 0x92250208,
-	// .panel_name = "dijing_ft8725_vid_672_1080",
-	// .panel_supplier = "dijing",
+	.panel_name = "dijing_ft8725_vid_672_1080",
+	.panel_supplier = "dijing",
 	.lcm_index = 1,
 	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
 	// .hbm_type = HBM_MODE_RAMPING,
@@ -907,11 +907,11 @@ static struct mtk_panel_params ext_params_90hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-	// .panel_ver = 1,
+	.panel_ver = 1,
 	// MMI_STOPSHIP https://gerrit.mot.com/#/c/2561727/
 	// .panel_id = 0x92250208,
-	// .panel_name = "dijing_ft8725_vid_672_1080",
-	// .panel_supplier = "dijing",
+	.panel_name = "dijing_ft8725_vid_672_1080",
+	.panel_supplier = "dijing",
 	.lcm_index = 1,
 	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
 	// .hbm_type = HBM_MODE_RAMPING,
@@ -971,12 +971,12 @@ static struct mtk_panel_params ext_params_120hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-	
-	// .panel_ver = 1,
+
+	.panel_ver = 1,
 	// MMI_STOPSHIP https://gerrit.mot.com/#/c/2561727/
 	// .panel_id = 0x92250208,
-	// .panel_name = "dijing_ft8725_vid_672_1080",
-	// .panel_supplier = "dijing",
+	.panel_name = "dijing_ft8725_vid_672_1080",
+	.panel_supplier = "dijing",
 	.lcm_index = 1,
 	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
 	// .hbm_type = HBM_MODE_RAMPING,
