@@ -43,11 +43,35 @@ struct swtp_t swtp_data;
 static const char rf_name[] = "RF_cable";
 #define MAX_RETRY_CNT 30
 
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+static int swtp_tx_power_mode = SWTP_DO_TX_POWER;
+static ssize_t swtp_gpio_state_show(const struct class *class,
+		const struct class_attribute *attr,
+		char *buf)
+{
+	int ret = 0;
+
+	if (swtp_tx_power_mode == SWTP_NO_TX_POWER) {
+		ret = 1;
+	}
+
+	return sprintf(buf, "%d\n", ret);
+}
+
+static CLASS_ATTR_RO(swtp_gpio_state);
+
+static struct class swtp_class = {
+	.name			= "swtp",
+};
+#endif
+
 static int swtp_send_tx_power(struct swtp_t *swtp)
 {
 	unsigned long flags;
 	int power_mode, ret = 0;
-
+#ifdef CONFIG_MOTO_DISABLE_SWTP_FACTORY
+	int factory_tx_power_mode = SWTP_NO_TX_POWER;
+#endif
 	if (swtp == NULL) {
 		CCCI_LEGACY_ERR_LOG(-1, SYS, "%s:swtp is null\n", __func__);
 		return -1;
@@ -55,9 +79,28 @@ static int swtp_send_tx_power(struct swtp_t *swtp)
 
 	spin_lock_irqsave(&swtp->spinlock, flags);
 
+#ifdef CONFIG_MOTO_DISABLE_SWTP_FACTORY
+// FACTORY SW: SET NO_TX directly
+	ret = exec_ccci_kern_func(ID_UPDATE_TX_POWER,
+		(char *)&factory_tx_power_mode, sizeof(factory_tx_power_mode));
+    #if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+    CCCI_LEGACY_ERR_LOG(-1, SYS,"%s ret =%d\n",__func__, ret);
+    #endif
+	power_mode = factory_tx_power_mode;
+    #if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+    CCCI_LEGACY_ERR_LOG(-1, SYS,"%s factory_tx_power_mode =%d\n",__func__, factory_tx_power_mode);
+    #endif
+#else
 	ret = exec_ccci_kern_func(ID_UPDATE_TX_POWER,
 		(char *)&swtp->tx_power_mode, sizeof(swtp->tx_power_mode));
+    #if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+    CCCI_LEGACY_ERR_LOG(-1, SYS,"%s ret =%d\n",__func__, ret);
+    #endif
 	power_mode = swtp->tx_power_mode;
+    #if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+    CCCI_LEGACY_ERR_LOG(-1, SYS,"%s swtp->tx_power_mode =%d\n",__func__, swtp->tx_power_mode);
+    #endif
+#endif
 	spin_unlock_irqrestore(&swtp->spinlock, flags);
 
 	if (ret != 0)
@@ -104,14 +147,38 @@ static int swtp_switch_state(int irq, struct swtp_t *swtp)
 		swtp->gpio_state[i] = SWTP_EINT_PIN_PLUG_IN;
 
 	swtp->tx_power_mode = SWTP_NO_TX_POWER;
+
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+  	if ((swtp->gpio_state[0] == SWTP_EINT_PIN_PLUG_OUT)&&(swtp->gpio_state[1] == SWTP_EINT_PIN_PLUG_OUT)&&(swtp->gpio_state[2] == SWTP_EINT_PIN_PLUG_OUT)&&(swtp->gpio_state[3] == SWTP_EINT_PIN_PLUG_OUT)) {
+  		swtp->tx_power_mode = SWTP_DO_TX_POWER;
+  		CCCI_LEGACY_ERR_LOG(0, SYS,
+  			"--------SWTP_DO_TX_POWER----------%s>>tx_power_mode = %d,gpio_state:Ant5=%d, Ant1=%d, Ant0=%d, Ant4=%d\n",
+  			__func__, swtp->tx_power_mode, swtp->gpio_state[0], swtp->gpio_state[1], swtp->gpio_state[2], swtp->gpio_state[3]);
+  	} else {
+  		swtp->tx_power_mode = SWTP_NO_TX_POWER;
+  		CCCI_LEGACY_ERR_LOG(0, SYS,
+  			"--------SWTP_NO_TX_POWER----------%s>>tx_power_mode = %d,gpio_state:Ant5=%d, Ant1=%d, Ant0=%d, Ant4=%d\n",
+  			__func__, swtp->tx_power_mode, swtp->gpio_state[0], swtp->gpio_state[1], swtp->gpio_state[2], swtp->gpio_state[3]);
+  	}
+#else
 	for (i = 0; i < MAX_PIN_NUM; i++) {
 		if (swtp->gpio_state[i] == SWTP_EINT_PIN_PLUG_IN) {
 			swtp->tx_power_mode = SWTP_DO_TX_POWER;
 			break;
 		}
 	}
+#endif
 
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+	inject_pin_status_event(swtp->tx_power_mode, rf_name);
+#else
 	inject_pin_status_event(swtp->curr_mode, rf_name);
+#endif
+
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+	swtp_tx_power_mode = swtp->tx_power_mode;
+#endif
+
 	spin_unlock_irqrestore(&swtp->spinlock, flags);
 
 	return swtp->tx_power_mode;
@@ -198,6 +265,12 @@ static void swtp_init_delayed_work(struct work_struct *work)
 	CCCI_NORMAL_LOG(-1, SYS, "%s at the begin...\n", __func__);
 	CCCI_BOOTUP_LOG(-1, SYS, "%s at the begin...\n", __func__);
 
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+	ret = class_register(&swtp_class);
+
+	ret = class_create_file(&swtp_class, &class_attr_swtp_gpio_state);
+#endif
+
 	if (ARRAY_SIZE(swtp_of_match) != ARRAY_SIZE(irq_name) ||
 		ARRAY_SIZE(swtp_of_match) > MAX_PIN_NUM + 1 ||
 		ARRAY_SIZE(irq_name) > MAX_PIN_NUM + 1) {
@@ -283,7 +356,24 @@ int swtp_init(void)
 	/* tx work setting */
 	INIT_DELAYED_WORK(&swtp_data.delayed_work,
 		swtp_tx_delayed_work);
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+
+#ifdef CONFIG_MOTO_DISABLE_SWTP_FACTORY
+    swtp_data.tx_power_mode = SWTP_NO_TX_POWER;
+#else
+	swtp_data.tx_power_mode = SWTP_DO_TX_POWER;
+#endif
+
+#else
 	swtp_data.tx_power_mode = SWTP_NO_TX_POWER;
+#endif
+
+
+
+
+#if defined(CONFIG_MOTO_BOGOTA_SWTP_CUST)
+	swtp_tx_power_mode = swtp_data.tx_power_mode;
+#endif
 
 	spin_lock_init(&swtp_data.spinlock);
 

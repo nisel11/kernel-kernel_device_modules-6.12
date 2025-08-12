@@ -69,3 +69,21 @@ config MTK_CCCI_DUMP
 	  Say Y here if will dump some md mem info in ccci_dump,
 	  only be opened on userdebug and eng load, if unsure, say N.
 	  The option default disabled.
+
+config MOTO_DISABLE_SWTP_FACTORY
+	bool "ECCCI tesla swtp customization"
+	depends on MTK_ECCCI_DRIVER
+	help
+	  This option enables devonn swtp customization, if yes,
+	  then it is supported, if no,
+	  it is disabled.
+	  The option default disabled.
+
+config MOTO_BOGOTA_SWTP_CUST
+	bool "ECCCI bogota swtp customization"
+	depends on MTK_ECCCI_DRIVER
+	help
+	  This option enables bogota swtp customization, if yes,
+	  then it is supported, if no,
+	  it is disabled.
+	  The option default disabled.
