@@ -15,3 +15,13 @@ config DEVICE_MODULES_SPI_MT65XX
 	  SPI drivers for Mediatek MT65XX and MT81XX series ARM SoCs.
 
 endif # SPI
+
+config MT6855_TWO_DEVICE_SPI_BUS_SUPPORT
+	tristate "support two device on spi bus"
+	depends on OF
+	depends on DRM_MIPI_DSI
+        default n
+	help
+	  To set spi bus support two device.
+	  set N by default.
+	  If spi bus need support two device on it, set Y in product dts.

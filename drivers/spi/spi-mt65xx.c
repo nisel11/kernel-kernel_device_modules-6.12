@@ -1866,6 +1866,9 @@ static int mtk_spi_probe(struct platform_device *pdev)
 				goto err_put_ctrl;
 			}
 		}
+#if defined(CONFIG_MT6855_TWO_DEVICE_SPI_BUS_SUPPORT)
+		ctrl->num_chipselect = mdata->pad_num;
+#endif
 	}
 
 	platform_set_drvdata(pdev, ctrl);
@@ -1976,12 +1979,14 @@ static int mtk_spi_probe(struct platform_device *pdev)
 			goto err_put_ctrl;
 		}
 
+#ifndef CONFIG_MT6855_TWO_DEVICE_SPI_BUS_SUPPORT
 		if (!ctrl->cs_gpiods && ctrl->num_chipselect > 1) {
 			dev_err(&pdev->dev,
 				"cs_gpiods not specified and num_chipselect > 1\n");
 			ret = -EINVAL;
 			goto err_put_ctrl;
 		}
+#endif
 	}
 
 	if (mdata->dev_comp->dma_ext)
