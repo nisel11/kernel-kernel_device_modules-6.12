@@ -55,3 +55,58 @@ config INPUT_CHIPONE_IC_NAME
 	string "set touch ic name"
 	help
 		This config is set as project name for touch to select configuration.
+
+config INPUT_FOCALTECH_IC_NAME
+	string "set touch ic name"
+	help
+		This config is set as project name for touch to select configuration.
+
+config FTS_MTK_CHECK_PANEL
+	bool "Support mtk panel check"
+	help
+		Say Y here if support mtk panel check.
+
+config INPUT_FOCALTECH_DEBUG_EN
+	bool "set input focaltech debug enable"
+	help
+		Say Y here if support input focaltech debug enable.
+
+config INPUT_FOCALTECH_0FLASH_MMI_ENABLE_DOUBLE_TAP
+	bool "set input focaltec wake gesture feature"
+	help
+		Say Y here if support touch wake gesture feature.
+
+config FTS_LAST_TIME
+	bool "Support get the timestamp of last touch event"
+	help
+		Say Y here if need to get the timestamp of last touch event.
+
+config FTS_IRQ_DIS_FOR_RESET
+	bool "set fts irq disable for reset"
+	help
+		Say Y here if support fts irq disable for reset.
+
+config FTS_STOWED_MODE_SUPPORT
+	bool "set fts stowed mode enable"
+	help
+		Say Y here if support fts stowed mode.
+
+config FTS_CHECK_DEVICE_BOOTMODE_SUPPORT
+	bool "set fts device bootmode check"
+	help
+		Say Y here if support fts device bootmode check.
+
+config FOCALTECH_LOG_CAPTURE
+	bool "set fts log capture"
+	help
+		Say Y here if support fts log capture.
+
+config FOCAL_SPI_DRIVE
+	bool "set fts spi drive"
+	help
+		Say Y here if support fts spi drive.
+
+config INPUT_HIGH_RESOLUTION_4
+	bool "set fts input high resolution 4"
+	help
+		Say Y here if support fts input high resolution 4.
