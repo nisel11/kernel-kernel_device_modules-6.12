@@ -36,6 +36,21 @@ config MTK_PANEL_NOTIFICATIONS
 	help
 		Say Y here if support mtk panel notofications.
 
+config CHIPONE_CHECK_DEVICE_BOOTMODE
+	bool "set device bootmode check"
+	help
+		Say Y here if support device bootmode check.
+
+config CTS_NOTIFY_TOUCH_STATE
+	bool "set touch state notofy"
+	help
+		Say Y here if support touch state notofy.
+
+config STOWED_MODE_EN
+	bool "set stowed mode enable"
+	help
+		Say Y here if support stowed mode.
+
 config INPUT_CHIPONE_IC_NAME
 	string "set touch ic name"
 	help
