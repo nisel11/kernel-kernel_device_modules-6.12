@@ -11,6 +11,60 @@
 
 /* Legacy design */
 struct IMGSENSOR_HW_POWER_SEQ sensor_power_sequence[] = {
+#if defined(CONFIG_MOT_BOGOTA_CAMERA_PROJECT)
+#if defined(MOT_BOGOTA_IMX882_MIPI_RAW)
+        {
+                SENSOR_DRVNAME_MOT_BOGOTA_IMX882_MIPI_RAW,
+                {
+                        {SensorMCLK, Vol_High, 1},
+                        {RST, Vol_Low, 1},
+                        {DOVDD, Vol_1800, 3},
+                        {DVDD, Vol_High, 1},
+                        {AVDD, Vol_High, 4},
+                        {RST, Vol_High, 5},
+                },
+        },
+#endif
+#if defined(MOT_BOGOTA_GC32E1_MIPI_RAW)
+        {
+                SENSOR_DRVNAME_MOT_BOGOTA_GC32E1_MIPI_RAW,
+                {
+                        {SensorMCLK, Vol_High, 0},
+                        {RST, Vol_Low, 1},
+                        {DOVDD, Vol_1800, 6},
+                        {DVDD, Vol_High, 5},
+                        {AVDD, Vol_High, 5},
+                        {RST, Vol_High, 5},
+                },
+        },
+#endif
+#if defined(MOT_BOGOTA_GC08A8_MIPI_RAW)
+	{
+		SENSOR_DRVNAME_MOT_BOGOTA_GC08A8_MIPI_RAW,
+		{
+			{SensorMCLK, Vol_High, 1},
+			{RST, Vol_Low, 1},
+			{DOVDD, Vol_1800, 3},
+			{AVDD, Vol_High, 1},
+			{DVDD, Vol_High, 4},
+			{RST, Vol_High, 4},
+		},
+	},
+#endif
+#if defined(MOT_BOGOTA_SC820_MIPI_RAW)
+	{
+		SENSOR_DRVNAME_MOT_BOGOTA_SC820_MIPI_RAW,
+		{
+			{RST, Vol_Low, 1},
+			{SensorMCLK, Vol_High, 1},
+			{DOVDD, Vol_1800, 3},
+			{DVDD, Vol_1200, 1},
+			{AVDD, Vol_2800, 4},
+			{RST, Vol_High, 7}
+		},
+	},
+#endif
+#endif
 #if defined(HI1339_MIPI_RAW)
 		{
 			SENSOR_DRVNAME_HI1339_MIPI_RAW,

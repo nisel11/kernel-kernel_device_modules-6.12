@@ -123,6 +123,16 @@
 /************************************************************************
  *
  ************************************************************************/
+  /* Bogota */
+#define MOT_BOGOTA_IMX882_SENSOR_ID                       0x8202
+#define SENSOR_DRVNAME_MOT_BOGOTA_IMX882_MIPI_RAW        "mot_bogota_imx882_mipi_raw"
+#define MOT_BOGOTA_GC32E1_SENSOR_ID                       0x32E1
+#define SENSOR_DRVNAME_MOT_BOGOTA_GC32E1_MIPI_RAW        "mot_bogota_gc32e1_mipi_raw"
+#define MOT_BOGOTA_GC08A8_SENSOR_ID                       0x08a8
+#define SENSOR_DRVNAME_MOT_BOGOTA_GC08A8_MIPI_RAW         "mot_bogota_gc08a8_mipi_raw"
+#define MOT_BOGOTA_SC820_SENSOR_ID                        0xd154
+#define SENSOR_DRVNAME_MOT_BOGOTA_SC820_MIPI_RAW          "mot_bogota_sc820_mipi_raw"
+
 #define HI1339_SENSOR_ID                          0x1339
 #define SENSOR_DRVNAME_HI1339_MIPI_RAW            "hi1339_mipi_raw"
 #define SENSOR_DRVNAME_HI1339SUBTXD_MIPI_RAW      "hi1339subtxd_mipi_raw"

@@ -218,7 +218,7 @@
 			drive-strength = <3>;
 		};
 	};
-	camera_pins_cam0_af_0: vcamaf0@vcam0 {
+	/* camera_pins_cam0_af_0: vcamaf0@vcam0 {
 		pins_cmd_dat {
 			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
 			slew-rate = <1>;
@@ -231,10 +231,10 @@
 			slew-rate = <1>;
 			output-high;
 		};
-	};
+	}; */
 	camera_pins_default: camdefault {
 	};
-	flash_en_pin0: flash_en_pin0 {
+	/* flash_en_pin0: flash_en_pin0 {
 		pins_cmd_dat {
 			pinmux = <PINMUX_GPIO4__FUNC_GPIO4>;
 			slew-rate = <1>;
@@ -247,7 +247,7 @@
 			slew-rate = <1>;
 			output-high;
 		};
-	};
+	}; */
 };
 &kd_camera_hw1 {
 	pinctrl-names = "default",
@@ -269,7 +269,6 @@
 			"cam2_mclk_off",
 			"cam2_mclk_2mA", "cam2_mclk_4mA",
 			"cam2_mclk_6mA", "cam2_mclk_8mA";
-
 	pinctrl-0 = <&camera_pins_default>;
 	pinctrl-1 = <&camera_pins_cam0_rst_0>;
 	pinctrl-2 = <&camera_pins_cam0_rst_1>;
@@ -313,13 +312,15 @@
 	cam0_pin_rst = "gpio";
 	cam0_pin_vcama = "gpio";
 	cam0_pin_vcamd = "gpio";
-	cam0_pin_vcamaf = "gpio";
+	//cam0_pin_vcamaf = "gpio";
 	cam0_pin_vcamio = "regulator";
+
 	cam1_pin_mclk = "mclk";
 	cam1_pin_rst = "gpio";
 	cam1_pin_vcama = "gpio";
 	cam1_pin_vcamd = "gpio";
 	cam1_pin_vcamio = "regulator";
+
 	cam2_pin_mclk = "mclk";
 	cam2_pin_rst = "gpio";
 	cam2_pin_vcama = "gpio";
@@ -332,7 +333,7 @@
 	status = "okay";
 };
 /* CAMERA GPIO end */
-&i2c0 {
+/* &i2c0 {
         status = "okay";
         clock-frequency = <400000>;
         strobe_main:strobe_main@63 {
@@ -343,7 +344,7 @@
         pinctrl-0 = <&flash_en_pin0>;
         pinctrl-1 = <&flash_en_pin1>;
     };
-};
+};*/
 /* CAMERA EEPROM */
 &i2c2 {
 	status = "okay";
@@ -391,7 +392,6 @@
 		reg = <0x62>;
 		status = "okay";
 	};
-
 	mtk_camera_eeprom2:camera_eeprom2@50 {
 		compatible = "mediatek,camera_eeprom";
 		reg = <0x50>;
@@ -422,7 +422,7 @@
 /* CAMERA TZ config end */
 
 /* CAMERA AF */
-&i2c2 {
+/* &i2c2 {
 	camera_main_af_mtk:camera_main_af@0c {
 		compatible = "mediatek,camera_main_af";
 		reg = <0x0C>;
@@ -434,7 +434,8 @@
 	pinctrl-0 = <&camera_pins_cam0_af_1>;
 	pinctrl-1 = <&camera_pins_cam0_af_0>;
 	status = "okay";
-};
+}; */
+
 //&i2c8 {
 //	camera_main_af_mtk:camera_main_af@72 {
 //		compatible = "mediatek,camera_main_af";

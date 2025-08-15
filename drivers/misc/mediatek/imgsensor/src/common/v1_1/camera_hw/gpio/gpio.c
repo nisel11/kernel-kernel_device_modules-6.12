@@ -20,6 +20,10 @@ struct GPIO_PINCTRL gpio_pinctrl_list_cam[
 	{"ldo_vcama1_0"},
 	{"ldo_vcamafvdd_1"},
 	{"ldo_vcamafvdd_0"},
+//#if defined(CONFIG_MOT_BOGOTA_CAMERA_PROJECT)
+	//{"ldo_vcamaf_1"},
+	//{"ldo_vcamaf_0"},
+//#endif
 	{"ldo_vcamd_1"},
 	{"ldo_vcamd_0"},
 	{"ldo_vcamd1_1"},
