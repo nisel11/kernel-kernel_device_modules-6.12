@@ -29,3 +29,7 @@
 	mmi,main-utags = "/dev/block/by-name/hw";
 };
 
+/* Trustonic Mobicore real driver */
+&mobicore {
+trustonic,real-drv = <1>;
+};
