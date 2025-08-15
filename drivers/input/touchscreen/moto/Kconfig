@@ -110,3 +110,48 @@ config INPUT_HIGH_RESOLUTION_4
 	bool "set fts input high resolution 4"
 	help
 		Say Y here if support fts input high resolution 4.
+
+config TP_MTK_CHECK_PANEL
+	bool "set ovt mtk check panel"
+	help
+		Say Y here if support ovt mtk check panel.
+
+config OVT_ENABLE_DOUBLE_TAP
+	bool "set ovt wake gesture feature"
+	help
+		Say Y here if support touch wake gesture feature.
+
+config TP_LAST_TIME
+	bool "Support get the timestamp of last touch event"
+	help
+		Say Y here if need to get the timestamp of last touch event.
+
+config SUPPORT_MULTI_FIRMWARE
+	bool "set ovt multi fireware support"
+	help
+		Say Y here if support ovt multi fireware.
+
+config OVT_STOWED_MODE_SUPPORT
+	bool "set ovt stowed mode enable"
+	help
+		Say Y here if support ovt stowed mode.
+
+config OMN_LOG_CAPTURE
+	bool "set ovt log capture"
+	help
+		Say Y here if support ovt log capture.
+
+config OVT_PANEL_GESTURE_NOTIFY_SUPPORT
+	bool "set ovt panel gesture notify support"
+	help
+		Say Y here if support ovt panel gesture notify.
+
+config OVT_CHECK_DEVICE_BOOTMODE_SUPPORT
+	bool "set ovt check device bootmode support"
+	help
+		Say Y here if support ovt check device bootmode.
+
+config OVT_CHARGER_DETECT_SUPPORT
+	bool "set ovt charger detect support"
+	help
+		Say Y here if support ovt charger detect.
