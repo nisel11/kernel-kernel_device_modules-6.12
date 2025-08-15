@@ -291,6 +291,11 @@ int pe50_hal_init_hardware(struct chg_alg_device *alg, const char **support_ta,
 		ret = IS_ERR(hal->bat_psy) ? PTR_ERR(hal->bat_psy) : -ENODEV;
 		PE50_ERR("get bat_psy fail(%d)\n", ret);
 	}
+	hal->bat_manager_psy = power_supply_get_by_name("battery");
+	if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
+		ret = IS_ERR(hal->bat_manager_psy) ? PTR_ERR(hal->bat_manager_psy) : -ENODEV;
+		PE50_ERR("get bat_manager_psy fail(%d)\n", ret);
+	}
 	PE50_INFO("successfully\n");
 	return 0;
 err_free_mem1:
@@ -425,25 +430,39 @@ static int pe50_get_tbat(struct pe50_hal *hal)
 {
 	int ret = 27;
 	union power_supply_propval prop = {0};
-	struct power_supply *bat_manager_psy = NULL;
 
-	bat_manager_psy = hal->bat_manager_psy;
-	if (IS_ERR_OR_NULL(bat_manager_psy)) {
+#if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
 		pr_notice("%s retry to get pe5->bat_manager_psy\n", __func__);
-		bat_manager_psy = power_supply_get_by_name("battery");
-		hal->bat_manager_psy = bat_manager_psy;
+		hal->bat_manager_psy = power_supply_get_by_name("battery");
+		if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
+			pr_notice("%s Couldn't get bat_manager_psy\n", __func__);
+			ret = 27;
+			goto out;
+		}
 	}
-
-	if (IS_ERR_OR_NULL(bat_manager_psy)) {
-		pr_notice("%s Couldn't get bat_manager_psy\n", __func__);
+	ret = power_supply_get_property(hal->bat_manager_psy,
+		POWER_SUPPLY_PROP_TEMP, &prop);
+#else
+	if (IS_ERR_OR_NULL(hal->bat_psy)) {
+		pr_notice("%s retry to get pe5->bat_psy\n", __func__);
+		hal->bat_psy = devm_power_supply_get_by_phandle(hal->dev, "gauge");
+		if (IS_ERR_OR_NULL(hal->bat_psy)) {
+			pr_notice("%s Couldn't get bat_psy\n", __func__);
+			ret = 27;
+			goto out;
+		}
+	}
+	ret = power_supply_get_property(hal->bat_psy,
+		POWER_SUPPLY_PROP_TEMP, &prop);
+#endif
+	if (ret < 0) {
+		PE50_ERR("get tbat fail(%d)\n", ret);
 		ret = 27;
-	} else {
-		ret = power_supply_get_property(bat_manager_psy,
-			POWER_SUPPLY_PROP_TEMP, &prop);
-		if (ret < 0)
-			return ret;
-		ret = prop.intval / 10;
+		goto out;
 	}
+	ret = prop.intval / 10;
+out:
 	PE50_DBG("%d\n", ret);
 	return ret;
 }
@@ -529,15 +548,29 @@ int pe50_hal_get_soc(struct chg_alg_device *alg, u32 *soc)
 	union power_supply_propval val = {0,};
 	struct pe50_hal *hal = chg_alg_dev_get_drv_hal_data(alg);
 
-	if (IS_ERR_OR_NULL(hal->bat_psy)) {
-	    hal->bat_psy = devm_power_supply_get_by_phandle(hal->dev, "gauge");
+#if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
+		pr_notice("%s retry to get pe5->bat_manager_psy\n", __func__);
+		hal->bat_manager_psy = power_supply_get_by_name("battery");
+		if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
+			pr_notice("%s Couldn't get bat_manager_psy\n", __func__);
+			goto out;
+		}
 	}
-
-	if (IS_ERR_OR_NULL(hal->bat_psy))
-		goto out;
-
+	ret = power_supply_get_property(hal->bat_manager_psy,
+					POWER_SUPPLY_PROP_CAPACITY, &val);
+#else
+	if (IS_ERR_OR_NULL(hal->bat_psy)) {
+		pr_notice("%s retry to get pe5->bat_psy\n", __func__);
+		hal->bat_psy = devm_power_supply_get_by_phandle(hal->dev, "gauge");
+		if (IS_ERR_OR_NULL(hal->bat_psy)) {
+			pr_notice("%s Couldn't get bat_psy\n", __func__);
+			goto out;
+		}
+	}
 	ret = power_supply_get_property(hal->bat_psy,
 					POWER_SUPPLY_PROP_CAPACITY, &val);
+#endif
 	if (ret < 0) {
 		PE50_ERR("get soc fail(%d)\n", ret);
 		goto out;

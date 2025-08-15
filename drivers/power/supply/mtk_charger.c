@@ -3151,18 +3151,29 @@ int mmi_get_prop_from_battery(struct mtk_charger *info,
 				union power_supply_propval *val)
 {
 	int rc;
+	struct power_supply *psy;
 
-	if (!info->bat_psy) {
-		info->bat_psy = power_supply_get_by_name("battery");
-
-		if (!info->bat_psy) {
-			pr_err("[%s]Error getting battery power sypply\n", __func__);
+#if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	if (!info->bat_manager_psy) {
+		info->bat_manager_psy = power_supply_get_by_name("battery");
+		if (!info->bat_manager_psy) {
+			pr_err("[%s]Error getting bat_manager_psy\n", __func__);
 			return -EINVAL;
 		}
 	}
+	psy = info->bat_manager_psy;
+#else
+	if (!info->bat_psy) {
+		info->bat_psy = devm_power_supply_get_by_phandle(&info->pdev->dev, "gauge");
+		if (!info->bat_psy) {
+			pr_err("[%s]Error getting bat_psy\n", __func__);
+			return -EINVAL;
+		}
+	}
+	psy = info->bat_psy;
+#endif
 
-	rc = power_supply_get_property(info->bat_psy, psp, val);
-
+	rc = power_supply_get_property(psy, psp, val);
 	return rc;
 }
 
@@ -5453,6 +5464,11 @@ static int mtk_charger_probe(struct platform_device *pdev)
 		"gauge");
 	if (IS_ERR_OR_NULL(info->bat_psy))
 		chr_err("%s: devm power fail to get bat_psy\n", __func__);
+
+	info->bat_manager_psy = power_supply_get_by_name("battery");
+	if (IS_ERR_OR_NULL(info->bat_manager_psy)) {
+		chr_err("%s: devm power fail to get bat_manager_psy\n", __func__);
+	}
 
 	if (IS_ERR(info->psy1))
 		chr_err("register psy1 fail:%ld\n",

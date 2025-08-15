@@ -250,6 +250,14 @@ config GAUGE_MT6375
 	  The fuelgauge calculates and determines the battery state of charge
 	  according to battery open circuit voltage.
 
+config MTK_BATTERY_MANAGER
+	tristate "Use MediaTek Battery Manager"
+	depends on GAUGE_MT6375
+	help
+	  Say Y to Use MediaTek Battery Manager
+	  Decide whether to use mtk battery manager or an external battery gauge
+	  when obtaining battery parameters
+
 config GAUGE_MT6379
 	tristate "MT6379 Fuel Gauge driver"
 	depends on MFD_MT6379_SPMI
