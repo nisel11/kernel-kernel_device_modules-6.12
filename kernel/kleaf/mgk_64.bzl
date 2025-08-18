@@ -2101,7 +2101,7 @@ def get_overlay_modules_list():
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/misc/sx937x:sx937x_sar")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/misc/awinic/sarsensor:awinic_sar")
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/sound/soc/codecs/aw87564:snd-soc-aw87564".format(kernel_version))
-
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/sound/soc/codecs/fs1815:snd-soc-fs1815".format(kernel_version))
 
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})

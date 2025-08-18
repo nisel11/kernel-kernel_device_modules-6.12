@@ -73,6 +73,7 @@ enum mtk_spk_type {
 enum audiopa_type {
 	AUDIOPA_DEFAULT = 0,
 	AUDIOPA_AW87564,
+	AUDIOPA_FS1815,
 };
 #endif
 

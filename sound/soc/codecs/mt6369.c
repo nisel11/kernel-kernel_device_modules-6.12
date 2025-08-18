@@ -21,6 +21,7 @@
 #include <mtk-sp-spk-amp.h>
 #ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
 #include <aw87xxx.h>
+#include <fsm_public.h>
 #endif
 
 #include "mt6369.h"
@@ -5903,6 +5904,14 @@ static int mt6369_codec_probe(struct snd_soc_component *cmpnt)
 		pr_info("%s awinic\n", __func__);
 		if (ret < 0) {
 			pr_err("%s: awinic add_codec_controls failed, err %d\n",__func__, ret);
+			return ret;
+		}
+	}else if (audiopa_get_type() == AUDIOPA_FS1815) {
+		pr_info("%s fs1815\n", __func__);
+		ret = fsm_add_codec_controls(cmpnt);
+		if (ret < 0) {
+			pr_err("%s: add fsm1815_codec_controls failed, ret %d\n",
+			__func__, ret);
 			return ret;
 		}
 	}
