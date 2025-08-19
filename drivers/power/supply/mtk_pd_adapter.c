@@ -237,6 +237,9 @@ static int pd_get_property(struct adapter_device *dev,
 		& DPM_FLAGS_PARTNER_USB_SUSPEND;
 		mutex_unlock(&info->idx_lock);
 		break;
+	case PD_TYPE:
+		ret = info->pd_type[info->active_idx];
+		break;
 	default:
 		return -EINVAL;
 	}

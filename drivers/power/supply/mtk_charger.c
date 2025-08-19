@@ -5302,6 +5302,7 @@ int notify_adapter_event(struct notifier_block *notifier,
 		mutex_lock(&pinfo->ta_lock);
 		chr_err("TA Notify Detach\n");
 		pinfo->ta_status[index] = TA_DETACH;
+		pinfo->pd_type = adapter_dev_get_property(pinfo->adapter_dev[PD], PD_TYPE);
 		mutex_unlock(&pinfo->ta_lock);
 		mtk_chg_alg_notify_call(pinfo, EVT_DETACH, 0);
 		_wake_up_charger(pinfo);
@@ -5312,6 +5313,7 @@ int notify_adapter_event(struct notifier_block *notifier,
 		mutex_lock(&pinfo->ta_lock);
 		chr_err("TA Notify Attach\n");
 		pinfo->ta_status[index] = TA_ATTACH;
+		pinfo->pd_type = adapter_dev_get_property(pinfo->adapter_dev[PD], PD_TYPE);
 		mutex_unlock(&pinfo->ta_lock);
 		_wake_up_charger(pinfo);
 		/* reset PE40 */
@@ -5321,6 +5323,7 @@ int notify_adapter_event(struct notifier_block *notifier,
 		mutex_lock(&pinfo->ta_lock);
 		chr_err("TA Notify Detect Fail\n");
 		pinfo->ta_status[index] = TA_DETECT_FAIL;
+		pinfo->pd_type = adapter_dev_get_property(pinfo->adapter_dev[PD], PD_TYPE);
 		mutex_unlock(&pinfo->ta_lock);
 		_wake_up_charger(pinfo);
 		/* reset PE50 */
@@ -5330,6 +5333,7 @@ int notify_adapter_event(struct notifier_block *notifier,
 		mutex_lock(&pinfo->ta_lock);
 		chr_err("TA Notify Hard Reset\n");
 		pinfo->ta_status[index] = TA_HARD_RESET;
+		pinfo->pd_type = adapter_dev_get_property(pinfo->adapter_dev[PD], PD_TYPE);
 		pinfo->ta_hardreset = true;
 		mutex_unlock(&pinfo->ta_lock);
 		_wake_up_charger(pinfo);
@@ -5340,6 +5344,7 @@ int notify_adapter_event(struct notifier_block *notifier,
 		mutex_lock(&pinfo->ta_lock);
 		chr_err("TA Notify Soft Reset\n");
 		pinfo->ta_status[index] = TA_SOFT_RESET;
+		pinfo->pd_type = adapter_dev_get_property(pinfo->adapter_dev[PD], PD_TYPE);
 		mutex_unlock(&pinfo->ta_lock);
 		_wake_up_charger(pinfo);
 		/* PD30 is ready */
@@ -5379,8 +5384,8 @@ int notify_adapter_event(struct notifier_block *notifier,
 		}
 		break;
 	}
-	chr_debug("%s: evt: pd:%d, ufcs:%d\n", __func__,
-	pinfo->ta_status[PD], pinfo->ta_status[UFCS]);
+	chr_debug("%s: evt: pd:%d, ufcs:%d, pd_type:%d\n", __func__,
+	pinfo->ta_status[PD], pinfo->ta_status[UFCS], pinfo->pd_type);
 
 	if (report_psy)
 		power_supply_changed(pinfo->psy1);
