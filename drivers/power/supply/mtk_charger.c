@@ -3242,7 +3242,7 @@ static int mmi_get_ffc_fv(struct mtk_charger *info, int temp_c)
 	int i = 0;
 	int temp = temp_c;
 	int num_zones;
-	struct mmi_ffc_zone *zone;
+	struct mmi_zone *zone;
 
 	//temp = charger->batt_info.batt_temp;
 	num_zones = info->mmi.num_ffc_zones;
@@ -3250,12 +3250,34 @@ static int mmi_get_ffc_fv(struct mtk_charger *info, int temp_c)
 	while (i < num_zones && temp > zone[i++].temp);
 	zone = i > 0? &zone[i - 1] : NULL;
 
-	info->mmi.chrg_iterm = zone->ffc_chg_iterm;
-	ffc_max_fv = zone->ffc_max_mv;
+	info->mmi.chrg_iterm = zone->chg_iterm;
+	ffc_max_fv = zone->max_mv;
 	pr_info("FFC temp zone %d, fv %d mV, chg iterm %d mA\n",
 		  ((i > 0)? (i - 1) : 0), ffc_max_fv, info->mmi.chrg_iterm);
 
 	return ffc_max_fv;
+}
+
+static int mmi_get_normal_fv(struct mtk_charger *info, int temp_c)
+{
+	int normal_max_fv;
+	int i = 0;
+	int temp = temp_c;
+	int num_zones;
+	struct mmi_zone *zone;
+
+	//temp = charger->batt_info.batt_temp;
+	num_zones = info->mmi.num_normal_zones;
+	zone = info->mmi.normal_zones;
+	while (i < num_zones && temp > zone[i++].temp);
+	zone = i > 0? &zone[i - 1] : NULL;
+
+	info->mmi.chrg_iterm = zone->chg_iterm;
+	normal_max_fv = zone->max_mv;
+	pr_info("NORMAL temp zone %d, fv %d mV, chg iterm %d mA\n",
+		  ((i > 0)? (i - 1) : 0), normal_max_fv, info->mmi.chrg_iterm);
+
+	return normal_max_fv;
 }
 
 #define MIN_TEMP_C -20
@@ -3796,6 +3818,7 @@ static void mmi_charger_check_status(struct mtk_charger *info)
 	if (mmi->base_fv_mv == 0) {
 		mmi->base_fv_mv = info->data.battery_cv / 1000;
 	}
+
 	if (info->dvchg1_dev != NULL && info->pd_type == MTK_PD_CONNECT_PE_READY_SNK_APDO) {
 		if (info->mmi.ffc_zones != NULL) {
 			max_fv_mv = mmi_get_ffc_fv(info, batt_temp);
@@ -3805,9 +3828,19 @@ static void mmi_charger_check_status(struct mtk_charger *info)
 			max_fv_mv = mmi->base_fv_mv;
 		}
 	} else {
-		max_fv_mv = mmi->base_fv_mv;
-		info->mmi.chrg_iterm =  info->mmi.back_chrg_iterm;
+		if (info->mmi.normal_zones != NULL) {
+			max_fv_mv = mmi_get_normal_fv(info, batt_temp);
+			if (max_fv_mv == 0) {
+				max_fv_mv = mmi->base_fv_mv;
+				info->mmi.chrg_iterm =  info->mmi.back_chrg_iterm;
+			}
+		} else {
+			max_fv_mv = mmi->base_fv_mv;
+			info->mmi.chrg_iterm =  info->mmi.back_chrg_iterm;
+		}
+		pr_info("normal mode  fv %d mV, chg iterm %d mA\n", max_fv_mv, info->mmi.chrg_iterm);
 	}
+
 	/* Determine Next State */
 	prev_step = info->mmi.pres_chrg_step;
 
@@ -4061,11 +4094,11 @@ static int parse_mmi_dt(struct mtk_charger *info, struct device *dev)
 			return -ENODEV;
 		}
 
-		info->mmi.ffc_zones = (struct mmi_ffc_zone *)
+		info->mmi.ffc_zones = (struct mmi_zone *)
 			devm_kzalloc(dev, byte_len, GFP_KERNEL);
 
 		info->mmi.num_ffc_zones =
-			byte_len / sizeof(struct mmi_ffc_zone);
+			byte_len / sizeof(struct mmi_zone);
 
 		if (info->mmi.ffc_zones == NULL)
 			return -ENOMEM;
@@ -4082,11 +4115,45 @@ static int parse_mmi_dt(struct mtk_charger *info, struct device *dev)
 		for (i = 0; i < info->mmi.num_ffc_zones; i++) {
 			pr_err("FFC:Zone %d,Temp %d,Volt %d,Ich %d", i,
 				 info->mmi.ffc_zones[i].temp,
-				 info->mmi.ffc_zones[i].ffc_max_mv,
-				 info->mmi.ffc_zones[i].ffc_chg_iterm);
+				 info->mmi.ffc_zones[i].max_mv,
+				 info->mmi.ffc_zones[i].chg_iterm);
 		}
 	} else
 		info->mmi.ffc_zones = NULL;
+
+	if (of_find_property(node, "mmi,mmi-normal-zones", &byte_len)) {
+		if ((byte_len / sizeof(u32)) % 3) {
+			pr_err("DT error wrong mmi normal zones\n");
+			return -ENODEV;
+		}
+
+		info->mmi.normal_zones = (struct mmi_zone *)
+			devm_kzalloc(dev, byte_len, GFP_KERNEL);
+
+		info->mmi.num_normal_zones =
+			byte_len / sizeof(struct mmi_zone);
+
+		if (info->mmi.normal_zones == NULL)
+			return -ENOMEM;
+
+		rc = of_property_read_u32_array(node,
+				"mmi,mmi-normal-zones",
+				(u32 *)info->mmi.normal_zones,
+				byte_len / sizeof(u32));
+			if (rc < 0) {
+				pr_err("Couldn't read mmi normal zones rc = %d\n", rc);
+				return rc;
+				}
+
+		for (i = 0; i < info->mmi.num_normal_zones; i++) {
+			pr_err("normal:Zone %d,Temp %d,Volt %d,Ich %d", i,
+				info->mmi.normal_zones[i].temp,
+				info->mmi.normal_zones[i].max_mv,
+				info->mmi.normal_zones[i].chg_iterm);
+		}
+	} else  {
+		info->mmi.normal_zones = NULL;
+	}
 
 	rc = of_property_read_u32(node, "mmi,iterm-ma",
 				  &info->mmi.chrg_iterm);
