@@ -2084,9 +2084,9 @@ def get_overlay_modules_list():
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_f_usbnet:moto_f_usbnet")
 
     if "bogota" in DEFCONFIG_OVERLAYS:
-        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/regulator/ocp2138_w_mmi:ocp2138")
-        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/aw99703_w_mmi:leds_aw99703")
-        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/ktd3136_w_mmi:ktd3136_bl")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/regulator/ocp2138_w_mmi:ocp2138_w")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/aw99703_w_mmi:leds_aw99703_w")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/ktd3136_w_mmi:ktd3136_bl_w")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/input/touchscreen/chipone_tddi_mmi_v2_u:chipone_tddi_mmi_v2_u")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/input/touchscreen/focaltech_0flash_mmi_v3_u:focaltech_0flash_mmi_v3_u")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/input/touchscreen/omnivision_tcm_0flash_u_mmi:omnivision_tcm_0flash_u_mmi")
