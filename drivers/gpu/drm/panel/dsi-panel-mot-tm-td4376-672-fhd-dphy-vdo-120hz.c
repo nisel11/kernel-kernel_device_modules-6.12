@@ -902,9 +902,7 @@ static int panel_ext_reset(struct drm_panel *panel, int on)
 
 static enum mtk_lcm_version panel_get_lcm_version(void)
 {
-	//MMI_STOPSHIP
-	// return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
-	return 3;
+	return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
 }
 
 //MMI_STOPSHIP <#if 1>

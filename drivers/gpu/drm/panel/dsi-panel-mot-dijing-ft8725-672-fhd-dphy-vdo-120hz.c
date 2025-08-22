@@ -1081,11 +1081,10 @@ static int panel_ext_reset(struct drm_panel *panel, int on)
 	return 0;
 }
 
-//MMI_STOPSHIP
-// static enum mtk_lcm_version panel_get_lcm_version(void)
-// {
-// 	return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
-// }
+static enum mtk_lcm_version panel_get_lcm_version(void)
+{
+	return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
+}
 
 //MMI_STOPSHIP <#if 1>
 #if 0
@@ -1179,7 +1178,7 @@ static struct mtk_panel_funcs ext_funcs = {
 	.set_backlight_cmdq = lcm_setbacklight_cmdq,
 	.ext_param_set = mtk_panel_ext_param_set,
 	//MMI_STOPSHIP
-	// .get_lcm_version = panel_get_lcm_version,
+	.get_lcm_version = panel_get_lcm_version,
 //	.ata_check = panel_ata_check,
 	//MMI_STOPSHIP
 	// .set_gesture_flag = panel_set_gesture_flag,
