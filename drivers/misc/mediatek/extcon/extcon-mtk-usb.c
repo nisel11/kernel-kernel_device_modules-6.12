@@ -26,12 +26,35 @@
 #if IS_ENABLED(CONFIG_TCPC_CLASS)
 #include "tcpm.h"
 #endif
+#include "mtk_charger.h"
 
 static const unsigned int usb_extcon_cable[] = {
 	EXTCON_USB,
 	EXTCON_USB_HOST,
 	EXTCON_NONE,
 };
+
+static int mmi_mux_typec_otg_chan(enum mmi_mux_channel channel, bool on)
+{
+	struct mtk_charger *info = NULL;
+	struct power_supply *chg_psy = NULL;
+
+	chg_psy = power_supply_get_by_name("mtk-master-charger");
+	if (chg_psy == NULL || IS_ERR(chg_psy)) {
+		pr_err("%s Couldn't get chg_psy\n", __func__);
+		return PTR_ERR(chg_psy);
+	}
+
+	info = (struct mtk_charger *)power_supply_get_drvdata(chg_psy);
+	pr_info("%s open typec OTG chan =%d, on = %d\n", __func__, channel, on);
+	if (info->algo.do_mux)
+		info->algo.do_mux(info, channel, on);
+	else
+		pr_err("%s get info->algo.do_mux fail\n", __func__);
+
+	power_supply_put(chg_psy);
+	return 0;
+}
 
 static void mtk_usb_extcon_update_role(struct work_struct *work)
 {
@@ -213,7 +236,23 @@ static int mtk_usb_extcon_set_vbus(struct mtk_extcon_info *extcon,
 
 	dev_info(dev, "vbus turn %s\n", is_on ? "on" : "off");
 
+	if (IS_ERR_OR_NULL(extcon->vbus)) {
+		extcon->vbus = devm_regulator_get(dev, "vbus");
+		if (IS_ERR_OR_NULL(extcon->vbus)) {
+			/* try to get by name */
+			extcon->vbus = devm_regulator_get(dev, "usb-otg-vbus");
+			if (IS_ERR_OR_NULL(extcon->vbus)) {
+				dev_err(dev, "failed to get vbus\n");
+				ret = PTR_ERR(extcon->vbus);
+				extcon->vbus = NULL;
+				return 0;
+			}
+		}
+		vbus = extcon->vbus;
+	}
+
 	if (is_on) {
+		mmi_mux_typec_otg_chan(MMI_MUX_CHANNEL_TYPEC_OTG, true);
 		if (extcon->vbus_vol) {
 			ret = regulator_set_voltage(vbus,
 					extcon->vbus_vol, extcon->vbus_vol);
@@ -237,13 +276,20 @@ static int mtk_usb_extcon_set_vbus(struct mtk_extcon_info *extcon,
 			dev_info(dev, "vbus regulator enable failed\n");
 			return ret;
 		}
+		extcon->vbus_on = regulator_is_enabled(extcon->vbus);
 	} else {
 		regulator_disable(vbus);
+		extcon->vbus_on = regulator_is_enabled(extcon->vbus);
+		dev_info(dev, "vbus regulator release, extcon->vbus_on=%d\n", extcon->vbus_on);
+		extcon->vbus = NULL;
+		mmi_mux_typec_otg_chan(MMI_MUX_CHANNEL_TYPEC_OTG, false);
 		/* Restore to default state */
 		extcon->vbus_cur_inlimit = 0;
 	}
 
-	extcon->vbus_on = is_on;
+	if (extcon->vbus_on != is_on) {
+		dev_err(dev, "vbus regulator %s otg failed\n", is_on?"enable":"disable");
+	}
 
 	return 0;
 }
@@ -481,6 +527,7 @@ static int mtk_usb_extcon_tcpc_init(struct mtk_extcon_info *extcon)
 }
 #endif
 
+#ifdef MTK_BASE
 static void mtk_usb_extcon_detect_cable(struct work_struct *work)
 {
 	struct mtk_extcon_info *extcon = container_of(to_delayed_work(work),
@@ -594,6 +641,7 @@ static int mtk_usb_extcon_gpio_init(struct mtk_extcon_info *extcon)
 
 	return 0;
 }
+#endif
 
 #if IS_ENABLED(CONFIG_TCPC_CLASS)
 #define PROC_FILE_SMT "mtk_typec"
@@ -735,12 +783,12 @@ static int mtk_usb_extcon_probe(struct platform_device *pdev)
 	ret = mtk_usb_extcon_psy_init(extcon);
 	if (ret < 0)
 		dev_err(dev, "failed to init psy\n");
-
+#ifdef MTK_BASE
 	/* get id/vbus gpio resources */
 	ret = mtk_usb_extcon_gpio_init(extcon);
 	if (ret < 0)
 		dev_info(dev, "failed to init id/vbus pin\n");
-
+#endif
 #if IS_ENABLED(CONFIG_TCPC_CLASS)
 	/* tcpc */
 	ret = mtk_usb_extcon_tcpc_init(extcon);

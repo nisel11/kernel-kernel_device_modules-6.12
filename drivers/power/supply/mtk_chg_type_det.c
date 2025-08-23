@@ -50,6 +50,29 @@ struct mtk_ctd_info {
 	struct task_struct *attach_task;
 };
 
+static int mmi_mux_typec_chg_chan(enum mmi_mux_channel channel, bool on)
+{
+	struct mtk_charger *info = NULL;
+	struct power_supply *chg_psy = NULL;
+
+	chg_psy = power_supply_get_by_name("mtk-master-charger");
+	if (chg_psy == NULL || IS_ERR(chg_psy)) {
+		pr_err("%s Couldn't get chg_psy\n", __func__);
+		return PTR_ERR(chg_psy);
+	}
+
+	info = (struct mtk_charger *)power_supply_get_drvdata(chg_psy);
+	pr_info("%s open typec chg chan = %d on = %d\n", __func__, channel, on);
+
+	if (info->algo.do_mux)
+		info->algo.do_mux(info, channel, on);
+	else
+		pr_err("%s get info->algo.do_mux fail\n", __func__);
+
+	power_supply_put(chg_psy);
+	return 0;
+}
+
 static int typec_attach_thread(void *data)
 {
 	struct mtk_ctd_info *mci = data;
@@ -77,7 +100,7 @@ wait:
 
 		dev_info(mci->dev, "%s port%d attach = %d\n", __func__,
 				   i, attach);
-
+		mmi_mux_typec_chg_chan(MMI_MUX_CHANNEL_TYPEC_CHG, attach);
 		if (mci->bc12_sel[i] == MTK_CTD_BY_SUBPMIC_PWR_RDY)
 			continue;
 
