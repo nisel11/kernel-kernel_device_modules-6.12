@@ -430,32 +430,36 @@ static int pe50_get_tbat(struct pe50_hal *hal)
 {
 	int ret = 27;
 	union power_supply_propval prop = {0};
+	struct power_supply *psy = NULL;
 
 #if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	PE50_DBG("MTK battery is used.\n");
 	if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
-		pr_notice("%s retry to get pe5->bat_manager_psy\n", __func__);
+		PE50_ERR("%s retry to get bat_manager_psy\n", __func__);
 		hal->bat_manager_psy = power_supply_get_by_name("battery");
 		if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
-			pr_notice("%s Couldn't get bat_manager_psy\n", __func__);
+			PE50_ERR("%s Couldn't get bat_manager_psy\n", __func__);
 			ret = 27;
 			goto out;
 		}
 	}
-	ret = power_supply_get_property(hal->bat_manager_psy,
-		POWER_SUPPLY_PROP_TEMP, &prop);
+	psy = hal->bat_manager_psy;
 #else
+	PE50_DBG("MTK battery is not used.\n");
 	if (IS_ERR_OR_NULL(hal->bat_psy)) {
-		pr_notice("%s retry to get pe5->bat_psy\n", __func__);
+		PE50_ERR("%s retry to get bat_psy\n", __func__);
 		hal->bat_psy = devm_power_supply_get_by_phandle(hal->dev, "gauge");
 		if (IS_ERR_OR_NULL(hal->bat_psy)) {
-			pr_notice("%s Couldn't get bat_psy\n", __func__);
+			PE50_ERR("%s Couldn't get bat_psy\n", __func__);
 			ret = 27;
 			goto out;
 		}
 	}
-	ret = power_supply_get_property(hal->bat_psy,
-		POWER_SUPPLY_PROP_TEMP, &prop);
+	psy = hal->bat_psy;
 #endif
+
+	ret = power_supply_get_property(psy,
+		POWER_SUPPLY_PROP_TEMP, &prop);
 	if (ret < 0) {
 		PE50_ERR("get tbat fail(%d)\n", ret);
 		ret = 27;
@@ -492,11 +496,33 @@ static int pe50_get_vbat(struct pe50_hal *hal)
 {
 	int ret = 0;
 	union power_supply_propval val = {0,};
+	struct power_supply *psy = NULL;
 
-	if (IS_ERR_OR_NULL(hal->bat_psy))
-		goto out;
+#if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	PE50_DBG("MTK battery is used.\n");
+	if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
+		PE50_ERR("%s retry to get bat_manager_psy\n", __func__);
+		hal->bat_manager_psy = power_supply_get_by_name("battery");
+		if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
+			PE50_ERR("%s Couldn't get bat_manager_psy\n", __func__);
+			goto out;
+		}
+	}
+	psy = hal->bat_manager_psy;
+#else
+	PE50_DBG("MTK battery is not used.\n");
+	if (IS_ERR_OR_NULL(hal->bat_psy)) {
+		PE50_ERR("%s retry to get bat_psy\n", __func__);
+		hal->bat_psy = devm_power_supply_get_by_phandle(hal->dev, "gauge");
+		if (IS_ERR_OR_NULL(hal->bat_psy)) {
+			PE50_ERR("%s Couldn't get bat_psy\n", __func__);
+			goto out;
+		}
+	}
+	psy = hal->bat_psy;
+#endif
 
-	ret = power_supply_get_property(hal->bat_psy,
+	ret = power_supply_get_property(psy,
 					POWER_SUPPLY_PROP_VOLTAGE_NOW, &val);
 	if (ret < 0) {
 		PE50_ERR("get vbat fail(%d)\n", ret);
@@ -546,31 +572,35 @@ int pe50_hal_get_soc(struct chg_alg_device *alg, u32 *soc)
 {
 	int ret = -EOPNOTSUPP;
 	union power_supply_propval val = {0,};
+	struct power_supply *psy = NULL;
 	struct pe50_hal *hal = chg_alg_dev_get_drv_hal_data(alg);
 
 #if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	PE50_DBG("MTK battery is used.\n");
 	if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
-		pr_notice("%s retry to get pe5->bat_manager_psy\n", __func__);
+		PE50_ERR("%s retry to get bat_manager_psy\n", __func__);
 		hal->bat_manager_psy = power_supply_get_by_name("battery");
 		if (IS_ERR_OR_NULL(hal->bat_manager_psy)) {
-			pr_notice("%s Couldn't get bat_manager_psy\n", __func__);
+			PE50_ERR("%s Couldn't get bat_manager_psy\n", __func__);
 			goto out;
 		}
 	}
-	ret = power_supply_get_property(hal->bat_manager_psy,
-					POWER_SUPPLY_PROP_CAPACITY, &val);
+	psy = hal->bat_manager_psy;
 #else
+	PE50_DBG("MTK battery is not used.\n");
 	if (IS_ERR_OR_NULL(hal->bat_psy)) {
-		pr_notice("%s retry to get pe5->bat_psy\n", __func__);
+		PE50_ERR("%s retry to get bat_psy\n", __func__);
 		hal->bat_psy = devm_power_supply_get_by_phandle(hal->dev, "gauge");
 		if (IS_ERR_OR_NULL(hal->bat_psy)) {
-			pr_notice("%s Couldn't get bat_psy\n", __func__);
+			PE50_ERR("%s Couldn't get bat_psy\n", __func__);
 			goto out;
 		}
 	}
-	ret = power_supply_get_property(hal->bat_psy,
-					POWER_SUPPLY_PROP_CAPACITY, &val);
+	psy = hal->bat_psy;
 #endif
+
+	ret = power_supply_get_property(psy,
+					POWER_SUPPLY_PROP_CAPACITY, &val);
 	if (ret < 0) {
 		PE50_ERR("get soc fail(%d)\n", ret);
 		goto out;

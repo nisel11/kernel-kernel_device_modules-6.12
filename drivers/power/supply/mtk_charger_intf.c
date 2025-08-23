@@ -177,29 +177,43 @@ int get_cs_side_battery_voltage(struct mtk_charger *info, int *vbat)
 int get_battery_temperature(struct mtk_charger *info)
 {
 	union power_supply_propval prop = {0};
-	struct power_supply *bat_psy = NULL;
-	int ret = 0;
-	int tmp_ret = 0;
+	struct power_supply *psy = NULL;
+	int ret = 27;
 
-	bat_psy = info->bat_psy;
-
-	if (bat_psy == NULL || IS_ERR(bat_psy)) {
+#if IS_ENABLED(CONFIG_MTK_BATTERY_MANAGER)
+	chr_debug("%s MTK battery is used.\n", __func__);
+	if (IS_ERR_OR_NULL(info->bat_manager_psy)) {
+		chr_err("%s retry to get bat_manager_psy\n", __func__);
+		info->bat_manager_psy = power_supply_get_by_name("battery");
+		if (IS_ERR_OR_NULL(info->bat_manager_psy)) {
+			chr_err("%s Couldn't get bat_manager_psy\n", __func__);
+			ret = 27;
+			goto out;
+		}
+	}
+	psy = info->bat_manager_psy;
+#else
+	chr_debug("%s MTK battery is not used.\n", __func__);
+	if (IS_ERR_OR_NULL(info->bat_psy)) {
 		chr_err("%s retry to get bat_psy\n", __func__);
-		bat_psy = devm_power_supply_get_by_phandle(&info->pdev->dev, "gauge");
-		info->bat_psy = bat_psy;
+		info->bat_psy = devm_power_supply_get_by_phandle(&info->pdev->dev, "gauge");
+		if (IS_ERR_OR_NULL(info->bat_psy)) {
+			chr_err("%s Couldn't get bat_psy\n", __func__);
+			ret = 27;
+			goto out;
+		}
 	}
+	psy = info->bat_psy;
+#endif
 
-	if (bat_psy == NULL || IS_ERR(bat_psy)) {
-		chr_err("%s Couldn't get bat_psy\n", __func__);
+	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_TEMP, &prop);
+	if (ret < 0) {
+		chr_err("%s: get temperature fail(%d)\n", __func__, ret);
 		ret = 27;
-	} else {
-		tmp_ret = power_supply_get_property(bat_psy,
-			POWER_SUPPLY_PROP_TEMP, &prop);
-		if (tmp_ret < 0)
-			chr_debug("%s: %d\n", __func__, tmp_ret);
-		ret = prop.intval / 10;
+		goto out;
 	}
-
+	ret = prop.intval / 10;
+out:
 	chr_debug("%s:%d\n", __func__,
 		ret);
 	return ret;
