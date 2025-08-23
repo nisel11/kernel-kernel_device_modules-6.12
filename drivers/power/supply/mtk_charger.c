@@ -1138,6 +1138,9 @@ static ssize_t Charging_mode_show(struct device *dev,
 	case PE5P_ID:
 		alg_name = "P5P";
 		break;
+	case PEHV_ID:
+		alg_name = "pehv";
+		break;
 	}
 	chr_err("%s: charging_mode: %s\n", __func__, alg_name);
 	return snprintf(buf, PAGE_SIZE, "%s\n", alg_name);
@@ -2801,6 +2804,23 @@ static bool charger_init_algo(struct mtk_charger *info)
 			alg->config = info->config;
 			alg->alg_id = HVBP_ID;
 			chg_alg_init_algo(alg);
+			register_chg_alg_notifier(alg, &info->chg_alg_nb);
+		}
+		idx++;
+	}
+
+	if (info->fast_charging_indicator & PEHV_ID) {
+		alg = get_chg_alg_by_name("pehv");
+		info->alg[idx] = alg;
+		if (alg == NULL) {
+			chr_err("get pehv fail\n");
+			return false;
+		} else if (alg->alg_id == 0) {
+			chr_err("get pehv success\n");
+			alg->config = info->config;
+			alg->alg_id = PEHV_ID;
+			chg_alg_init_algo(alg);
+
 			register_chg_alg_notifier(alg, &info->chg_alg_nb);
 		}
 		idx++;
@@ -5090,8 +5110,21 @@ static int psy_charger_get_property(struct power_supply *psy,
 				chr_err("get pe5 fail\n");
 			else {
 				ret = chg_alg_is_algo_ready(alg);
-				if (ret == ALG_RUNNING)
+				if (ret == ALG_RUNNING) {
 					val->intval = true;
+					break;
+				}
+			}
+
+			alg = get_chg_alg_by_name("pehv");
+			if (alg == NULL)
+				chr_err("get pehv fail\n");
+			else {
+				ret = chg_alg_is_algo_ready(alg);
+				if (ret == ALG_RUNNING) {
+					val->intval = true;
+					break;
+				}
 			}
 			break;
 		}

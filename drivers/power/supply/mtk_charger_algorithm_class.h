@@ -25,6 +25,8 @@
 #define HVBP_ID  (1 << 5)
 #define PE5P_ID  (1 << 6)
 
+#define PEHV_ID (1 << 14)
+
 struct chg_alg_properties {
 	const char *alias_name;
 };
