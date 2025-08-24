@@ -864,6 +864,7 @@ struct mtk_panel_funcs {
 		mtk_dsi_ddic_cmd cb, void *handle,
 		unsigned int x, unsigned int y, unsigned int w, unsigned int h,
 		struct mtk_dsi_cmd_option *cmd_opt);
+	int (*set_gesture_flag)(int state);
 };
 
 void mtk_panel_init(struct mtk_panel_ctx *ctx);
