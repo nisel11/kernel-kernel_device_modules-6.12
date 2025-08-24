@@ -463,19 +463,17 @@ static int lcm_disable(struct drm_panel *panel)
 
 	return 0;
 }
-//MMI_STOPSHIP
-// #if 1
-// static int panel_set_gesture_flag(int state)
-// {
-// 	if(state == 1)
-// 		tp_gesture_flag = 1;
-// 	else
-// 		tp_gesture_flag = 0;
 
-// 	pr_info("%s:disp:set tp_gesture_flag:%d\n", __func__, tp_gesture_flag);
-// 	return 0;
-// }
-// #endif
+static int panel_set_gesture_flag(int state)
+{
+	if(state == 1)
+		tp_gesture_flag = 1;
+	else
+		tp_gesture_flag = 0;
+
+	pr_info("%s:disp:set tp_gesture_flag:%d\n", __func__, tp_gesture_flag);
+	return 0;
+}
 
 static int lcm_unprepare(struct drm_panel *panel)
 {
@@ -1177,11 +1175,10 @@ static struct mtk_panel_funcs ext_funcs = {
 	.reset = panel_ext_reset,
 	.set_backlight_cmdq = lcm_setbacklight_cmdq,
 	.ext_param_set = mtk_panel_ext_param_set,
-	//MMI_STOPSHIP
 	.get_lcm_version = panel_get_lcm_version,
 //	.ata_check = panel_ata_check,
 	//MMI_STOPSHIP
-	// .set_gesture_flag = panel_set_gesture_flag,
+	.set_gesture_flag = panel_set_gesture_flag,
 	// .panel_feature_set = panel_feature_set,
 };
 #endif
