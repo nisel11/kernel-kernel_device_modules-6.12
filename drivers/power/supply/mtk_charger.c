@@ -5826,10 +5826,23 @@ static int mtk_charger_probe(struct platform_device *pdev)
 	/* bc value init*/
 	info->bc_disable_charging = false;
 
+#ifdef MTK_BASE
 	/* 8 = KERNEL_POWER_OFF_CHARGING_BOOT */
 	/* 9 = LOW_POWER_OFF_CHARGING_BOOT */
 	if (info != NULL && info->bootmode != 8 && info->bootmode != 9)
 		mtk_charger_force_disable_power_path(info, CHG1_SETTING, true);
+#else
+	info->chg1_dev = get_charger_by_name("primary_chg");
+	if (!IS_ERR_OR_NULL(info->chg1_dev)) {
+		if (charger_dev_is_power_ready(info->chg1_dev) > 0) {
+			pr_info("charger power is ready\n");
+			mtk_charger_force_disable_power_path(info, CHG1_SETTING, false);
+		} else {
+			pr_info("charger power is not ready\n");
+			mtk_charger_force_disable_power_path(info, CHG1_SETTING, true);
+		}
+	}
+#endif
 
 	mtk_charger_tcmd_register(info);
 	mmi_info = info;

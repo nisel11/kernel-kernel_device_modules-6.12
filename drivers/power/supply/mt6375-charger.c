@@ -778,6 +778,18 @@ static int mt6375_chg_is_enabled(struct mt6375_chg_data *ddata, bool *en)
 	return 0;
 }
 
+static int mt6375_chg_is_power_ready(struct charger_device *chgdev)
+{
+	struct mt6375_chg_data *ddata = charger_get_data(chgdev);
+	int ret = 0;
+	u32 val = 0;
+
+	ret = mt6375_chg_field_get(ddata, F_ST_PWR_RDY, &val);
+	if (ret < 0)
+		return ret;
+	return val;
+}
+
 static int mt6375_chg_is_charge_done(struct mt6375_chg_data *ddata, bool *done)
 {
 	union power_supply_propval val;
@@ -2455,6 +2467,7 @@ static const struct charger_ops mt6375_chg_ops = {
 	.set_usbid_rup = mt6375_set_usbid_rup,
 	.set_usbid_src_ton = mt6375_set_usbid_src_ton,
 	.enable_usbid_floating = mt6375_enable_usbid_floating,
+	.is_power_ready = mt6375_chg_is_power_ready,
 };
 
 static irqreturn_t mt6375_fl_wdt_handler(int irq, void *data)
@@ -2795,6 +2808,8 @@ static int mt6375_chg_init_setting(struct mt6375_chg_data *ddata)
 		dev_err(ddata->dev, "failed to disable WDT\n");
 		return ret;
 	}
+
+	mt6375_chg_enable_charging(ddata, false);
 
 	/* if get failed, just ignore it */
 	ret = mt6375_chg_field_get(ddata, F_PP_PG_FLAG, &val);

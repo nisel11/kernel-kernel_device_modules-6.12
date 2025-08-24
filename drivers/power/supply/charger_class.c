@@ -978,6 +978,15 @@ int charger_dev_get_property(struct charger_device *charger_dev,
 }
 EXPORT_SYMBOL(charger_dev_get_property);
 
+int charger_dev_is_power_ready(struct charger_device *chg_dev)
+{
+	if (chg_dev != NULL && chg_dev->ops != NULL && chg_dev->ops->is_power_ready)
+		return chg_dev->ops->is_power_ready(chg_dev);
+
+	return -EOPNOTSUPP;
+}
+EXPORT_SYMBOL(charger_dev_is_power_ready);
+
 static DEVICE_ATTR_RO(name);
 
 static struct attribute *charger_class_attrs[] = {
