@@ -254,4 +254,7 @@ config SND_SOC_BOGOTA_MULTI_AUDIO_PA
 	help
 	  This option enables support for multi audio pa.
 
+config BOGOTA_AUDIO
+	tristate "bogota on-board mic power supply 2.5v"
+
 endmenu
