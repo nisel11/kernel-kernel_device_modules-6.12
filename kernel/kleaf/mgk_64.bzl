@@ -2099,6 +2099,7 @@ def get_overlay_modules_list():
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-txd-ili7807s-672-fhd-dphy-vdo-120hz".format(kernel_version))
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/sc8541_mmi:sc8541_mmi")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/nu2115a_mmi:nu2115a_mmi")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/power/qpnp_adaptive_charge:qpnp_adaptive_charge")
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/power/supply:moto_chg_tcmd".format(kernel_version))
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/sensors:sensors_class")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/misc/sx937x:sx937x_sar")
