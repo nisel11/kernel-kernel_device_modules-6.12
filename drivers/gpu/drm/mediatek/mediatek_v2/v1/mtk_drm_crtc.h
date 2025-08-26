@@ -1758,4 +1758,5 @@ struct mtk_ddp_comp *mtk_crtc_get_comp_with_index(struct mtk_drm_crtc *mtk_crtc,
 #endif
 struct mtk_ddp_comp *mtk_disp_get_wdma_comp_by_scn(struct drm_crtc *crtc, enum addon_scenario scn);
 enum addon_scenario mtk_crtc_wb_get_scn(struct mtk_crtc_state *state);
+int mtk_drm_crtc_set_panel_feature(struct drm_crtc *crtc, const struct panel_param_info param_info);
 #endif /* MTK_DRM_CRTC_H */

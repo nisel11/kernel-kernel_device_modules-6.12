@@ -495,6 +495,10 @@ struct DISP_AAL_TRIG_STATE {
 /* DISP_ESD_CEHCK */
 #define DRM_MTK_ESD_STAT_CHK 0x5d
 
+/* panel feature */
+#define DRM_SET_PANEL_FEATURE 0x4d
+#define DRM_GET_PANEL_FEATURE 0x4E
+
 /* DISP to MML */
 #define DRM_MTK_MML_CTRL 0x5f
 
@@ -2277,4 +2281,25 @@ enum MTK_PARTIAL_UPDATE_STATE {
 
 #define MTK_DRM_ADVANCE
 #define MTK_DRM_FORMAT_DIM		fourcc_code('D', ' ', '0', '0')
+
+/* panel feature */
+typedef enum {
+    PARAM_HBM = 0,
+    PARAM_CABC,
+    PARAM_ACL,
+    PARAM_DC,
+    POWER_MODE_MAX_NUM,
+    PARAM_COLOR = POWER_MODE_MAX_NUM,
+    PARAM_MAX_NUM
+} paramId_t;
+
+struct panel_param_info {
+	paramId_t param_idx;
+	uint32_t value;
+};
+
+#define DRM_IOCTL_SET_PANEL_FEATURE          DRM_IOWR(DRM_COMMAND_BASE + \
+	DRM_SET_PANEL_FEATURE, struct panel_param_info)
+#define DRM_IOCTL_GET_PANEL_FEATURE          DRM_IOWR(DRM_COMMAND_BASE + \
+	DRM_GET_PANEL_FEATURE, struct panel_param_info)
 #endif /* _UAPI_MEDIATEK_DRM_H */

@@ -14330,6 +14330,17 @@ static int mtk_dsi_io_cmd(struct mtk_ddp_comp *comp, struct cmdq_pkt *handle,
 		partial_roi = (struct mtk_rect *)params;
 		mtk_cal_dsi_valid_partial_roi(comp, partial_roi);
 	}
+	case DSI_PANEL_FEATURE_SET:
+	{
+		panel_ext = mtk_dsi_get_panel_ext(comp);
+		if (!(panel_ext && panel_ext->funcs &&
+		      panel_ext->funcs->panel_feature_set))
+			break;
+
+		panel_ext->funcs->panel_feature_set(dsi->panel, dsi,
+					       mipi_dsi_dcs_write_gce, handle,
+					       *(struct panel_param_info*) params);
+	}
 		break;
 	default:
 		break;
