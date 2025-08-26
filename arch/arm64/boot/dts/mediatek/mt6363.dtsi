@@ -139,7 +139,7 @@
 			};
 
 			home {
-				linux,keycodes = <115>;
+				linux,keycodes = <114>;
 			};
 		};
 
