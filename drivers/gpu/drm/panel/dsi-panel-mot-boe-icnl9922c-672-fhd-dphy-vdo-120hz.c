@@ -63,8 +63,6 @@ struct lcm {
 	unsigned int cabc_mode;
 };
 
-//MMI_STOPSHIP <#if 1>
-#if 0
 static struct mtk_panel_para_table panel_cabc_ui[] = {
 	{4, {0xF0, 0x99, 0x22, 0x0C}},
 	{32,{0xE1, 0x0F, 0x1F, 0x2F, 0x3F, 0x4F, 0x5F, 0x6F, 0x7F, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xE8, 0xEC, 0xED, 0xEF, 0xF1, 0xF8, 0xF8, 0xF8, 0xF9, 0xFB, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF, 0xFF, 0xFF}},
@@ -85,7 +83,6 @@ static struct mtk_panel_para_table panel_cabc_disable[] = {
 	{33,{0xE2, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF, 0x3F, 0xFF}},
 	{4, {0xF0, 0x00, 0x00, 0x00}},
 };
-#endif
 
 #define lcm_dcs_write_seq(ctx, seq...) \
 ({\
@@ -468,9 +465,8 @@ static struct mtk_panel_params ext_params_30hz = {
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
-//end MMI_STOPHIP
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -533,8 +529,8 @@ static struct mtk_panel_params ext_params_45hz = {
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -597,8 +593,8 @@ static struct mtk_panel_params ext_params_60hz = {
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -663,8 +659,8 @@ static struct mtk_panel_params ext_params_90hz = {
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -729,8 +725,8 @@ static struct mtk_panel_params ext_params_120hz = {
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -838,8 +834,6 @@ static enum mtk_lcm_version panel_get_lcm_version(void)
 	return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
 }
 
-//MMI_STOPSHIP <#if 1>
-#if 0
 static int panel_cabc_set_cmdq(struct lcm *ctx, void *dsi, dcs_grp_write_gce cb, void *handle, uint32_t cabc_mode)
 {
 	unsigned int para_count = 0;
@@ -923,7 +917,6 @@ static int panel_feature_set(struct drm_panel *panel, void *dsi,
 	pr_debug("%s: set feature %d to %d, ret %d\n", __func__, param_info.param_idx, param_info.value, ret);
 	return ret;
 }
-#endif
 
 static struct mtk_panel_funcs ext_funcs = {
 	.reset = panel_ext_reset,
@@ -931,8 +924,7 @@ static struct mtk_panel_funcs ext_funcs = {
 	.ext_param_set = mtk_panel_ext_param_set,
 	.get_lcm_version = panel_get_lcm_version,
 	.set_gesture_flag = panel_set_gesture_flag,
-//MMI_STOPSHIP
-	// .panel_feature_set = panel_feature_set,
+	.panel_feature_set = panel_feature_set,
 };
 #endif
 

@@ -66,8 +66,6 @@ struct lcm {
 	unsigned int cabc_mode;
 };
 
-//MMI_STOPSHIP <#if 1>
-#if 0
 static struct mtk_panel_para_table panel_cabc_ui[] = {
 	{2, {0x55, 0x01}},
 };
@@ -79,7 +77,6 @@ static struct mtk_panel_para_table panel_cabc_mv[] = {
 static struct mtk_panel_para_table panel_cabc_disable[] = {
 	{2, {0x55, 0x00}},
 };
-#endif
 
 #define lcm_dcs_write_seq(ctx, seq...) \
 ({\
@@ -536,9 +533,8 @@ static struct mtk_panel_params ext_params_30hz = {
 	.panel_name = "tm_td4376_vid_672_1080",
 	.panel_supplier = "tm",
 	.lcm_index = 2,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
-//end MMI_STOPSHIP
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -600,8 +596,8 @@ static struct mtk_panel_params ext_params_45hz = {
 	.panel_name = "tm_td4376_vid_672_1080",
 	.panel_supplier = "tm",
 	.lcm_index = 2,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -663,8 +659,8 @@ static struct mtk_panel_params ext_params_60hz = {
 	.panel_name = "tm_td4376_vid_672_1080",
 	.panel_supplier = "tm",
 	.lcm_index = 2,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -728,8 +724,8 @@ static struct mtk_panel_params ext_params_90hz = {
 	.panel_name = "tm_td4376_vid_672_1080",
 	.panel_supplier = "tm",
 	.lcm_index = 2,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -793,8 +789,8 @@ static struct mtk_panel_params ext_params_120hz = {
 	.panel_name = "tm_td4376_vid_672_1080",
 	.panel_supplier = "tm",
 	.lcm_index = 2,
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -902,8 +898,6 @@ static enum mtk_lcm_version panel_get_lcm_version(void)
 	return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
 }
 
-//MMI_STOPSHIP <#if 1>
-#if 0
 static int panel_cabc_set_cmdq(struct lcm *ctx, void *dsi, dcs_grp_write_gce cb, void *handle, uint32_t cabc_mode)
 {
 	unsigned int para_count = 0;
@@ -987,17 +981,14 @@ static int panel_feature_set(struct drm_panel *panel, void *dsi,
 	pr_debug("%s: set feature %d to %d, ret %d\n", __func__, param_info.param_idx, param_info.value, ret);
 	return ret;
 }
-#endif
 
 static struct mtk_panel_funcs ext_funcs = {
 	.reset = panel_ext_reset,
 	.set_backlight_cmdq = lcm_setbacklight_cmdq,
 	.ext_param_set = mtk_panel_ext_param_set,
 	.get_lcm_version = panel_get_lcm_version,
-//	.ata_check = panel_ata_check,
 	.set_gesture_flag = panel_set_gesture_flag,
-//MMI_STOPSHIP
-	// .panel_feature_set = panel_feature_set,
+	.panel_feature_set = panel_feature_set,
 };
 #endif
 

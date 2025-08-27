@@ -66,8 +66,6 @@ struct lcm {
 	enum panel_version version;
 };
 
-//MMI_STOPSHIP <#if 1>
-#if 0
 static struct mtk_panel_para_table panel_cabc_ui[] = {
         {2, {0x55, 0x01}},
 };
@@ -79,7 +77,6 @@ static struct mtk_panel_para_table panel_cabc_mv[] = {
 static struct mtk_panel_para_table panel_cabc_disable[] = {
         {2, {0x55, 0x00}},
 };
-#endif
 
 #define lcm_dcs_write_seq(ctx, seq...) \
 ({\
@@ -670,35 +667,6 @@ static const struct drm_display_mode switch_mode_120hz = {
 };
 
 #if defined(CONFIG_MTK_PANEL_EXT)
-/*
-static int panel_ata_check(struct drm_panel *panel)
-{
-	struct lcm *ctx = panel_to_lcm(panel);
-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-	unsigned char data[3] = {0x00, 0x00, 0x00};
-	unsigned char id[3] = {0x00, 0x80, 0x00};
-	ssize_t ret;
-
-	ret = mipi_dsi_dcs_read(dsi, 0x4, data, 3);
-	if (ret < 0) {
-		pr_info("%s error\n", __func__);
-		return 0;
-	}
-
-	pr_info("ATA read data %x %x %x\n", data[0], data[1], data[2]);
-
-	if (data[0] == id[0] &&
-			data[1] == id[1] &&
-			data[2] == id[2])
-		return 1;
-
-	pr_info("ATA expect read data is %x %x %x\n",
-			id[0], id[1], id[2]);
-
-	return 0;
-}
-*/
-
 static int lcm_setbacklight_cmdq(void *dsi, dcs_write_gce cb,
 	void *handle, unsigned int level)
 {
@@ -720,9 +688,8 @@ static struct mtk_panel_params ext_params_30hz = {
 	.panel_name = "dijing_ft8725_vid_672_1080",
 	.panel_supplier = "dijing",
 	.lcm_index = 1,
-	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -782,9 +749,8 @@ static struct mtk_panel_params ext_params_45hz = {
 	.panel_name = "dijing_ft8725_vid_672_1080",
 	.panel_supplier = "dijing",
 	.lcm_index = 1,
-	// MMI_SSTOPSHIP -- https://gerrit.mot.com/#/c/2976056/
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -844,9 +810,8 @@ static struct mtk_panel_params ext_params_60hz = {
 	.panel_name = "dijing_ft8725_vid_672_1080",
 	.panel_supplier = "dijing",
 	.lcm_index = 1,
-	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -908,9 +873,8 @@ static struct mtk_panel_params ext_params_90hz = {
 	.panel_name = "dijing_ft8725_vid_672_1080",
 	.panel_supplier = "dijing",
 	.lcm_index = 1,
-	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -972,9 +936,8 @@ static struct mtk_panel_params ext_params_120hz = {
 	.panel_name = "dijing_ft8725_vid_672_1080",
 	.panel_supplier = "dijing",
 	.lcm_index = 1,
-	//MMI_SSTOPSHIP --- https://gerrit.mot.com/#/c/2976056/
-	// .hbm_type = HBM_MODE_RAMPING,
-	// .max_bl_level = 2047,
+	.hbm_type = HBM_MODE_RAMPING,
+	.max_bl_level = 2047,
 	.physical_width_um = PHYSICAL_WIDTH,
 	.physical_height_um = PHYSICAL_HEIGHT,
 	.output_mode = MTK_PANEL_DSC_SINGLE_PORT,
@@ -1080,8 +1043,6 @@ static enum mtk_lcm_version panel_get_lcm_version(void)
 	return MTK_LEGACY_LCM_DRV_WITH_BACKLIGHTCLASS;
 }
 
-//MMI_STOPSHIP <#if 1>
-#if 0
 static int panel_cabc_set_cmdq(struct lcm *ctx, void *dsi, dcs_grp_write_gce cb, void *handle, uint32_t cabc_mode)
 {
 	unsigned int para_count = 0;
@@ -1165,17 +1126,14 @@ static int panel_feature_set(struct drm_panel *panel, void *dsi,
 	pr_debug("%s: set feature %d to %d, ret %d\n", __func__, param_info.param_idx, param_info.value, ret);
 	return ret;
 }
-#endif
 
 static struct mtk_panel_funcs ext_funcs = {
 	.reset = panel_ext_reset,
 	.set_backlight_cmdq = lcm_setbacklight_cmdq,
 	.ext_param_set = mtk_panel_ext_param_set,
 	.get_lcm_version = panel_get_lcm_version,
-//	.ata_check = panel_ata_check,
-	//MMI_STOPSHIP
 	.set_gesture_flag = panel_set_gesture_flag,
-	// .panel_feature_set = panel_feature_set,
+	.panel_feature_set = panel_feature_set,
 };
 #endif
 
