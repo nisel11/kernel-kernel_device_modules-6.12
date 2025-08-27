@@ -562,6 +562,13 @@ enum DISPLAY_MODE {
 	DISPLAY_MODE_NUM,
 };
 
+enum panel_hbm_type {
+	HBM_MODE_DCS_ONLY = 0,
+	HBM_MODE_DCS_GPIO,
+	HBM_MODE_DCS_I2C,
+	HBM_MODE_RAMPING,
+};
+
 struct mtk_panel_params {
 	unsigned int pll_clk;
 	unsigned int data_rate;
@@ -659,6 +666,10 @@ struct mtk_panel_params {
 	u64 panel_id;
 	char panel_name[DRM_DISPLAY_NAME_LEN];
 	char panel_supplier[DRM_DISPLAY_NAME_LEN];
+	/*panel feature*/
+	bool check_panel_feature;
+	int max_bl_level;
+	enum panel_hbm_type hbm_type;
 	/*vdo ltpo*/
 	unsigned int ltpo_vm_enable;
 	unsigned int ltpo_vm_minimum_fps;
@@ -867,8 +878,9 @@ struct mtk_panel_funcs {
 		struct mtk_dsi_cmd_option *cmd_opt);
 	int (*set_gesture_flag)(int state);
 	int (*panel_feature_set)(struct drm_panel *panel, void *dsi_drv,
-			    dcs_write_gce cb, void *handle, struct panel_param_info param_info);
+			    dcs_grp_write_gce cb, void *handle, struct panel_param_info param_info);
 	int (*panel_feature_get)(struct drm_panel *panel, paramId_t param_id);
+	int (*panel_hbm_waitfor_fps_valid)(struct drm_panel *panel, unsigned int timeout_ms);
 };
 
 void mtk_panel_init(struct mtk_panel_ctx *ctx);

@@ -14411,6 +14411,7 @@ static int mtk_dsi_io_cmd(struct mtk_ddp_comp *comp, struct cmdq_pkt *handle,
 		partial_roi = (struct mtk_rect *)params;
 		mtk_cal_dsi_valid_partial_roi(comp, partial_roi);
 	}
+		break;
 	case DSI_PANEL_FEATURE_SET:
 	{
 		panel_ext = mtk_dsi_get_panel_ext(comp);
@@ -14418,9 +14419,34 @@ static int mtk_dsi_io_cmd(struct mtk_ddp_comp *comp, struct cmdq_pkt *handle,
 		      panel_ext->funcs->panel_feature_set))
 			break;
 
-		panel_ext->funcs->panel_feature_set(dsi->panel, dsi,
-					       mipi_dsi_dcs_write_gce, handle,
+		return panel_ext->funcs->panel_feature_set(dsi->panel, dsi,
+					       mipi_dsi_dcs_grp_write_gce, handle,
 					       *(struct panel_param_info*) params);
+	}
+		break;
+
+	case DSI_PANEL_FEATURE_GET:
+	{
+		struct panel_param_info *param_info = (struct panel_param_info*)params;
+
+		panel_ext = mtk_dsi_get_panel_ext(comp);
+		if (!(panel_ext && panel_ext->funcs &&
+		      panel_ext->funcs->panel_feature_get)) {
+			return  -1;
+		} else {
+			return panel_ext->funcs->panel_feature_get(dsi->panel, param_info);
+		}
+	}
+		break;
+
+	case PANEL_HBM_WAITFOR_FPS_VALID:
+	{
+		panel_ext = mtk_dsi_get_panel_ext(comp);
+		if (!(panel_ext && panel_ext->funcs &&
+		      panel_ext->funcs->panel_hbm_waitfor_fps_valid))
+			break;
+
+		panel_ext->funcs->panel_hbm_waitfor_fps_valid(dsi->panel, *(unsigned int *)params);
 	}
 		break;
 	default:

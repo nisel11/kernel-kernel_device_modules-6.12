@@ -10495,18 +10495,46 @@ int mtk_drm_ioctl_mml_ctrl(struct drm_device *dev, void *data, struct drm_file *
 	return ret;
 }
 
+static bool mtk_drm_check_pane_feature_valid(struct drm_crtc *crtc, struct panel_param_info param_info)
+{
+	uint32_t param_value = 0;
+	bool  ret = false;
+	if (!mtk_drm_crtc_get_panel_feature(crtc, param_info.param_idx, &param_value))
+	{
+		if (param_value != param_info.value) ret = true;
+		DDPMSG("%s: set param_idx %d from %d to %d\n", __func__, param_info.param_idx, param_value, param_info.value);
+	}
+	return ret;
+}
+
 static int mtk_drm_ioctl_set_panel_feature(struct drm_device *dev, void *data,
 		struct drm_file *file_priv)
 {
 	struct panel_param_info *param_info = data;
 	struct mtk_drm_private *private = dev->dev_private;
 	struct drm_crtc *crtc = private->crtc[0];
-	//struct mtk_panel_params *panel_ext = mtk_drm_get_lcm_ext_params(crtc);
+	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+	struct mtk_ddp_comp *comp = mtk_ddp_comp_request_output(mtk_crtc);
+	struct mtk_panel_params *panel_ext = mtk_drm_get_lcm_ext_params(crtc);
 	int ret = 0;
+	unsigned int timeout = 30;
+
+	if (panel_ext->check_panel_feature) {
+		if (!mtk_drm_check_pane_feature_valid(crtc, *param_info)) return ret;
+	}
 
 	DDPMSG("%s: set param_idx %d to %d\n", __func__, param_info->param_idx, param_info->value);
 
-	ret = mtk_drm_crtc_set_panel_feature(crtc, *param_info);
+	switch (param_info->param_idx) {
+		case PARAM_HBM:
+			if (comp && comp->funcs && comp->funcs->io_cmd && (param_info->value ==2))
+				comp->funcs->io_cmd(comp, NULL, PANEL_HBM_WAITFOR_FPS_VALID, &timeout);
+			ret = mtk_drm_crtc_set_panel_feature(crtc, *param_info);
+			break;
+		default:
+			ret = mtk_drm_crtc_set_panel_feature(crtc, *param_info);
+			break;
+	}
 	return ret;
 }
 

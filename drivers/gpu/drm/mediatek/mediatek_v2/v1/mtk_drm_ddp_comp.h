@@ -1414,6 +1414,8 @@ enum mtk_ddp_io_cmd {
 	MTK_IO_CMD_BWM_CALC_RATIO,
 	MTK_IO_CMD_BWM_ENABLE,
 	DSI_PANEL_FEATURE_SET,
+	DSI_PANEL_FEATURE_GET,
+	PANEL_HBM_WAITFOR_FPS_VALID,
 };
 
 enum mtk_ddp_comp_apsrc_crtc_id {
