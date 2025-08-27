@@ -203,6 +203,7 @@ struct mtk_dsi {
 	unsigned int roi_y_offset;
 	unsigned int roi_height;
 	struct drm_display_mode max_vrefresh_mode;
+	bool moto_sysfs_add_done;
 };
 
 enum dsi_porch_type;

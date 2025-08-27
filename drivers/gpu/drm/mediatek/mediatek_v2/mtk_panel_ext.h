@@ -656,6 +656,7 @@ struct mtk_panel_params {
 	unsigned int crop_height[MTK_MAX_PANEL];
 
 	u64 panel_ver;
+	u64 panel_id;
 	char panel_name[DRM_DISPLAY_NAME_LEN];
 	char panel_supplier[DRM_DISPLAY_NAME_LEN];
 	/*vdo ltpo*/
