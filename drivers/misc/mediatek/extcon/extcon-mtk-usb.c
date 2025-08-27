@@ -230,12 +230,6 @@ static int mtk_usb_extcon_set_vbus(struct mtk_extcon_info *extcon,
 	struct device *dev = extcon->dev;
 	int ret;
 
-	/* vbus is optional */
-	if (!vbus || extcon->vbus_on == is_on)
-		return 0;
-
-	dev_info(dev, "vbus turn %s\n", is_on ? "on" : "off");
-
 	if (IS_ERR_OR_NULL(extcon->vbus)) {
 		extcon->vbus = devm_regulator_get(dev, "vbus");
 		if (IS_ERR_OR_NULL(extcon->vbus)) {
@@ -250,6 +244,12 @@ static int mtk_usb_extcon_set_vbus(struct mtk_extcon_info *extcon,
 		}
 		vbus = extcon->vbus;
 	}
+
+	/* vbus is optional */
+	if (!vbus || extcon->vbus_on == is_on)
+		return 0;
+
+	dev_info(dev, "vbus turn %s\n", is_on ? "on" : "off");
 
 	if (is_on) {
 		mmi_mux_typec_otg_chan(MMI_MUX_CHANNEL_TYPEC_OTG, true);
