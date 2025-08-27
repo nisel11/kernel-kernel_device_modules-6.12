@@ -462,9 +462,9 @@ static struct mtk_panel_params ext_params_30hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-//MMI_STOPSHIP
+
 	.panel_ver = 1,
-	// .panel_id = 0x912c0a02,
+	.panel_id = 0x912c0a02,
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
@@ -527,9 +527,9 @@ static struct mtk_panel_params ext_params_45hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-//MMI_STOPSHIP
+
 	.panel_ver = 1,
-	// .panel_id = 0x912c0a02,
+	.panel_id = 0x912c0a02,
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
@@ -591,9 +591,9 @@ static struct mtk_panel_params ext_params_60hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-//MMI_STOPSHIP
+
 	.panel_ver = 1,
-	// .panel_id = 0x912c0a02,
+	.panel_id = 0x912c0a02,
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
@@ -657,9 +657,9 @@ static struct mtk_panel_params ext_params_90hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-//MMI_STOPSHIP
+
 	.panel_ver = 1,
-	// .panel_id = 0x912c0a02,
+	.panel_id = 0x912c0a02,
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
@@ -723,9 +723,9 @@ static struct mtk_panel_params ext_params_120hz = {
 	.lcm_esd_check_table[0] = {
 		.cmd = 0x0A, .count = 1, .para_list[0] = 0x9C,
 	},
-//MMI_STOPSHIP
+
 	.panel_ver = 1,
-	// .panel_id = 0x912c0a02,
+	.panel_id = 0x912c0a02,
 	.panel_name = "boe_icnl9922c_vid_672_1080",
 	.panel_supplier = "boe",
 	.lcm_index = 0,
