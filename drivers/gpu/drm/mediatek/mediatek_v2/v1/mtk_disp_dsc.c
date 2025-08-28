@@ -1517,6 +1517,9 @@ static void mtk_dsc_config(struct mtk_ddp_comp *comp,
 				mtk_ddp_write(comp, 0xD1E9D9C9, DISP_REG_DSC_PPS17, handle);//
 				mtk_ddp_write(comp, 0xD20DD1E9, DISP_REG_DSC_PPS18, handle);//
 				mtk_ddp_write(comp, 0x0000D230, DISP_REG_DSC_PPS19, handle);//
+				mtk_ddp_write(comp, 0xD209D9E9, DISP_REG_DSC_PPS17, handle);
+				mtk_ddp_write(comp, 0xD22BD229, DISP_REG_DSC_PPS18, handle);
+				mtk_ddp_write(comp, 0x0000D271, DISP_REG_DSC_PPS19, handle);
 			} else {
 				//8bpc_to_8bpp_20_slice_h
 				mtk_ddp_write(comp, 0x20000c03, DISP_REG_DSC_PPS6, handle);
@@ -1534,6 +1537,25 @@ static void mtk_dsc_config(struct mtk_ddp_comp *comp,
 				mtk_ddp_write(comp, 0xd1a7d1a5, DISP_REG_DSC_PPS18, handle);//
 				mtk_ddp_write(comp, 0x0000d1ed, DISP_REG_DSC_PPS19, handle);//
 			}
+
+			if (dsc_params->pps_list.count > 0) {
+				unsigned int i, num, idx, value;
+
+				num = dsc_params->pps_list.count;
+				for (i = 0; i < num; i++) {
+					idx = dsc_params->pps_list.dsc_pps_params[i].dsc_pps_idx;
+					if (idx < 20) {
+						value = dsc_params->pps_list.dsc_pps_params[i].dsc_pps_para;
+						mtk_ddp_write(comp, value,
+							DISP_REG_DSC_PPS0 + idx * 4, handle);
+						DDPINFO("set panel dsc pps %d: 0x%03x, 0x%08x\n", idx,
+							(DISP_REG_DSC_PPS0 + idx * 4), value);
+					} else {
+						DDPMSG("panel dsc pps idx %d is wrong\n", idx);
+					}
+				}
+			}
+
 			if (spr_params->enable && spr_params->relay == 0
 				&& comp->mtk_crtc->spr_is_on == 1 && disp_spr_bypass == 0) {
 				//mtk_ddp_write(comp, 0x0001d822, DISP_REG_DSC_CFG, handle);

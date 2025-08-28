@@ -378,6 +378,15 @@ struct mtk_panel_dsc_ext_pps_cfg {
 	unsigned int range_bpg_ofs_count;
 };
 
+struct mtk_panel_dsc_pps {
+	unsigned int dsc_pps_idx;
+	unsigned int dsc_pps_para;
+};
+
+struct mtk_panel_dsc_pps_params {
+	unsigned int count;
+	struct mtk_panel_dsc_pps dsc_pps_params[20];
+};
 
 struct mtk_panel_dsc_params {
 	unsigned int enable;
@@ -416,6 +425,7 @@ struct mtk_panel_dsc_params {
 	unsigned int rc_tgt_offset_hi;
 	unsigned int rc_tgt_offset_lo;
 	struct mtk_panel_dsc_ext_pps_cfg ext_pps_cfg;
+	struct mtk_panel_dsc_pps_params pps_list;
 };
 struct mtk_dsi_phy_timcon {
 	unsigned int hs_trail;
