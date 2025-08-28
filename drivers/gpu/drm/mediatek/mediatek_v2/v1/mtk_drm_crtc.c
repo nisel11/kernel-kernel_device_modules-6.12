@@ -141,6 +141,7 @@ static struct mtk_drm_property mtk_crtc_property[CRTC_PROP_MAX] = {
 
 static struct cmdq_pkt *sb_cmdq_handle;
 static unsigned int sb_backlight;
+static unsigned int cur_backlight = 0;
 #if IS_ENABLED(CONFIG_VHOST_CMDQ)
 static struct cmdq_client *g_cmdq_client[CLIENT_TYPE_MAX * 10];
 static unsigned int cmdq_client_num;
@@ -3233,6 +3234,8 @@ int mtk_drm_setbacklight(struct drm_crtc *crtc, unsigned int level,
 	oddmr_comp = priv->ddp_comp[DDP_COMPONENT_ODDMR0];
 	mtk_ddp_comp_io_cmd(oddmr_comp, cmdq_handle, ODDMR_BL_CHG, &level);
 
+	cur_backlight = level;
+
 	if ((cfg_flag & (0x1<<SET_BACKLIGHT_LEVEL)) && !(cfg_flag & (0x1<<SET_ELVSS_PN))
 		&& !(cfg_flag & (0x1<<ENABLE_DYN_ELVSS))
 		&& !(cfg_flag & (0x1<<DISABLE_DYN_ELVSS))) {
@@ -3289,6 +3292,45 @@ int mtk_drm_setbacklight(struct drm_crtc *crtc, unsigned int level,
 			level);
 
 	return ret;
+}
+
+int mtk_drm_bl_recovery(struct drm_crtc *crtc)
+{
+	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+	struct cmdq_pkt *cmdq_handle;
+	struct mtk_ddp_comp *comp = mtk_ddp_comp_request_output(mtk_crtc);
+
+	if (!(mtk_crtc->enabled)) {
+		DDPINFO("%s Sleep State set backlight stop --crtc not ebable\n",__func__);
+
+		return -EINVAL;
+	}
+
+	if (!comp) {
+		DDPINFO("%s no output comp\n", __func__);
+
+		return -EINVAL;
+	}
+
+	mtk_drm_idlemgr_kick(__func__, crtc, 0);
+
+	cmdq_handle =
+		cmdq_pkt_create(mtk_crtc->gce_obj.client[CLIENT_DSI_CFG]);
+
+	if (mtk_crtc_with_sub_path(crtc, mtk_crtc->ddp_mode))
+		mtk_crtc_wait_frame_done(mtk_crtc, cmdq_handle,
+			DDP_SECOND_PATH, 0);
+	else
+		mtk_crtc_wait_frame_done(mtk_crtc, cmdq_handle,
+			DDP_FIRST_PATH, 0);
+
+	if (comp->funcs && comp->funcs->io_cmd)
+		comp->funcs->io_cmd(comp, cmdq_handle, DSI_SET_BL, &cur_backlight);
+
+	cmdq_pkt_flush(cmdq_handle);
+	cmdq_pkt_destroy(cmdq_handle);
+
+	return 0;
 }
 
 static void mtk_drm_spr_switch_cb(struct cmdq_cb_data data)
