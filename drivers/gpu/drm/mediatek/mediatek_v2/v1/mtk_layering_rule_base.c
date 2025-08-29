@@ -69,6 +69,7 @@ static int ext_id_tuning(struct drm_device *dev,
 			  int disp_idx);
 static unsigned int roll_gpu_for_idle;
 static int g_emi_bound_table[HRT_LEVEL_NUM];
+static uint32_t g_larb_max_hrt_weight;
 int have_force_gpu_layer;
 int sum_overlap_w_of_bwm;
 bool need_rollback_to_gpu_before_gpuc;
@@ -2503,6 +2504,19 @@ static int _calc_hrt_num(struct drm_device *dev,
 	return sum_overlap_w;
 }
 
+static void calc_larb_max_overlap(struct drm_device *dev,
+			       struct drm_mtk_layering_info *disp_info)
+{
+	int larb0_overlap_w, larb1_overlap_w;
+	larb0_overlap_w = _calc_hrt_num(dev, disp_info, HRT_PRIMARY, HRT_TYPE_LARB0,
+					    true, l_rule_info->dal_enable, false);
+
+	larb1_overlap_w = _calc_hrt_num(dev, disp_info, HRT_PRIMARY, HRT_TYPE_LARB1,
+					    true, l_rule_info->dal_enable, false);
+	g_larb_max_hrt_weight = (larb0_overlap_w > larb1_overlap_w) ? larb0_overlap_w : larb1_overlap_w;
+	DDPMSG("%s, larb0: %d, larb1:%d\n", __func__, larb0_overlap_w, larb1_overlap_w);
+}
+
 #ifdef HAS_LARB_HRT
 static int calc_larb_hrt_level(struct drm_device *dev,
 			       struct drm_mtk_layering_info *disp_info)
@@ -2631,6 +2645,7 @@ static int calc_hrt_num(struct drm_device *dev,
 	 * So calculate larb bound only for HRT_LEVEL2.
 	 */
 	disp_info->hrt_num = emi_hrt_level;
+	calc_larb_max_overlap(dev, disp_info);
 #ifdef HRT_DEBUG_LEVEL1
 	DDPMSG("EMI hrt lv2:%d,overlap_w:%d\n", emi_hrt_level, sum_overlap_w);
 #endif
@@ -4060,6 +4075,7 @@ void lye_add_blob_ids(struct drm_mtk_layering_info *l_info,
 	lyeblob_ids->ref_cnt_mask = crtc_mask;
 	lyeblob_ids->free_cnt_mask = crtc_mask;
 	lyeblob_ids->hrt_valid = g_hrt_valid;
+	lyeblob_ids->larb_max_hrt_weight = g_larb_max_hrt_weight;
 	lyeblob_ids->disp_status = l_info->disp_list;
 	INIT_LIST_HEAD(&lyeblob_ids->list);
 	mutex_lock(&priv->lyeblob_list_mutex);
@@ -5196,6 +5212,7 @@ static int layering_rule_start(struct drm_mtk_layering_info *disp_info_user,
 					sum_overlap_w_of_bwm += 200;
 			}
 		}
+		g_larb_max_hrt_weight = 0;
 	}
 	check_gles_change(&dbg_gles, __LINE__, false);
 
