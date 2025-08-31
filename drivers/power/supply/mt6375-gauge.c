@@ -4040,7 +4040,7 @@ static int mtk_gauge_proprietary_init(struct mt6375_priv *priv)
 		return -ENOMEM;
 
 	dev_notice(priv->dev, "%s, before setting psy config (2)\n", __func__);
-	gauge->psy_desc.name = "mt6375-gauge";
+	gauge->psy_desc.name = "mtk-gauge";
 	gauge->name = "fgauge";
 	gauge->psy_desc.type = POWER_SUPPLY_TYPE_UNKNOWN;
 	gauge->psy_desc.properties = gauge_properties;
