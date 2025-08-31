@@ -13,9 +13,9 @@
 
 serialnum_1 = "ATLRB52NVT";
 
-battery1_profile_t0_num = <100>;
-battery1_profile_t0_col = <3>;
-battery1_profile_t0 =
+battery1-profile-t0-num = <100>;
+battery1-profile-t0-col = <3>;
+battery1-profile-t0 =
 <
 0       44520   425
 532     44296   425
@@ -118,9 +118,9 @@ battery1_profile_t0 =
 52138   33710   675
 52670   33710   675
 >;
-battery1_profile_t1_num = <100>;
-battery1_profile_t1_col = <3>;
-battery1_profile_t1 =
+battery1-profile-t1-num = <100>;
+battery1-profile-t1-col = <3>;
+battery1-profile-t1 =
 <
 0       44540   625
 532     44327   626
@@ -223,9 +223,9 @@ battery1_profile_t1 =
 52138   34583   786
 52670   33600   925
 >;
-battery1_profile_t2_num = <100>;
-battery1_profile_t2_col = <3>;
-battery1_profile_t2 =
+battery1-profile-t2-num = <100>;
+battery1-profile-t2-col = <3>;
+battery1-profile-t2 =
 <
 0       44630   1325
 532     44396   1325
@@ -328,9 +328,9 @@ battery1_profile_t2 =
 52138   34784   11490
 52670   33560   14025
 >;
-battery1_profile_t3_num = <100>;
-battery1_profile_t3_col = <3>;
-battery1_profile_t3 =
+battery1-profile-t3-num = <100>;
+battery1-profile-t3-col = <3>;
+battery1-profile-t3 =
 <
 0       44600   2475
 532     44367   2475
@@ -433,9 +433,9 @@ battery1_profile_t3 =
 52138   35810   19650
 52670   35810   19650
 >;
-battery1_profile_t4_num = <100>;
-battery1_profile_t4_col = <3>;
-battery1_profile_t4 =
+battery1-profile-t4-num = <100>;
+battery1-profile-t4-col = <3>;
+battery1-profile-t4 =
 <
 0       44660   6075
 532     44345   6075

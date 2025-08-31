@@ -14,9 +14,9 @@
 
 serialnum_3 = "LWNRB60SWD";
 
-battery3_profile_t0_num = <100>;
-battery3_profile_t0_col = <3>;
-battery3_profile_t0 =
+battery3-profile-t0-num = <100>;
+battery3-profile-t0-col = <3>;
+battery3-profile-t0 =
 <
 0       44510   375
 606     44318   375
@@ -119,9 +119,9 @@ battery3_profile_t0 =
 59414   33600   675
 60020   33600   675
 >;
-battery3_profile_t1_num = <100>;
-battery3_profile_t1_col = <3>;
-battery3_profile_t1 =
+battery3-profile-t1-num = <100>;
+battery3-profile-t1-col = <3>;
+battery3-profile-t1 =
 <
 0       44550   625
 606     44369   625
@@ -224,9 +224,9 @@ battery3_profile_t1 =
 59414   34929   761
 60020   33900   900
 >;
-battery3_profile_t2_num = <100>;
-battery3_profile_t2_col = <3>;
-battery3_profile_t2 =
+battery3-profile-t2-num = <100>;
+battery3-profile-t2-col = <3>;
+battery3-profile-t2 =
 <
 0       44560   1200
 606     44389   1200
@@ -329,9 +329,9 @@ battery3_profile_t2 =
 59414   34647   5716
 60020   33250   13200
 >;
-battery3_profile_t3_num = <100>;
-battery3_profile_t3_col = <3>;
-battery3_profile_t3 =
+battery3-profile-t3-num = <100>;
+battery3-profile-t3-col = <3>;
+battery3-profile-t3 =
 <
 0       44660   2275
 606     44438   2275
@@ -434,9 +434,9 @@ battery3_profile_t3 =
 59414   35970   20125
 60020   35970   20125
 >;
-battery3_profile_t4_num = <100>;
-battery3_profile_t4_col = <3>;
-battery3_profile_t4 =
+battery3-profile-t4-num = <100>;
+battery3-profile-t4-col = <3>;
+battery3-profile-t4 =
 <
 0       44630   4775
 606     44398   4776

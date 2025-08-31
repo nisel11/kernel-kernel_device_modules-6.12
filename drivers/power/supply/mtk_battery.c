@@ -191,8 +191,11 @@ static int mmi_get_batid_by_serialnumber(void)
 
 	batt_node = of_find_node_by_name(NULL, "mtk_gauge");
 	if (!batt_node) {
-		pr_err("Batterydata not available\n");
-		return 0;
+		batt_node = of_find_node_by_name(NULL, "mtk-gauge");
+		if (!batt_node) {
+			pr_err("Batterydata not available\n");
+			return 0;
+		}
 	}
 
 	dev_sn = mmi_get_battery_serialnumber();
