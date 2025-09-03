@@ -111,6 +111,9 @@ static bool is_typec_adapter(struct mtk_charger *info)
 	int rp;
 	int cap_type;
 
+	if (info == NULL || info->adapter_dev[PD] == NULL)
+		return false;
+
 	rp = adapter_dev_get_property(info->adapter_dev[PD], TYPEC_RP_LEVEL);
 	cap_type = adapter_dev_get_property(info->adapter_dev[PD], CAP_TYPE);
 	if (cap_type == MTK_CAP_TYPE_UNKNOWN && rp != 500)
