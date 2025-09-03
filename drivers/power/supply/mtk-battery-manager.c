@@ -25,7 +25,10 @@
 #include <linux/suspend.h>
 #include <linux/vmalloc.h>
 #include <net/sock.h>
+#include <linux/of_platform.h>
+#include <linux/platform_device.h>
 
+#include "mtk_charger.h"
 #include "mtk_battery.h"
 #include "mtk_gauge.h"
 #if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
@@ -1110,6 +1113,13 @@ static int bs_psy_get_property(struct power_supply *psy,
 		val->intval = bs_data->bat_status;
 		break;
 	case POWER_SUPPLY_PROP_HEALTH:
+		if (bm->info) {
+			bs_data->bat_health = bm->info->mmi.batt_health;
+			pr_info("get batt_health successfully, bat_health:%d\n", bs_data->bat_health);
+		} else {
+			pr_err("bm->info is NULL\n");
+			bs_data->bat_health = POWER_SUPPLY_HEALTH_GOOD;
+		}
 		val->intval = bs_data->bat_health;
 		break;
 	case POWER_SUPPLY_PROP_PRESENT:
@@ -1815,6 +1825,39 @@ void bm_custom_init_from_dts(struct platform_device *pdev, struct mtk_battery_ma
 		bm->disable_quick_shutdown, bm->vsys_det_voltage1, bm->vsys_det_voltage2);
 }
 
+struct mtk_charger *get_mtk_charger_info(void)
+{
+	struct device_node *np;
+	struct platform_device *pdev;
+	struct mtk_charger *info;
+
+	// find device tree node
+	np = of_find_compatible_node(NULL, NULL, "mediatek,charger");
+	if (!np) {
+		pr_err("Cannot find charger device node\n");
+		return NULL;
+	}
+
+	// obtain platform_device
+	pdev = of_find_device_by_node(np);
+	pr_info("mtk charger device name:%s", pdev->name);
+	of_node_put(np);
+	if (!pdev) {
+		pr_err("Cannot find platform device\n");
+		return NULL;
+	}
+
+	// obtain platform device data
+	info = platform_get_drvdata(pdev);
+	if (!info) {
+		pr_err("Driver data is NULL\n");
+		return NULL;
+	}
+
+	return info;
+}
+
+
 static int mtk_bm_probe(struct platform_device *pdev)
 {
 	struct mtk_battery_manager *bm;
@@ -1911,6 +1954,10 @@ static int mtk_bm_probe(struct platform_device *pdev)
 #ifdef BM_USE_ALARM_TIMER
 	battery_manager_thread_alarm_init(bm);
 #endif
+
+	bm->info = get_mtk_charger_info();
+	if (IS_ERR_OR_NULL(bm->info))
+		pr_err("[%s]Fail to get mtk charger info\n", __func__);
 
 	kthread_run(battery_manager_routine_thread, bm, "battery_manager_thread");
 

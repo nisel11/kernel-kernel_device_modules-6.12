@@ -1424,6 +1424,9 @@ struct mtk_battery_manager {
 	int disable_quick_shutdown;
 	int vsys_det_voltage1;
 	int vsys_det_voltage2;
+
+	/* mtk charger info */
+	struct mtk_charger *info;
 };
 
 struct mtk_battery_sysfs_field_info {

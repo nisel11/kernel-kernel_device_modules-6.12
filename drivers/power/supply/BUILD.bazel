@@ -96,6 +96,11 @@ define_mgk_ddk_ko(
         "mtk_battery_daemon.h",
         "mtk_gauge.h",
         "moto_chg_tcmd.h",
+        "mtk_charger.h",
+        "charger_class.h",
+        "adapter_class.h",
+        "mtk_charger_algorithm_class.h",
+        "mtk_smartcharging.h",
     ],
     includes = ["."],
     ko_deps = [
