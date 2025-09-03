@@ -3071,6 +3071,7 @@ static int mtk_charger_plug_out(struct mtk_charger *info)
 	info->charger_thread_polling = false;
 	info->dpdmov_stat = false;
 	info->lst_dpdmov_stat = false;
+	info->mmi.active_fast_alg = 0;
 	info->power_path_en = true;
 	info->en_power_path = true;
 

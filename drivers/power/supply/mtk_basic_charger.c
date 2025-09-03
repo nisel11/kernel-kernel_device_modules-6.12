@@ -161,6 +161,12 @@ static bool support_fast_charging(struct mtk_charger *info)
 
 		if (state == ALG_READY || state == ALG_RUNNING) {
 			info->mmi.active_fast_alg |= alg->alg_id;
+			if ((PE5_ID == alg->alg_id) &&
+			    (PDC_ID & info->mmi.active_fast_alg)) {
+				alg = get_chg_alg_by_name("pd");
+				chg_alg_stop_algo(alg);
+				info->mmi.active_fast_alg &= ~PDC_ID;
+			}
 			ret = true;
 			break;
 		} else
