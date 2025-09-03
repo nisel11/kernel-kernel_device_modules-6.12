@@ -448,6 +448,7 @@ struct mmi_params {
 	struct notifier_block	chg_reboot;
 	int			min_therm_current_limit;
 	int			charge_rate;
+	unsigned int	active_fast_alg;
 	bool			enable_mux;
 	struct mmi_mux_chan	mux_channel;
 	int			wls_switch_en;
