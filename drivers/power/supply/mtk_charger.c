@@ -3144,6 +3144,7 @@ static bool mtk_is_charger_on(struct mtk_charger *info)
 	return true;
 }
 
+#ifdef MTK_BASE
 static void charger_send_kpoc_uevent(struct mtk_charger *info)
 {
 	static bool first_time = true;
@@ -3160,6 +3161,7 @@ static void charger_send_kpoc_uevent(struct mtk_charger *info)
 		}
 	}
 }
+#endif
 
 /*********************
  * MMI Functionality *
@@ -4500,6 +4502,7 @@ void mmi_init(struct mtk_charger *info)
 	info->mmi.init_done = true;
 }
 
+#ifdef MTK_BASE
 static void kpoc_power_off_check(struct mtk_charger *info)
 {
 	unsigned int boot_mode = info->bootmode;
@@ -4526,6 +4529,7 @@ static void kpoc_power_off_check(struct mtk_charger *info)
 		charger_send_kpoc_uevent(info);
 	}
 }
+#endif
 
 static void charger_status_check(struct mtk_charger *info)
 {
@@ -4652,7 +4656,9 @@ static int charger_routine_thread(void *arg)
 		mmi_charger_check_status(info);
 		charger_check_status(info);
 		mtk_check_ta_status(info);
+#ifdef MTK_BASE
 		kpoc_power_off_check(info);
+#endif
 
 		if (!info->cs_hw_disable)
 			chr_err("Vbat=%d vbat2=%d vbats=%d vbus:%d ibus:%d I=%d I2=%d T=%d uisoc:%d type:%s>%s idx:%d ta_stat:%d swchg_ibat:%d cv:%d cmd_pp:%d\n",
