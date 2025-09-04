@@ -257,6 +257,7 @@ struct mt6375_chg_data {
 	int vbat0_flag;
 	atomic_t no_6pin_used;
 	u8 ecid_val[3];
+	int mmi_chg_status;
 
 	/*for external qc protocol ic such as wt6670f*/
 	struct delayed_work detect_qc_dwork;
@@ -1286,6 +1287,10 @@ static int mt6375_chg_get_property(struct power_supply *psy,
 		mutex_unlock(&ddata->attach_lock);
 		return 0;
 	case POWER_SUPPLY_PROP_STATUS:
+		if(ddata->mmi_chg_status == POWER_SUPPLY_STATUS_FULL) {
+			val->intval = POWER_SUPPLY_STATUS_FULL;
+			return 0;
+		}
 		ret = mt6375_get_chg_status(ddata);
 		if (ret < 0)
 			return ret;
@@ -2320,8 +2325,15 @@ static int mt6375_do_event(struct charger_device *chgdev, u32 event, u32 args)
 
 	switch (event) {
 	case EVENT_FULL:
+		ddata->mmi_chg_status = POWER_SUPPLY_STATUS_FULL;
+		power_supply_changed(ddata->psy);
+		break;
 	case EVENT_RECHARGE:
+		ddata->mmi_chg_status = POWER_SUPPLY_STATUS_CHARGING;
+		power_supply_changed(ddata->psy);
+		break;
 	case EVENT_DISCHARGE:
+		ddata->mmi_chg_status = POWER_SUPPLY_STATUS_DISCHARGING;
 		power_supply_changed(ddata->psy);
 		break;
 	default:
@@ -2354,6 +2366,8 @@ static int mt6375_plug_out(struct charger_device *chgdev)
 	struct mt6375_chg_platform_data *pdata = dev_get_platdata(ddata->dev);
 
 	mt_dbg(ddata->dev, "++\n");
+
+	ddata->mmi_chg_status = POWER_SUPPLY_STATUS_DISCHARGING;
 
 	if (ddata->qc_dev) {
 		adapter_dev_reset_chg_type(ddata->qc_dev);
