@@ -3772,12 +3772,14 @@ static const struct attribute_group power_supply_mmi_attr_group = {
 	.attrs = mmi_g,
 };
 
-
+#define MMI_BATT_UEVENT_NUM (2)
 static void mmi_update_batt_status(struct mtk_charger *info)
 {
 	static struct power_supply	*batt_psy;
 	char *chrg_rate_string = NULL;
-	char *envp[2];
+	char *batt_age_string = NULL;
+	char *batt_string = NULL;
+	char *envp[MMI_BATT_UEVENT_NUM + 1];
 	int rc;
 
 	if (!batt_psy) {
@@ -3794,20 +3796,27 @@ static void mmi_update_batt_status(struct mtk_charger *info)
 	}
 
 	mmi_charge_rate_check(info);
-	chrg_rate_string = kmalloc(CHG_SHOW_MAX_SIZE, GFP_KERNEL);
-	if (!chrg_rate_string) {
+	batt_string = kmalloc(CHG_SHOW_MAX_SIZE * MMI_BATT_UEVENT_NUM, GFP_KERNEL);
+	if (!batt_string) {
 		pr_err("%s  Failed to Get Uevent Mem\n", __func__);
-		envp[0] = NULL;
 	} else {
+		chrg_rate_string = batt_string;
+		batt_age_string = &batt_string[CHG_SHOW_MAX_SIZE];
+
 		scnprintf(chrg_rate_string, CHG_SHOW_MAX_SIZE,
 			  "POWER_SUPPLY_CHARGE_RATE=%s",
 			  charge_rate[info->mmi.charge_rate]);
-		envp[0] = chrg_rate_string;
-		envp[1] = NULL;
-	}
 
-	kobject_uevent_env(&batt_psy->dev.kobj, KOBJ_CHANGE, envp);
-	kfree(chrg_rate_string);
+		scnprintf(batt_age_string, CHG_SHOW_MAX_SIZE,
+			  "POWER_SUPPLY_AGE=%d",
+			  mmi_get_battery_age());
+
+		envp[0] = chrg_rate_string;
+		envp[1] = batt_age_string;
+		envp[2] = NULL;
+		kobject_uevent_env(&batt_psy->dev.kobj, KOBJ_CHANGE, envp);
+		kfree(batt_string);
+	}
 }
 
 #define WARM_TEMP 45
