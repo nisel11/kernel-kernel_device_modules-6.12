@@ -44,12 +44,14 @@
 #define DPM_DBG_ENABLE		0
 #define PD_ERR_ENABLE		1
 #define PE_DBG_ENABLE		0
-#define TYPEC_DBG_ENABLE	0
+#define TYPEC_DBG_ENABLE	1
 
 #define DP_INFO_ENABLE		1
 #define DP_DBG_ENABLE		0
 
 #define TCPM_DBG_ENABLE		1
+
+#define MMI_DBG_ENABLE	1
 
 #define TCPC_ENABLE_ANYMSG	\
 		((TCPC_DBG_ENABLE)|(TCPC_DBG2_ENABLE)|\
@@ -568,5 +570,13 @@ enum {
 };
 
 void sched_set_fifo(struct task_struct *p);
+
+#if MMI_DBG_ENABLE
+#define MMI_INFO(format, args...)	\
+	RT_DBG_INFO(CONFIG_TCPC_DBG_PRESTR "MMI> " format, ##args)
+#else
+#define MMI_INFO(format, args...)
+#endif
+
 int tcpc_class_complete_work(struct device *dev, void *data);
 #endif /* #ifndef __LINUX_RT_TCPCI_CORE_H */

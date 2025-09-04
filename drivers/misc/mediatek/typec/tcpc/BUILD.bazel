@@ -92,6 +92,7 @@ define_mgk_ddk_ko(
                 "pd_process_evt_vcs.c",
                 "pd_process_evt_vdm.c",
                 "tcpci_event.c",
+                "pd_dpm_mmi_adapter.c",
             ],
         },
     },
