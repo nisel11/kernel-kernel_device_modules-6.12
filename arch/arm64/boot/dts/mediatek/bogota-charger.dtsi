@@ -315,6 +315,7 @@
 		mmi_therm_vol_thres = <80>;
 		mmi_therm_step = <3>;
 		mmi_max_ibat = <6000>;
+		mmi_max_hrst_cnt = <1>;
 };
 
 &charger_cooler {
