@@ -68,6 +68,10 @@ struct charger_data;
 #define NON_STD_AC_CHARGER_CURRENT		500000
 #define CHARGING_HOST_CHARGER_CURRENT		650000
 
+/*wireless input current and charging current*/
+#define WIRELESS_FACTORY_MAX_CURRENT			3000000
+#define WIRELESS_FACTORY_MAX_INPUT_CURRENT		1250000
+
 /* dynamic mivr */
 #define V_CHARGER_MIN_1 4400000 /* 4.4 V */
 #define V_CHARGER_MIN_2 4200000 /* 4.2 V */
@@ -131,6 +135,7 @@ struct mmi_mux_configure {
 	u32 wls_mos;
 	bool wls_boost_en;
 	bool wls_loadswtich_en;
+	bool wls_chip_en;
 };
 
 /* for external qc protocol ic such as wt6670f*/
@@ -333,6 +338,10 @@ struct charger_custom_data {
 	int min_charger_voltage_2;
 	int max_dmivr_charger_current;
 
+	/*wireless charger*/
+	int wireless_factory_max_current;
+	int wireless_factory_max_input_current;
+
 	/* bc values*/
 	int bc_stop_charging_uisoc;
 	int bc_recharge_uisoc;
@@ -516,6 +525,7 @@ struct mtk_charger {
 	struct power_supply *psy_hvdvchg2;
 
 	struct power_supply  *chg_psy;
+	struct power_supply  *wl_psy;
 	struct power_supply  *bc12_psy;
 	struct power_supply  *bat_psy;
 	struct power_supply  *bat2_psy;
@@ -656,6 +666,7 @@ struct mtk_charger {
 	/*charger IC charging status*/
 	bool is_charging;
 	bool is_cs_chg_done;
+	int wireless_online;
 
 	ktime_t uevent_time_check;
 

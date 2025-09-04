@@ -191,6 +191,12 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 	pdata2 = &info->chg_data[CHG2_SETTING];
 	pdata_dvchg = &info->chg_data[DVCHG1_SETTING];
 	// pdata_dvchg2 = &info->chg_data[DVCHG2_SETTING];
+
+	if (info->atm_enabled == true) {
+		is_basic = true;
+		goto done;
+	}
+
 	if (info->usb_unlimited) {
 		pdata->input_current_limit =
 					info->data.ac_charger_input_current;
@@ -223,11 +229,6 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 		goto done;
 	}
 #endif
-
-	if (info->atm_enabled == true) {
-		is_basic = true;
-		goto done;
-	}
 
 	if (info->chr_type == POWER_SUPPLY_TYPE_USB &&
 	    info->usb_type == POWER_SUPPLY_USB_TYPE_SDP) {
@@ -461,6 +462,11 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 		pdata_dvchg->thermal_input_current_limit;
 
 done:
+
+	if ((info->atm_enabled == true) && info->wireless_online) {
+		pdata->charging_current_limit = info->data.wireless_factory_max_current;
+		pdata->input_current_limit = info->data.wireless_factory_max_input_current;
+	}
 
 	if (pdata->moto_chg_tcmd_ibat != -1)
 		pdata->charging_current_limit = pdata->moto_chg_tcmd_ibat;
@@ -1002,26 +1008,27 @@ static int hvdvchg2_dev_event(struct notifier_block *nb, unsigned long event,
 	return NOTIFY_OK;
 }
 
-#define MMI_MUX(_mos1,  _mos2, _boost, _switch) \
+#define MMI_MUX(_mos1,  _mos2, _boost, _switch, _chipstate) \
 { \
 	.typec_mos = _mos1, \
 	.wls_mos = _mos2, \
 	.wls_boost_en = _boost, \
 	.wls_loadswtich_en = _switch, \
+	.wls_chip_en = _chipstate, \
 }
 
 static const struct mmi_mux_configure config_mmi_mux[MMI_MUX_CHANNEL_MAX] = {
-	[MMI_MUX_CHANNEL_NONE] = MMI_MUX(MMI_DVCHG_MUX_CLOSE, MMI_DVCHG_MUX_CLOSE, false, false),
-	[MMI_MUX_CHANNEL_TYPEC_CHG] = MMI_MUX(MMI_DVCHG_MUX_CHG_OPEN, MMI_DVCHG_MUX_CLOSE, false, false),
-	[MMI_MUX_CHANNEL_TYPEC_OTG] = MMI_MUX(MMI_DVCHG_MUX_OTG_OPEN, MMI_DVCHG_MUX_CLOSE, false, true),
-	[MMI_MUX_CHANNEL_WLC_CHG] = MMI_MUX(MMI_DVCHG_MUX_CLOSE, MMI_DVCHG_MUX_CHG_OPEN, false, false),
-	[MMI_MUX_CHANNEL_WLC_OTG] = MMI_MUX(MMI_DVCHG_MUX_DISABLE, MMI_DVCHG_MUX_DISABLE, true, true),
-	[MMI_MUX_CHANNEL_TYPEC_CHG_WLC_OTG] = MMI_MUX(MMI_DVCHG_MUX_CHG_OPEN, MMI_DVCHG_MUX_CLOSE, true, true),
-	[MMI_MUX_CHANNEL_TYPEC_CHG_WLC_CHG] = MMI_MUX(MMI_DVCHG_MUX_CHG_OPEN, MMI_DVCHG_MUX_CLOSE, false, false),
-	[MMI_MUX_CHANNEL_TYPEC_OTG_WLC_CHG] = MMI_MUX(MMI_DVCHG_MUX_OTG_OPEN, MMI_DVCHG_MUX_CLOSE, false, false),
-	[MMI_MUX_CHANNEL_TYPEC_OTG_WLC_OTG] = MMI_MUX(MMI_DVCHG_MUX_OTG_OPEN, MMI_DVCHG_MUX_CLOSE,  true, true),
-	[MMI_MUX_CHANNEL_WLC_FW_UPDATE] = MMI_MUX(MMI_DVCHG_MUX_DISABLE, MMI_DVCHG_MUX_DISABLE, true, true),
-	[MMI_MUX_CHANNEL_WLC_FACTORY_TEST] = MMI_MUX(MMI_DVCHG_MUX_CLOSE, MMI_DVCHG_MUX_CHG_OPEN, false, false),
+	[MMI_MUX_CHANNEL_NONE] = MMI_MUX(MMI_DVCHG_MUX_CLOSE, MMI_DVCHG_MUX_CLOSE, false, false, true),
+	[MMI_MUX_CHANNEL_TYPEC_CHG] = MMI_MUX(MMI_DVCHG_MUX_CHG_OPEN, MMI_DVCHG_MUX_CLOSE, false, false, false),
+	[MMI_MUX_CHANNEL_TYPEC_OTG] = MMI_MUX(MMI_DVCHG_MUX_OTG_OPEN, MMI_DVCHG_MUX_CLOSE, false, true, false),
+	[MMI_MUX_CHANNEL_WLC_CHG] = MMI_MUX(MMI_DVCHG_MUX_CLOSE, MMI_DVCHG_MUX_CHG_OPEN, false, false, true),
+	[MMI_MUX_CHANNEL_WLC_OTG] = MMI_MUX(MMI_DVCHG_MUX_DISABLE, MMI_DVCHG_MUX_DISABLE, true, true, true),
+	[MMI_MUX_CHANNEL_TYPEC_CHG_WLC_OTG] = MMI_MUX(MMI_DVCHG_MUX_CHG_OPEN, MMI_DVCHG_MUX_CLOSE, true, true, true),
+	[MMI_MUX_CHANNEL_TYPEC_CHG_WLC_CHG] = MMI_MUX(MMI_DVCHG_MUX_CHG_OPEN, MMI_DVCHG_MUX_CLOSE, false, false, false),
+	[MMI_MUX_CHANNEL_TYPEC_OTG_WLC_CHG] = MMI_MUX(MMI_DVCHG_MUX_OTG_OPEN, MMI_DVCHG_MUX_CLOSE, false, false, false),
+	[MMI_MUX_CHANNEL_TYPEC_OTG_WLC_OTG] = MMI_MUX(MMI_DVCHG_MUX_OTG_OPEN, MMI_DVCHG_MUX_CLOSE,  true, true, true),
+	[MMI_MUX_CHANNEL_WLC_FW_UPDATE] = MMI_MUX(MMI_DVCHG_MUX_DISABLE, MMI_DVCHG_MUX_DISABLE, true, true, true),
+	[MMI_MUX_CHANNEL_WLC_FACTORY_TEST] = MMI_MUX(MMI_DVCHG_MUX_CLOSE, MMI_DVCHG_MUX_CHG_OPEN, false, false, true),
 };
 
 static int mmi_mux_config(struct mtk_charger *info, enum mmi_mux_channel channel)
@@ -1035,6 +1042,14 @@ static int mmi_mux_config(struct mtk_charger *info, enum mmi_mux_channel channel
 		}
 	}
 
+	if (!info->mmi.factory_mode) {
+		struct chg_alg_device *alg;
+
+		alg = get_chg_alg_by_name("wlc");
+		if ((NULL != alg) && (alg->alg_id & info->fast_charging_indicator))
+			chg_alg_set_prop(alg, ALG_WLC_STATE, config_mmi_mux[channel].wls_chip_en);
+	}
+
 	charger_dev_config_mux(info->dvchg1_dev,
 		config_mmi_mux[channel].typec_mos, config_mmi_mux[channel].wls_mos);
 	if(gpio_is_valid(info->mmi.wls_boost_en))
@@ -1044,9 +1059,11 @@ static int mmi_mux_config(struct mtk_charger *info, enum mmi_mux_channel channel
 
 	return 0;
 }
+
 static int mmi_mux_switch(struct mtk_charger *info, enum mmi_mux_channel channel, bool on)
 {
 	int pre_chan, pre_on;
+
 	if(!info->mmi.enable_mux)
 		return 0;
 

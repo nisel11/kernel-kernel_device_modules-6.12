@@ -438,6 +438,7 @@ int get_charger_type(struct mtk_charger *info)
 	union power_supply_propval prop2 = {0};
 	union power_supply_propval prop3 = {0};
 	static struct power_supply *bc12_psy;
+	union power_supply_propval prop_wls = {0};
 	int ret;
 
 	bc12_psy = info->bc12_psy;
@@ -476,6 +477,9 @@ int get_charger_type(struct mtk_charger *info)
 		prop.intval,
 		prop2.intval,
 		prop3.intval);
+
+	if((info->mmi.factory_mode == true) && info->wireless_online && (POWER_SUPPLY_TYPE_UNKNOWN != prop_wls.intval))
+		return prop_wls.intval;
 
 	return prop2.intval;
 }
