@@ -113,6 +113,13 @@ define_mgk_ddk_ko(
 		":mobicore_source",
 		"{}/MobiCoreDriver/ffa_dummy.c".format(TRUSTONIC_TEE_VERSION),
 	],
+	conditional_srcs = {
+		"CONFIG_FSCRYPT_WRAPPED_KEY_MODE_SUPPORT": {
+			True: [
+				"{}/MobiCoreDriver/hwkm.c".format(TRUSTONIC_TEE_VERSION),
+			],
+		},
+	},
 	out = "{}/MobiCoreDriver/mcDrvModule.ko".format(TRUSTONIC_TEE_VERSION),
 	hdrs = [
 		":mobicore_public_hdrs",
