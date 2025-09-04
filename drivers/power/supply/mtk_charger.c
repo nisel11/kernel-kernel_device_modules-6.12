@@ -5600,6 +5600,10 @@ int notify_adapter_event(struct notifier_block *notifier,
 			_wake_up_charger(pinfo);
 		}
 		break;
+	case MMI_PD30_VDM_VERIFY:
+		chr_info("%s VDM VERIFY\n", __func__);
+		mtk_chg_alg_notify_call(pinfo, EVT_VDM_VERIFY, 0);
+		break;
 	}
 	chr_debug("%s: evt: pd:%d, ufcs:%d, pd_type:%d\n", __func__,
 	pinfo->ta_status[PD], pinfo->ta_status[UFCS], pinfo->pd_type);
