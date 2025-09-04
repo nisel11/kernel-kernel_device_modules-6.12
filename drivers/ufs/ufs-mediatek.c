@@ -46,6 +46,10 @@
 #include "ufs-mediatek-sysfs.h"
 #include "ufs-mediatek.h"
 
+#ifdef CONFIG_FSCRYPT_WRAPPED_KEY_MODE_SUPPORT
+#include "ufshcd-moto-crypto.h"
+#endif
+
 /* Power Throttling */
 #if IS_ENABLED(CONFIG_MTK_LOW_BATTERY_POWER_THROTTLING)
 #include <mtk_low_battery_throttling.h>
@@ -1776,6 +1780,16 @@ static int ufs_mtk_init(struct ufs_hba *hba)
 	ufs_mtk_init_clocks(hba);
 
 	ufs_mtk_init_sysfs(hba);
+
+	/* Instantiate Motorola crypto capabilities for wrapped keys.
+	 * It is controlled by CONFIG_FSCRYPT_WRAPPED_KEY_MODE_SUPPORT.
+	 * If this is not defined, this API would return zero and
+	 * non-wrapped crypto capabilities will be initialized.
+	 */
+#ifdef CONFIG_FSCRYPT_WRAPPED_KEY_MODE_SUPPORT
+	hba->quirks |= UFSHCD_QUIRK_CUSTOM_CRYPTO_PROFILE;
+	ufshcd_moto_hba_init_crypto_capabilities(hba);
+#endif
 
 	/*
 	 * ufshcd_vops_init() is invoked after

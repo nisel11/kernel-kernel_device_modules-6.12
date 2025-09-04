@@ -40,6 +40,7 @@ define_mgk_ddk_ko(
 	],
 
 	header_deps = [
+		"//kernel_device_modules-{}/drivers/tee/gud:mobicore_public_hdrs".format(kernel_version),
 	],
 
 	hdrs = glob(["**/*.h"]),
@@ -53,6 +54,7 @@ define_mgk_ddk_ko(
 		"//kernel_device_modules-{}/drivers/misc/mediatek/power_throttling:mtk_low_battery_throttling".format(kernel_version),
 		"//kernel_device_modules-{}/drivers/misc/mediatek/sda:irq-dbg".format(kernel_version),
 		"//kernel_device_modules-{}/drivers/ufs:ufs-mediatek-dbg".format(kernel_version),
+		"//kernel_device_modules-{}/drivers/tee/gud:mcDrvModule".format(kernel_version),
 	],
 
 	includes = [
@@ -110,6 +112,11 @@ define_mgk_ddk_ko(
 				"vendor/ufsringbuf.c",
 			],
 		},
+		"CONFIG_FSCRYPT_WRAPPED_KEY_MODE_SUPPORT": {
+			True: [
+				"ufshcd-moto-crypto.c",
+			],
+		},
 	},
 
 	copts = [
@@ -133,6 +140,7 @@ define_mgk_ddk_ko(
 	],
 
 	header_deps = [
+		"//kernel_device_modules-{}/drivers/tee/gud:mobicore_public_hdrs".format(kernel_version),
 	],
 
 	hdrs = glob(["**/*.h"]),
@@ -146,6 +154,7 @@ define_mgk_ddk_ko(
 		"//kernel_device_modules-{}/drivers/misc/mediatek/power_throttling:mtk_battery_oc_throttling".format(kernel_version),
 		"//kernel_device_modules-{}/drivers/misc/mediatek/power_throttling:mtk_low_battery_throttling".format(kernel_version),
 		"//kernel_device_modules-{}/drivers/ufs:ufs-mediatek-dbg".format(kernel_version),
+		"//kernel_device_modules-{}/drivers/tee/gud:mcDrvModule".format(kernel_version),
 	],
 
 	includes = [
@@ -202,6 +211,11 @@ define_mgk_ddk_ko(
 		"CONFIG_UFSRINGBUF": {
 			True: [
 				"vendor/ufsringbuf.c",
+			],
+		},
+		"CONFIG_FSCRYPT_WRAPPED_KEY_MODE_SUPPORT": {
+			True: [
+				"ufshcd-moto-crypto.c",
 			],
 		},
 	},
