@@ -2083,6 +2083,7 @@ def get_overlay_modules_list():
     if "moto" in DEFCONFIG_OVERLAYS:
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/misc/utag:utags")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_binder:moto_binder")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_mm/mm:moto_mm")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_f_usbnet:moto_f_usbnet")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/moto_swap:moto_swap")
 
