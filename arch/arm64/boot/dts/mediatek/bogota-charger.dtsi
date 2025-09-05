@@ -66,6 +66,9 @@
 	typec_limit_aicr = <3000000>;
 //	typecotp_charger = <1>;
 
+	//mmi config
+	mmi,typec-rp-max-current = <2000000>;
+
 	/*mmi config*/
 	mmi,iterm-ma = <255>;
 	mmi,mmi-temp-zones =

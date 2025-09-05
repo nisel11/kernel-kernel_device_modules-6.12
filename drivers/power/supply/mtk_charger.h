@@ -458,6 +458,7 @@ struct mmi_params {
 	int			min_therm_current_limit;
 	int			charge_rate;
 	unsigned int	active_fast_alg;
+	int			typec_rp_max_current;
 	bool			enable_mux;
 	struct mmi_mux_chan	mux_channel;
 	int			wls_switch_en;

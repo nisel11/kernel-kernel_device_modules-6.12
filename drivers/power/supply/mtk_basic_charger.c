@@ -278,6 +278,7 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 		info->setting.mmi_current_limit_dvchg1 = pdata->thermal_charging_current_limit;
 	else
 		info->setting.mmi_current_limit_dvchg1 = info->mmi.min_therm_current_limit;
+
 	if (support_fast_charging(info))
 		is_basic = false;
 	else {
@@ -293,13 +294,13 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 					info->data.max_dmivr_charger_current;
 		}
 		if (is_typec_adapter(info)) {
-			if (adapter_dev_get_property(info->adapter_dev[PD]
-			, TYPEC_RP_LEVEL)
-				== 3000) {
-				pdata->input_current_limit = 3000000;
+			if (adapter_dev_get_property(info->adapter_dev[PD], TYPEC_RP_LEVEL) == 3000) {
+				if (info->mmi.typec_rp_max_current)
+					pdata->input_current_limit = info->mmi.typec_rp_max_current;
+				else
+					pdata->input_current_limit = 3000000;
 				pdata->charging_current_limit = 3000000;
-			} else if (adapter_dev_get_property(info->adapter_dev[PD],
-				TYPEC_RP_LEVEL) == 1500) {
+			} else if (adapter_dev_get_property(info->adapter_dev[PD], TYPEC_RP_LEVEL) == 1500) {
 				pdata->input_current_limit = 1500000;
 				pdata->charging_current_limit = 2000000;
 			} else {
