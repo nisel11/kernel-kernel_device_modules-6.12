@@ -463,6 +463,12 @@ struct mmi_params {
 	struct mmi_mux_chan	mux_channel;
 	int			wls_switch_en;
 	int			wls_boost_en;
+
+	int			pd_pmax_mw;
+	struct adapter_auth_data	apdo_cap;
+	int			pd_cap_max_watt;
+	int			vbus_h;
+	int			vbus_l;
 };
 /*moto mmi Functionality end*/
 
