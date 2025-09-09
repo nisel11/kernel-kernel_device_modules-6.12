@@ -3094,6 +3094,8 @@ static bool charger_init_algo(struct mtk_charger *info)
 	return true;
 }
 
+static int mtk_charger_enable_power_path(struct mtk_charger *info,
+	int idx, bool en);
 static int mtk_charger_plug_out(struct mtk_charger *info)
 {
 	struct charger_data *pdata1 = &info->chg_data[CHG1_SETTING];
@@ -3190,6 +3192,8 @@ static int mtk_charger_plug_in(struct mtk_charger *info,
 		charger_dev_enable_adc(info->dvchg1_dev, true);
 	if (info->dvchg2_dev)
 		charger_dev_enable_adc(info->dvchg2_dev, true);
+	if(POWER_SUPPLY_TYPE_WIRELESS == chr_type)
+		mtk_charger_enable_power_path(info, CHG1_SETTING, true);
 	mtk_charger_force_disable_power_path(info, CHG1_SETTING, false);
 
 	power_supply_changed(info->psy1);
