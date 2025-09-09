@@ -184,6 +184,7 @@ struct tcpc_ops {
 	int (*get_vbus_voltage)(struct tcpc_device *tcpc, u32 *vbus);
 	int (*is_support_cid)(struct tcpc_device *tcpc);
 	int (*is_cid_plug)(struct tcpc_device *tcpc);
+	int (*set_cid)(struct tcpc_device *tcpc, bool en);
 
 #if CONFIG_WATER_DETECTION
 	int (*set_water_protection)(struct tcpc_device *tcpc, bool en);

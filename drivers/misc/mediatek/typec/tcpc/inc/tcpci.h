@@ -85,6 +85,7 @@ int tcpci_get_vbus_voltage(struct tcpc_device *tcpc, u32 *vbus);
 int tcpci_is_support_cid(struct tcpc_device *tcpc);
 int tcpci_is_cid_plug(struct tcpc_device *tcpc);
 int tcpci_notify_cid_state(struct tcpc_device *tcpc, bool cid_state);
+int tcpci_set_cid(struct tcpc_device *tcpc, bool en);
 
 #if CONFIG_WATER_DETECTION
 int tcpci_set_water_protection(struct tcpc_device *tcpc, bool en);

@@ -2173,6 +2173,15 @@ static int mt6375_is_cid_plug(struct tcpc_device *tcpc)
 	return ddata->mmi_cid_state;
 }
 
+static int mt6375_set_cid(struct tcpc_device *tcpc, bool en)
+{
+	struct mt6375_tcpc_data *ddata = tcpc_get_dev_data(tcpc);
+
+	ddata->support_cid = en;
+
+	return 0;
+}
+
 static struct tcpc_ops mt6375_tcpc_ops = {
 	.init = mt6375_tcpc_init,
 	.init_alert_mask = mt6375_init_mask,
@@ -2193,6 +2202,7 @@ static struct tcpc_ops mt6375_tcpc_ops = {
 	.get_vbus_voltage = mt6375_get_vbus_voltage,
 	.is_support_cid = mt6375_is_support_cid,
 	.is_cid_plug = mt6375_is_cid_plug,
+	.set_cid = mt6375_set_cid,
 
 	.set_low_power_mode = mt6375_set_low_power_mode,
 

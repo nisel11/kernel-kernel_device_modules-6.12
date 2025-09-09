@@ -386,6 +386,17 @@ int tcpci_is_cid_plug(struct tcpc_device *tcpc)
 }
 EXPORT_SYMBOL(tcpci_is_cid_plug);
 
+int tcpci_set_cid(struct tcpc_device *tcpc, bool en)
+{
+	int ret = 0;
+
+	if (tcpc->ops->set_cid)
+		ret = tcpc->ops->set_cid(tcpc, en);
+
+	return ret;
+}
+EXPORT_SYMBOL(tcpci_set_cid);
+
 #if CONFIG_WATER_DETECTION
 int tcpci_set_water_protection(struct tcpc_device *tcpc, bool en)
 {
