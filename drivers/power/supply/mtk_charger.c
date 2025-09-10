@@ -3972,6 +3972,8 @@ static int mmi_check_power_watt(struct mtk_charger *info, bool force)
 	if (info == NULL)
 		return power_watt;
 
+	mutex_lock(&info->mmi.power_watt_lock);
+
 	if (!info->wl_psy) {
 		info->wl_psy = power_supply_get_by_name("wireless");
 	}
@@ -4038,6 +4040,9 @@ out:
 	info->mmi.charger_watt = power_watt;
 
 	pr_info("[%s] power_watt = %dW\n", __func__, power_watt);
+
+	mutex_unlock(&info->mmi.power_watt_lock);
+
 	return power_watt;
 }
 
@@ -4810,6 +4815,8 @@ static DEVICE_ATTR(force_max_chrg_temp, 0644,
 		force_max_chrg_temp_show,
 		force_max_chrg_temp_store);
 
+static void mmi_notify_power_event_work(struct work_struct *work);
+
 void mmi_init(struct mtk_charger *info)
 {
 	int rc;
@@ -4870,6 +4877,9 @@ void mmi_init(struct mtk_charger *info)
 				&dev_attr_factory_charge_upper);
 	if (rc)
 		pr_err("[%s]couldn't create factory_charge_upper\n", __func__);
+
+	mutex_init(&info->mmi.power_watt_lock);
+	INIT_WORK(&info->mmi.notify_power_event_work, mmi_notify_power_event_work);
 
 	info->mmi.init_done = true;
 }
@@ -5908,19 +5918,19 @@ static int mmi_notify_lpd_event(struct mtk_charger *pinfo) {
 }
 
 #define CHG_SHOW_MAX_SIEZE 50
-static int mmi_notify_power_event(struct mtk_charger *pinfo) {
+static void mmi_notify_power_event_work(struct work_struct *work) {
 	char *event_string = NULL;
 	char *batt_uenvp[2];
 	int pmax_w = 0;
 
-	if(!pinfo->bat_psy)
-		pinfo->bat_psy = power_supply_get_by_name("battery");
-	if(!pinfo->bat_psy) {
+	if(!mmi_info->bat_psy)
+		mmi_info->bat_psy = power_supply_get_by_name("battery");
+	if(!mmi_info->bat_psy) {
 		chr_err("%s: get battery supply failed\n", __func__);
-		return -EINVAL;
+		return;
 	}
 
-	pmax_w = mmi_check_power_watt(pinfo, true);
+	pmax_w = mmi_check_power_watt(mmi_info, true);
 
 	event_string = kmalloc(CHG_SHOW_MAX_SIEZE, GFP_KERNEL);
 
@@ -5929,10 +5939,9 @@ static int mmi_notify_power_event(struct mtk_charger *pinfo) {
 
 	batt_uenvp[0] = event_string;
 	batt_uenvp[1] = NULL;
-	kobject_uevent_env(&pinfo->bat_psy->dev.kobj, KOBJ_CHANGE, batt_uenvp);
+	kobject_uevent_env(&mmi_info->bat_psy->dev.kobj, KOBJ_CHANGE, batt_uenvp);
 	chr_err("%s, pmax_w:%d send %s\n",__func__, pmax_w, event_string);
 	kfree(event_string);
-	return 0;
 }
 
 int notify_adapter_event(struct notifier_block *notifier,
@@ -5969,6 +5978,7 @@ int notify_adapter_event(struct notifier_block *notifier,
 		chr_err("TA Notify Attach\n");
 		pinfo->ta_status[index] = TA_ATTACH;
 		pinfo->pd_type = adapter_dev_get_property(pinfo->adapter_dev[PD], PD_TYPE);
+		schedule_work(&pinfo->mmi.notify_power_event_work);
 		mutex_unlock(&pinfo->ta_lock);
 		_wake_up_charger(pinfo);
 		/* reset PE40 */
@@ -6041,7 +6051,6 @@ int notify_adapter_event(struct notifier_block *notifier,
 		break;
 	case MMI_PD30_VDM_VERIFY:
 		chr_info("%s VDM VERIFY\n", __func__);
-		mmi_notify_power_event(pinfo);
 		mtk_chg_alg_notify_call(pinfo, EVT_VDM_VERIFY, 0);
 		break;
 	}
