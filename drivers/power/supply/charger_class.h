@@ -117,6 +117,7 @@ struct charger_ops {
 	int (*get_input_current)(struct charger_device *dev, u32 *uA);
 	int (*set_input_current)(struct charger_device *dev, u32 uA);
 	int (*get_min_input_current)(struct charger_device *dev, u32 *uA);
+	int (*get_max_input_current)(struct charger_device *dev, u32 *uA);
 
 	/* set boot volt times */
 	int (*set_boot_volt_times)(struct charger_device *dev, u32 val);
@@ -483,5 +484,6 @@ extern int charger_dev_get_protocol(struct charger_device *chg_dev, int *val);
 extern int charger_dev_config_qc_charger(struct charger_device *chg_dev);
 extern int charger_dev_set_dp_dm(struct charger_device *chg_dev, int val);
 extern int charger_dev_get_dp_dm(struct charger_device *chg_dev, int *val);
+extern int charger_dev_get_max_input_current(struct charger_device *chg_dev, u32 *uA);
 
 #endif /*LINUX_POWER_CHARGER_CLASS_H*/

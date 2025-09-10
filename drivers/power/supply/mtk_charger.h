@@ -755,6 +755,7 @@ extern int get_charger_input_current(struct mtk_charger *info,
 extern int get_charger_zcv(struct mtk_charger *info,
 	struct charger_device *chg);
 extern void _wake_up_charger(struct mtk_charger *info);
+extern void mmi_wake_up_charger(void);
 extern int mtk_adapter_switch_control(struct mtk_charger *info);
 extern int mtk_selected_adapter_ready(struct mtk_charger *info);
 extern int mtk_adapter_protocol_init(struct mtk_charger *info);

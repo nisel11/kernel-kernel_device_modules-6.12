@@ -184,6 +184,7 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 	int ret;
 	bool qc_is_detect = false;
 	int qc_chg_type = 0;
+	int icl_max = -1;
 
 	select_cv(info);
 
@@ -246,8 +247,13 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 		is_basic = true;
 
 	} else if (info->chr_type == POWER_SUPPLY_TYPE_USB_DCP) {
-		pdata->input_current_limit =
-			info->data.ac_charger_input_current;
+		charger_dev_get_max_input_current(info->chg1_dev, &icl_max);
+		if (icl_max > 0) {
+			pdata->input_current_limit = icl_max;
+		} else {
+			pdata->input_current_limit =
+				info->data.ac_charger_input_current;
+		}
 		pdata->charging_current_limit =
 			info->data.ac_charger_current;
 		if (info->config == DUAL_CHARGERS_IN_SERIES) {
@@ -339,9 +345,9 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 	charger_dev_get_protocol(info->chg1_dev, &qc_chg_type);
 	/*when qc is detect should make sure ICL is 500mA*/
 	if(qc_is_detect == true){
-		if(pdata->charging_current_limit > 500000){
-			pdata->charging_current_limit = 500000;
-			chr_err("qc is detect, set charging_current_limit 500mA!\n");
+		if(pdata->input_current_limit > 500000){
+			pdata->input_current_limit = 500000;
+			chr_err("qc is detect, set input_current_limit 500mA!\n");
 		}
 	} else {
 		if(qc_chg_type == USB_TYPE_QC3P_27 || qc_chg_type == USB_TYPE_QC3P_18
