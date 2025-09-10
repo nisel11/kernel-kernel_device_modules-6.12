@@ -1058,7 +1058,16 @@ static void mt6375_chg_pwr_rdy_process(struct mt6375_chg_data *ddata)
 		return;
 	ddata->pwr_rdy = val;
 	mt_dbg(ddata->dev, "pwr_rdy=%d\n", val);
+
+	if (ddata->qc_dev) {
+		adapter_dev_reset_chg_type(ddata->qc_dev);
+		ddata->pulse_cnt = 0;
+		ddata->qc_chg_type = 0;
+		ddata->qc_is_detect = false;
+	}
+
 	mmi_notify_vbus_event(ddata, val);
+
 	ret = mt6375_chg_field_set(ddata, F_BLEED_DIS_EN, !ddata->pwr_rdy);
 	if (ret < 0)
 		dev_err(ddata->dev, "failed to set bleed discharge = %d\n",
