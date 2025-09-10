@@ -295,6 +295,8 @@ struct mt6375_chg_data {
 	struct adapter_device *pd_adapter;
 
 	struct dcp15w dcp15w;
+
+	bool mmi_bc12_rerun_done;
 };
 
 struct mt6375_chg_platform_data {
@@ -1087,6 +1089,8 @@ static void mt6375_chg_pwr_rdy_process(struct mt6375_chg_data *ddata)
 	ddata->pwr_rdy = val;
 	mt_dbg(ddata->dev, "pwr_rdy=%d\n", val);
 
+	ddata->mmi_bc12_rerun_done = false;
+
 	if (ddata->qc_dev) {
 		adapter_dev_reset_chg_type(ddata->qc_dev);
 		ddata->pulse_cnt = 0;
@@ -1305,6 +1309,19 @@ static void mt6375_chg_bc12_work_func(struct work_struct *work)
 		break;
 	}
 
+	if ((val == PORT_STAT_SDP
+		|| val == PORT_STAT_CDP
+		|| val == PORT_STAT_UNKNOWN_TA)
+		&& (!ddata->mmi_bc12_rerun_done)) {
+		bc12_en = true;
+		rpt_psy = false;
+		ddata->mmi_bc12_rerun_done = true;
+		mt6375_chg_enable_bc12(ddata, false); //need to toggle bc12 en for rerun bc12
+		dev_info(ddata->dev, "rerun bc12 for port stat = %s\n", mt6375_port_stat_names[val]);
+		msleep(1000);
+		goto out;
+	}
+
 	switch (val) {
 	case PORT_STAT_NOINFO:
 		bc12_ctrl = false;
@@ -1371,6 +1388,7 @@ static void mt6375_chg_bc12_work_func(struct work_struct *work)
 		dev_info_ratelimited(ddata->dev, "%s, Unknown port stat(%d)\n", __func__, val);
 		goto out;
 	}
+	dev_info(ddata->dev, "port stat = %s\n", mt6375_port_stat_names[val]);
 out:
 	mutex_unlock(&ddata->attach_lock);
 	if (bc12_ctrl) {
