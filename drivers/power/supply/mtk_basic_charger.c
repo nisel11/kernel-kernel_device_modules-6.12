@@ -929,6 +929,10 @@ static int charger_dev_event(struct notifier_block *nb, unsigned long event,
 		info->dpdmov_stat = data->dpdmov_stat;
 		pr_info("%s: DPDM ovp = %d\n", __func__, info->dpdmov_stat);
 		break;
+	case CHARGER_DEV_NOTIFY_CTD_DONE:
+		pr_info("%s: CTD done\n", __func__);
+		schedule_work(&info->mmi.notify_power_event_work);
+		break;
 	default:
 		return NOTIFY_DONE;
 	}
