@@ -1132,10 +1132,12 @@ static int pe50_stop(struct pe50_algo_info *info, struct pe50_stop_info *sinfo)
 		PE50_INFO("PE50 stop due to adaptor power change\n");
 	}
 
-	ret = pe50_enable_dvchg_charging(info, PE50_DVCHG_SLAVE, false);
-	if (ret < 0) {
-		PE50_ERR("disable slave dvchg fail(%d)\n", ret);
-		return ret;
+	if (data->is_dvchg_exist[PE50_DVCHG_SLAVE]) {
+		ret = pe50_enable_dvchg_charging(info, PE50_DVCHG_SLAVE, false);
+		if (ret < 0) {
+			PE50_ERR("disable slave dvchg fail(%d)\n", ret);
+			return ret;
+		}
 	}
 	ret = pe50_set_dvchg_charging(info, false);
 	if (ret < 0) {
