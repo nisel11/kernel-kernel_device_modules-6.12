@@ -100,6 +100,22 @@
 
 
 /* SVP */
+&mtkheap_page_svp {
+    status = "ok";
+};
+
+&mtkheap_page_wfd {
+    status = "ok";
+};
+
+&mtkheap_region_svp {
+    status = "ok";
+};
+
+&mtkheap_region_wfd {
+    status = "ok";
+};
+
 &mtee_svp {
 	mtee: MTEE {
 		compatible = "mediatek,mtk_svp_on_mtee_support";
