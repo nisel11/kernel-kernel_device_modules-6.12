@@ -31,6 +31,7 @@
        tcpc,en_wd_polling_only;
        mmi,support_CID;
        mmi_cid_int = <&pio 21 0x0>;
+       mmi,en-moto-typec-otp;
 };
 
 &charger {
@@ -250,7 +251,6 @@
 };
 
 &mt6375_typec {
-	typecotp_tcpc = <1>;
 	pd-data {
 		/* 5V, 900ma */
 		pd,source-pdo-data = <0x0001905a>;
