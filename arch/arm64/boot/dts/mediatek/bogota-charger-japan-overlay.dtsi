@@ -188,6 +188,16 @@
 	};
 };
 
+&spmi {
+	second_pmic@5 {
+		regulators {
+			mt6369_mos_con1: mos-con1 {
+				regulator-name = "mt6369_mos_con1";
+			};
+		};
+	};
+};
+
 &mt6375_chg {
 	io-channels = <&mt6375_adc MT6375_ADC_CHGVIN>,
 		<&mt6375_adc MT6375_ADC_VSYS>,
@@ -203,8 +213,8 @@
 	pinctrl-0 = <&mos_on>;
 	pinctrl-1 = <&mos_off>;
 	cv = <4530>;
-	ircmp_r = <0>;
-	ircmp_v = <0>;
+	ircmp-r = <0>;
+	ircmp-v = <0>;
 	typecotp_chg = <1>;
 	mmi,hvdcp-support;
 };

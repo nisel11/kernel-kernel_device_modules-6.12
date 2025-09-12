@@ -562,6 +562,16 @@
 
 };
 
+&spmi {
+	second_pmic@5 {
+		regulators {
+			mt6369_mos_con1: mos-con1 {
+				regulator-name = "mt6369_mos_con1";
+			};
+		};
+	};
+};
+
 &mt6375_chg {
 	mmi,hvdcp-support;
 	cv = <4530>;
