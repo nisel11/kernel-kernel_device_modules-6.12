@@ -217,6 +217,7 @@
 	ircmp-v = <0>;
 	typecotp_chg = <1>;
 	mmi,hvdcp-support;
+	mmi,otp-mos-regulator-name = "mt6369_mos_con1";
 };
 
 &pio {

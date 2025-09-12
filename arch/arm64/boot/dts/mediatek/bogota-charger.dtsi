@@ -577,4 +577,5 @@
 	cv = <4530>;
 	ircmp-r = <0>;
 	ircmp-v = <0>;
+	mmi,otp-mos-regulator-name = "mt6369_mos_con1";
 };

@@ -563,4 +563,5 @@
 
 &mt6375_chg {
 	mmi,hvdcp-support;
+	mmi,otp-mos-regulator-name = "mt6369_mos_con1";
 };

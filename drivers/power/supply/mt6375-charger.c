@@ -291,6 +291,8 @@ struct mt6375_chg_data {
 	struct power_supply *batt_psy;
 	struct power_supply *wlc_psy;
 	char				*batt_uenvp[2];
+	struct regulator *otp_mos_reg;
+	const char *otp_mos_reg_name;
 
 	struct adapter_device *pd_adapter;
 
@@ -1833,6 +1835,70 @@ static int mt6375_get_adc(struct charger_device *chgdev, enum adc_channel chan,
 	return 0;
 }
 
+static int mt6375_enable_mos_short(struct charger_device *chgdev, bool en)
+{
+	int ret = 0;
+	struct mt6375_chg_data *ddata = charger_get_data(chgdev);
+
+	if (IS_ERR_OR_NULL(ddata)) {
+		pr_err("%s ddata is ERR or NULL\n", __func__);
+		return -EINVAL;
+	}
+
+	if (IS_ERR_OR_NULL(ddata->otp_mos_reg_name) ||
+		strlen(ddata->otp_mos_reg_name) == 0) {
+		dev_err(ddata->dev, "otp_mos_reg_name is empty\n");
+		return -EINVAL;
+	}
+
+	if (!ddata->otp_mos_reg) {
+		ddata->otp_mos_reg = devm_regulator_get(ddata->dev, ddata->otp_mos_reg_name);
+		if (IS_ERR_OR_NULL(ddata->otp_mos_reg)) {
+			dev_err(ddata->dev, "failed to get %s regulator\n", ddata->otp_mos_reg_name);
+			return -EINVAL;
+		} else {
+			dev_info(ddata->dev, "get %s regulator success!\n", ddata->otp_mos_reg_name);
+		}
+	}
+
+	if (IS_ERR_OR_NULL(ddata->otp_mos_reg)) {
+		dev_err(ddata->dev, "otp_mos_reg is ERR or NULL\n");
+		return -EINVAL;
+	}
+
+	if (en) {
+		mt_dbg(ddata->dev, "enable regulator:%s\n", ddata->otp_mos_reg_name);
+		ret = regulator_enable(ddata->otp_mos_reg);
+	} else {
+		mt_dbg(ddata->dev, "disable regulator:%s\n", ddata->otp_mos_reg_name);
+		ret = regulator_disable(ddata->otp_mos_reg);
+	}
+
+	dev_info(ddata->dev, "en=%d ret=%d\n", en, ret);
+
+	return ret;
+}
+
+static int otp_mos_reg_parse_dt(struct mt6375_chg_data *ddata)
+{
+	struct device_node *np = ddata->dev->of_node;
+
+	if (!np) {
+		pr_err("%s np is NULL\n", __func__);
+		return -EINVAL;
+	}
+
+	if (of_property_read_string(np, "mmi,otp-mos-regulator-name", &ddata->otp_mos_reg_name)) {
+		pr_err("%s failed to get otp-mos-regulator-name\n", __func__);
+		return -EINVAL;
+	}
+
+	pr_info("%s get otp-mos-regulator-name:%s len:%ld\n", __func__,
+			ddata->otp_mos_reg_name, strlen(ddata->otp_mos_reg_name));
+
+	return 0;
+}
+
 static int mt6375_get_vbus(struct charger_device *chgdev, u32 *vbus)
 {
 	return mt6375_get_adc(chgdev, ADC_CHANNEL_VBUS, vbus, vbus);
@@ -3161,6 +3227,8 @@ static const struct charger_ops mt6375_chg_ops = {
 	.config_qc_charger = mt6375_config_qc_charger,
 	.set_dp_dm = mmi_set_dp_dm,
 	.get_dp_dm = mmi_get_dp_dm,
+	/*typec otp mos*/
+	.enable_mos_short = mt6375_enable_mos_short,
 };
 
 static irqreturn_t mt6375_fl_wdt_handler(int irq, void *data)
@@ -3803,6 +3871,7 @@ static int mt6375_chg_probe(struct platform_device *pdev)
 	}
 
 	ddata->dev = dev;
+	otp_mos_reg_parse_dt(ddata);
 	init_completion(&ddata->pe_done);
 	init_completion(&ddata->aicc_done);
 	ddata->pwr_rdy = false;

@@ -1024,6 +1024,15 @@ int charger_dev_config_qc_charger(struct charger_device *chg_dev)
 }
 EXPORT_SYMBOL(charger_dev_config_qc_charger);
 
+int charger_dev_enable_mos_short(struct charger_device *chg_dev, bool en)
+{
+	if (chg_dev != NULL && chg_dev->ops != NULL && chg_dev->ops->enable_mos_short)
+		return chg_dev->ops->enable_mos_short(chg_dev, en);
+
+	return -EOPNOTSUPP;
+}
+EXPORT_SYMBOL(charger_dev_enable_mos_short);
+
 int charger_dev_set_dp_dm(struct charger_device *chg_dev, int val)
 {
 	if (chg_dev != NULL && chg_dev->ops != NULL && chg_dev->ops->set_dp_dm)
