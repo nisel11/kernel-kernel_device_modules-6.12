@@ -172,6 +172,7 @@ define_mgk_ddk_ko(
         ":mtk_charger_algorithm_class",
         ":moto_chg_tcmd",
         "//kernel_device_modules-{}/drivers/misc/mediatek/monitor_hang:monitor_hang".format(kernel_version),
+        "//kernel_device_modules-{}/drivers/misc/mediatek/typec/tcpc:tcpc_class".format(kernel_version),
     ],
     copts = [
         "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/include",

@@ -35,6 +35,9 @@
 };
 
 &charger {
+	/*typec_otp*/
+	mmi,typecotp-charger;
+
         /* sw jeita */
         enable_vbat_mon = <0>;
 
@@ -215,7 +218,6 @@
 	cv = <4530>;
 	ircmp-r = <0>;
 	ircmp-v = <0>;
-	typecotp_chg = <1>;
 	mmi,hvdcp-support;
 	mmi,otp-mos-regulator-name = "mt6369_mos_con1";
 };

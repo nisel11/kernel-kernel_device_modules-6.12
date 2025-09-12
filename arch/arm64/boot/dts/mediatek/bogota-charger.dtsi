@@ -35,6 +35,9 @@
 };
 
 &charger {
+	/*typec_otp*/
+	mmi,typecotp-charger;
+
     /* sw jeita */
     enable_vbat_mon = <0>;
 
@@ -211,14 +214,13 @@
 					  <&mt6375_adc MT6375_ADC_USBDM>,
 					  <&mt6375_adc MT6375_ADC_VREFTS>,
 					  <&mt6375_adc MT6375_ADC_TS>;
-		typecotp_chg = <1>;
 		pinctrl-names = "mos_on","mos_off";
 		pinctrl-0 = <&mos_on>;
 		pinctrl-1 = <&mos_off>;
 
 	cv = <4500>;
-	ircmp_r = <0>;
-	ircmp_v = <0>;
+	ircmp-r = <0>;
+	ircmp-v = <0>;
 };
 
 &pio {

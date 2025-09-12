@@ -702,6 +702,16 @@ struct mtk_charger {
 	struct mmi_params	mmi;
 	struct mutex mmi_mux_lock;
 
+	struct tcpc_device *tcpc_dev;
+	bool typecotp_charger;
+	bool typec_otp_sts;
+	bool dcp_otp_sts;
+	struct mutex typec_otp_lock;
+	/*typec connecter ntc thermal*/
+	struct thermal_cooling_device *tcd;
+	unsigned long typec_otp_max_state;
+	unsigned long typec_otp_cur_state;
+
 	/* adapter switch control */
 	int protocol_state;
 	int ta_capability;
