@@ -72,10 +72,21 @@ struct board_ntc_info {
 	void __iomem *data_reg;
 	void __iomem *dbg_reg;
 	void __iomem *en_reg;
+	int pre_temp;
 	struct pmic_auxadc_data *adc_data;
 	int is_tia;
 	struct iio_channel *channel;
 	struct thermal_zone_device *tz_dev;
+	struct iio_channel *chan_wcn_ntc;
+	struct iio_channel *chan_cam_ntc;
+	struct iio_channel *chan_flash_ntc;
+	struct iio_channel *chan_tspk_ntc;
+	struct iio_channel *chan_quiet_ntc;
+	struct iio_channel *chan_mchg_ntc;
+	struct iio_channel *chan_rec_ntc;
+	struct iio_channel *chan_chg_ntc;
+	struct iio_channel *chan_conn_ntc;
+	struct iio_channel *chan_schg_ntc;
 };
 
 unsigned int tia2_rc_sel_to_value(unsigned int sel)
@@ -88,6 +99,9 @@ unsigned int tia2_rc_sel_to_value(unsigned int sel)
 		break;
 	case 2:
 		resistance = 400000; /* 400K */
+		break;
+	case 3:
+		resistance = 3920; /* 3.92K */
 		break;
 	case 0:
 	default:
@@ -118,7 +132,7 @@ static struct tia_data tia2_data = {
 static struct pmic_auxadc_data mt6685_pmic_auxadc_data = {
 	.default_pullup_v = 184000,
 	.default_pullup_r = 100000,
-	.num_of_pullup_r_type = 3,
+	.num_of_pullup_r_type = 4,
 	.pullup_r_calibration = NULL,
 	.adc2volt = mt6685_adc2volt,
 	.tia_param = &tia2_data,
@@ -145,6 +159,14 @@ static const struct of_device_id board_ntc_of_match[] = {
 	{},
 };
 MODULE_DEVICE_TABLE(of, board_ntc_of_match);
+
+static bool is_conn_adc(unsigned int pullup_r_type)
+{
+	if (pullup_r_type == 3)
+		return true;
+	else
+		return false;
+}
 
 static int board_ntc_r_to_temp(struct board_ntc_info *ntc_info,
 						int val)
@@ -216,6 +238,37 @@ static int board_ntc_get_temp(struct thermal_zone_device *tz, int *temp)
 		return 0;
 	}
 
+	if (!PTR_ERR_OR_ZERO(ntc_info->chan_wcn_ntc)){
+		iio_read_channel_raw(ntc_info->chan_wcn_ntc, &val);
+		r_type = 0;
+	} else if (!PTR_ERR_OR_ZERO(ntc_info->chan_cam_ntc)){
+		iio_read_channel_raw(ntc_info->chan_cam_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_flash_ntc)){
+		iio_read_channel_raw(ntc_info->chan_flash_ntc, &val);
+		r_type = 0;
+	} else if (!PTR_ERR_OR_ZERO(ntc_info->chan_tspk_ntc)){
+		iio_read_channel_raw(ntc_info->chan_tspk_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_quiet_ntc)){
+		iio_read_channel_raw(ntc_info->chan_quiet_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_mchg_ntc)){
+		iio_read_channel_raw(ntc_info->chan_mchg_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_schg_ntc)){
+		iio_read_channel_raw(ntc_info->chan_schg_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_rec_ntc)){
+		iio_read_channel_raw(ntc_info->chan_rec_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_chg_ntc)){
+		iio_read_channel_raw(ntc_info->chan_chg_ntc, &val);
+		r_type = 0;
+	}  else if (!PTR_ERR_OR_ZERO(ntc_info->chan_conn_ntc)){
+		iio_read_channel_processed(ntc_info->chan_conn_ntc, &val);
+		r_type = 3;
+	}  else if (!IS_ERR(ntc_info->data_reg)) {
 	while (count < READ_TIA_REG_COUNT_MAX) {
 		val = readl(ntc_info->data_reg);
 
@@ -258,8 +311,17 @@ RETRY:
 		dev_err(ntc_info->dev, "adc2volt should exist\n");
 		return -ENODEV;
 	}
+	}else {
+		dev_info(ntc_info->dev, "Don't have adc info\n");
+		return -ENODEV;
+	}
 
+	if (is_conn_adc(r_type) != true) {
 	v_in = ntc_info->adc_data->adc2volt(get_adc_data(val, tia_param->valid_bit - 1));
+	} else {
+		v_in = val;
+	}
+
 	r_ntc = calculate_r_ntc(v_in, adc_data->pullup_r[r_type],
 				adc_data->pullup_v[r_type]);
 
@@ -273,8 +335,15 @@ RETRY:
 		*temp = board_ntc_r_to_temp(ntc_info, r_ntc);
 	}
 
-	dev_info_ratelimited(ntc_info->dev, "val=0x%x, v_in/r_type/r_ntc/t=%llu/%d/%d/%d\n",
+	if (ntc_info->pre_temp != *temp / 1000) {
+		ntc_info->pre_temp = *temp / 1000;
+		dev_info(ntc_info->dev, "v=0x%x, v/type/ntc/t=%llu/%d/%d/%d\n",
+			val, v_in, r_type, r_ntc, *temp);
+	/*
+	dev_dbg_ratelimited(ntc_info->dev, "val=0x%x, v_in/r_type/r_ntc/t=%llu/%d/%d/%d\n",
 		val, v_in, r_type, r_ntc, *temp);
+	*/
+	}
 
 	return 0;
 }
@@ -307,7 +376,10 @@ static int board_ntc_init_auxadc_data(struct device *dev,
 			else
 				adc_data->pullup_r[i] = adc_data->default_pullup_r;
 
+			if (is_conn_adc(i) != true)
 			adc_data->pullup_v[i] = adc_data->default_pullup_v;
+			else
+				adc_data->pullup_v[i] = 1800000;
 
 			dev_info(dev, "%d: default pullup_r=%d, pullup_v=%d\n",
 				i, adc_data->pullup_r[i],
@@ -363,6 +435,7 @@ static int board_ntc_probe(struct platform_device *pdev)
 	void __iomem *tia_reg;
 	struct thermal_zone_device *tz_dev;
 	int ret;
+	bool has_cust_ntc = false;
 
 	if (!pdev->dev.of_node) {
 		dev_err(&pdev->dev, "Only DT based supported\n");
@@ -392,13 +465,35 @@ static int board_ntc_probe(struct platform_device *pdev)
 
 		ntc_info->adc_data->is_initialized = true;
 	}
+	ntc_info->chan_wcn_ntc =  devm_iio_channel_get(&pdev->dev, "WCN_NTC");
+	ntc_info->chan_cam_ntc =  devm_iio_channel_get(&pdev->dev, "CAM_NTC");
+	ntc_info->chan_tspk_ntc =  devm_iio_channel_get(&pdev->dev, "SPK_NTC");
+	ntc_info->chan_quiet_ntc =  devm_iio_channel_get(&pdev->dev, "QUIET_NTC");
+	ntc_info->chan_mchg_ntc =  devm_iio_channel_get(&pdev->dev, "MCHG_NTC");
+	ntc_info->chan_schg_ntc =  devm_iio_channel_get(&pdev->dev, "SCHG_NTC");
+	ntc_info->chan_rec_ntc =  devm_iio_channel_get(&pdev->dev, "REC_NTC");
+	ntc_info->chan_chg_ntc =  devm_iio_channel_get(&pdev->dev, "CHG_NTC");
+	ntc_info->chan_conn_ntc =  devm_iio_channel_get(&pdev->dev, "CONN_NTC");
+	ntc_info->chan_flash_ntc =  devm_iio_channel_get(&pdev->dev, "FLED_NTC");
+
+	if ((!PTR_ERR_OR_ZERO(ntc_info->chan_wcn_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_cam_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_flash_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_tspk_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_quiet_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_mchg_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_schg_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_rec_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_chg_ntc)) ||
+			(!PTR_ERR_OR_ZERO(ntc_info->chan_conn_ntc)) )
+		has_cust_ntc = true;
 
 	platform_set_drvdata(pdev, ntc_info);
 
 	if (ntc_info->is_tia) {
 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 		tia_reg = devm_ioremap_resource(&pdev->dev, res);
-		if (IS_ERR(tia_reg))
+		if ((IS_ERR(tia_reg)) && (!has_cust_ntc))
 			return PTR_ERR(tia_reg);
 
 		ntc_info->data_reg = tia_reg;
@@ -422,6 +517,8 @@ static int board_ntc_probe(struct platform_device *pdev)
 			ret);
 		return ret;
 	}
+
+	dev_info(ntc_info->dev, "%s type %s done\n", __func__, tz_dev->type);
 
 	return 0;
 }

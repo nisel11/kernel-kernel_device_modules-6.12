@@ -360,6 +360,10 @@ static struct vtskin_data common_vtskin_data = {
 
 static const struct of_device_id vtskin_of_match[] = {
 	{
+		.compatible = "mediatek,mt6855-virtual-tskin",
+		.data = (void *)&mt6983_vtskin_data,
+	},
+	{
 		.compatible = "mediatek,mt6983-virtual-tskin",
 		.data = (void *)&mt6983_vtskin_data,
 	},
