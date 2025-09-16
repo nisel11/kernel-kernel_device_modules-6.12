@@ -4089,7 +4089,8 @@ static bool mmi_is_power_supply_changed(struct mtk_charger *info)
 	if(g_charge_rate == info->mmi.charge_rate &&
 		g_battery_age == mmi_get_battery_age() &&
 		g_water_detected == info->water_detected &&
-		g_vbus_present == mmi_check_vbus_present(info) &&
+		(g_vbus_present == mmi_check_vbus_present(info) ||
+		info->water_detected == false) &&
 		g_power_watt == mmi_check_power_info(info, false) &&
 		g_power_max_design_mw == info->mmi.power_max_design_mw &&
 		g_real_charger_type == info->mmi.real_charger_type)
