@@ -22,6 +22,7 @@
 #include <linux/regmap.h>
 #include <linux/regulator/driver.h>
 #include <linux/workqueue.h>
+#include <linux/pm_wakeup.h>
 
 #include "charger_class.h"
 #include "mtk_charger.h"
@@ -316,6 +317,8 @@ struct mt6375_chg_data {
 	struct dcp15w dcp15w;
 
 	bool mmi_bc12_rerun_done;
+
+	struct wakeup_source *bc12_wakelock;
 };
 
 struct mt6375_chg_platform_data {
@@ -1310,6 +1313,8 @@ static int mt6375_chg_enable_bc12(struct mt6375_chg_data *ddata, bool en)
 {
 	int i, ret, attach;
 	static const int max_wait_cnt = 250;
+	if (!ddata->bc12_wakelock->active)
+		__pm_stay_awake(ddata->bc12_wakelock);
 
 	mt_dbg(ddata->dev, "en=%d\n", en);
 	if (en) {
@@ -1334,6 +1339,7 @@ static int mt6375_chg_enable_bc12(struct mt6375_chg_data *ddata, bool en)
 		else
 			dev_info(ddata->dev, "%s: CDP free\n", __func__);
 	}
+	__pm_relax(ddata->bc12_wakelock);
 	ret = mt6375_chg_set_usbsw(ddata, en ? USBSW_CHG : USBSW_USB);
 	if (ret)
 		return ret;
@@ -4427,6 +4433,7 @@ static int mt6375_chg_probe(struct platform_device *pdev)
 	struct mt6375_chg_data *ddata;
 	struct device *dev = &pdev->dev;
 	const struct mt6375_chg_field *fds = mt6375_chg_fields;
+	char *name = NULL;
 
 	dev_info(dev, "%s: entry. 6375 charger probe now.\n", __func__);
 	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
@@ -4498,6 +4505,11 @@ static int mt6375_chg_probe(struct platform_device *pdev)
 	sema_init(&ddata->sem_dpdm, 1);
 
 	dcp15w_init(ddata);
+
+	name = devm_kasprintf(dev, GFP_KERNEL, "%s",
+		"bc12 suspend wakelock");
+	ddata->bc12_wakelock =
+		wakeup_source_register(NULL, name);
 
 	INIT_WORK(&ddata->bc12_work, mt6375_chg_bc12_work_func);
 	INIT_DELAYED_WORK(&ddata->pwr_rdy_dwork, mt6375_chg_pwr_rdy_dwork_func);
@@ -4596,6 +4608,7 @@ static void mt6375_chg_remove(struct platform_device *pdev)
 		charger_device_unregister(ddata->chgdev);
 		device_remove_file(ddata->dev, &dev_attr_shipping_mode);
 		cancel_delayed_work_sync(&ddata->pwr_rdy_dwork);
+		wakeup_source_unregister(ddata->bc12_wakelock);
 		destroy_workqueue(ddata->wq);
 		mutex_destroy(&ddata->dpdm_lock);
 		mutex_destroy(&ddata->pwr_rdy_dwork_lock);
