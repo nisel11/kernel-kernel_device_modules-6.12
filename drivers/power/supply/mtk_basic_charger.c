@@ -355,6 +355,8 @@ static bool select_charging_current_limit(struct mtk_charger *info,
 			qc_chg_type == USB_TYPE_QC3P_18 ||
 			qc_chg_type == USB_TYPE_QC30) {
 				pdata->input_current_limit = 3000000;
+		} else if (qc_chg_type == USB_TYPE_QC20) {
+			pdata->input_current_limit = 1500000;
 		}
 	}
 
