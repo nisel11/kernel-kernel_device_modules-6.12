@@ -64,6 +64,7 @@
 #include <asm/setup.h>
 
 #include <linux/thermal.h>
+#include <thermal_core.h>
 #include <tcpm.h>
 
 #include "mtk_charger.h"
@@ -5257,6 +5258,35 @@ static const struct thermal_cooling_device_ops mmi_typec_otp_tcd_ops = {
 	.set_cur_state = mmi_typec_otp_set_cur_state,
 };
 
+#define TYPEC_OTP_THRES 700
+#define TYPEC_RECOVER_THRES 600
+#define VBUS_THRES 4000
+static void mmi_check_typec_conn_temp(struct mtk_charger *info)
+{
+	struct thermal_zone_device *usb_conn_zone;
+	int conn_ntc = 0;
+
+	if (!info->typecotp_charger) {
+		chr_err("%s Error: typec-otp not support\n", __func__);
+		return;
+	}
+
+	usb_conn_zone = thermal_zone_get_zone_by_name("conn_ntc");
+	if (IS_ERR_OR_NULL(usb_conn_zone)) {
+		chr_err("get usb_conn zone failure\n");
+		return;
+	}
+
+	conn_ntc = usb_conn_zone->temperature / 100;
+	pr_info("otp conn_ntc = %d\n",conn_ntc);
+	if ((conn_ntc >= TYPEC_OTP_THRES) && (get_vbus(info) > VBUS_THRES)) {
+		mmi_typec_otp_set_cur_state(info->tcd, true);
+	} else if (conn_ntc <= TYPEC_RECOVER_THRES) {
+		mmi_typec_otp_set_cur_state(info->tcd, false);
+	}
+
+}
+
 static int charger_routine_thread(void *arg)
 {
 	struct mtk_charger *info = arg;
@@ -5318,6 +5348,8 @@ static int charger_routine_thread(void *arg)
 		/* get data from chgIC first, cs adc is backup */
 		get_cs_side_battery_voltage(info, &cs_vbat);
 		get_cs_side_battery_current(info, &cs_ibat);
+
+		mmi_check_typec_conn_temp(info);
 
 		is_charger_on = mtk_is_charger_on(info);
 
