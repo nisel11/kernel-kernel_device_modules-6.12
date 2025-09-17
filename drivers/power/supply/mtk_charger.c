@@ -3152,6 +3152,7 @@ static int mtk_charger_plug_out(struct mtk_charger *info)
 	memset(&info->mmi.apdo_cap, 0, sizeof(struct adapter_auth_data));
 	info->mmi.pd_cap_max_watt = 0;
 	info->mmi.charger_watt = 0;
+	info->mmi.force_pmic_icl_ma = 0;
 	power_supply_changed(info->psy1);
 	return 0;
 }
