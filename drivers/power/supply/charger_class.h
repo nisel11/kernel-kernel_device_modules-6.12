@@ -188,7 +188,7 @@ struct charger_ops {
 	int (*set_boost_current_limit)(struct charger_device *dev, u32 uA);
 	int (*is_enable_acdrv1)(struct charger_device *dev, bool en);
 	int (*is_enable_otg)(struct charger_device *dev, bool en);
-	int (*is_otg_enable)(struct charger_device *dev, bool *en);
+	int (*is_otg_enabled)(struct charger_device *dev, bool *en);
 	/* charger type detection */
 	int (*enable_chg_type_det)(struct charger_device *dev, bool en);
 
@@ -366,8 +366,8 @@ extern int charger_dev_is_enable_acdrv1(
 	struct charger_device *chg_dev, bool en);
 extern int charger_dev_is_enable_otg(
 	struct charger_device *chg_dev, bool en);
-extern int charger_dev_is_otg_enable(
-	struct charger_device *chg_dev, bool *en);
+extern int charger_dev_is_otg_enabled(
+	struct charger_device *charger_dev, bool *en);
 extern int charger_dev_get_zcv(
 	struct charger_device *charger_dev, u32 *uV);
 extern int charger_dev_run_aicl(
