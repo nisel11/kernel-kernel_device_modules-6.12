@@ -3891,7 +3891,7 @@ static int mmi_get_apdo_power(struct mtk_charger *info, bool force)
 	};
 
 	if (data->vta_max == 0 || data->ita_max == 0 || force == true) {
-		ret = adapter_dev_update_apdo_cap(info->pd_adapter, &_data);
+		ret = adapter_dev_update_apdo_cap(info->adapter_dev[PD], &_data);
 		if (ret < 0 || ret != MTK_ADAPTER_OK) {
 			pr_info("%s get apdo cap fail(%d)\n", __func__, ret);
 			pmax_mw = 0;
@@ -3935,7 +3935,7 @@ static int mmi_get_pdc_power(struct mtk_charger *info, bool force)
 	struct mmi_params *mmi = &info->mmi;
 
 	if (mmi->pd_cap_max_watt == 0 || force) {
-		ret = adapter_dev_get_cap(info->pd_adapter, MTK_PD, &acap);
+		ret = adapter_dev_get_cap(info->adapter_dev[PD], MTK_PD, &acap);
 		if (ret < 0) {
 			pr_info("[%s]get pd cap fail(%d)\n", __func__, ret);
 			pmax_mw = 0;
