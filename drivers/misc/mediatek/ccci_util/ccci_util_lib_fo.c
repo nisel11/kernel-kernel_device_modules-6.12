@@ -655,6 +655,40 @@ static void md_chk_hdr_info_parse(void)
 	}
 }
 
+#ifdef CONFIG_MOTO_CCCI_SEC_SUPPORT
+/* for customer data global variable */
+static struct ccci_security_data_t security_data;
+static unsigned int security_data_len;
+
+/* parsing tag info, need called by collect_lk_boot_arguments */
+static void ccci_security_data_parsing(void)
+{
+	if (mtk_ccci_find_args_val("ccci_sec_data", (char *)&security_data,
+		sizeof(struct ccci_security_data_t))
+		!= sizeof(struct ccci_security_data_t)) {
+		security_data_len = 0;
+		CCCI_UTIL_ERR_MSG("%s:Failed to find 'ccci_sec_data' in LK boot arguments.\n", __func__);
+	} else {
+		security_data_len = sizeof(struct ccci_security_data_t);
+		CCCI_UTIL_INF_MSG("the cid size=%u \n", security_data.cid_size);
+	}
+}
+
+/* transfer cust_data & len to caller */
+struct ccci_security_data_t *ccci_rpc_get_security_data(unsigned int *len)
+{
+	if (!len || !(security_data_len > 0)) {
+		CCCI_UTIL_ERR_MSG("%s:Failed to get security data,security_data_len=%u",
+			__func__, security_data_len);
+		return NULL;
+	}
+
+	*len = security_data_len;
+	return &security_data;
+}
+EXPORT_SYMBOL(ccci_rpc_get_security_data);
+#endif
+
 static void lk_info_parsing_v1(unsigned int *raw_ptr)
 {
 	struct _ccci_lk_info lk_inf;
@@ -856,6 +890,10 @@ _common_process:
 	md_chk_hdr_info_parse();
 	share_memory_info_parsing();
 	verify_md_enable_setting();
+
+#ifdef CONFIG_MOTO_CCCI_SEC_SUPPORT
+	ccci_security_data_parsing();
+#endif
 
 	s_g_lk_load_img_status |= LK_LOAD_MD_EN;
 

@@ -382,6 +382,14 @@ config EXT_MODULES
 	  Specify out-of-tree kernel modules to build in order
 	  The value must be kernel module repo list, such as
 	  "vendor/mediatek/kernel_modules/connectivity/common vendor/mediatek/kernel_modules/connectivity/gps"
+
+config MOTO_CCCI_SEC_SUPPORT
+	bool "moto ccci sec support"
+	help
+	  Used to enable moto ccci security support,
+	  which transfers moto security data, cid data etc to modem side.
+	  Say Y here if you need moto ccci security support.
+	  If unsure, say N
 endmenu # Config
 
 menu "Misc configs"

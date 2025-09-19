@@ -597,6 +597,17 @@ void __iomem *get_smem_start_addr(enum SMEM_USER_ID user_id,
 int switch_sim_mode(char *buf, unsigned int len); /* Export by SIM switch */
 unsigned int get_sim_switch_type(void); /* Export by SIM switch */
 
+#ifdef CONFIG_MOTO_CCCI_SEC_SUPPORT
+/*CCCI_CID_DATA_SIZE defines the maximum buffer size for CID data. The actual size of the data received from the bootloader is stored in the cid_size member of the struct.*/
+#define CCCI_CID_DATA_SIZE (3*1024)
+
+struct ccci_security_data_t {
+   unsigned char cid_data[CCCI_CID_DATA_SIZE];
+   unsigned int cid_size;
+};
+struct ccci_security_data_t *ccci_rpc_get_security_data(unsigned int *len);
+#endif
+
 #if IS_ENABLED(CONFIG_MTK_ECCCI_C2K_USB)
 /* for c2k usb bypass */
 typedef int (*usb_upstream_buffer_cb_t) (int transfer_id,
