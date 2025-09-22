@@ -12,6 +12,11 @@
 #include "sched_trace.h"
 #include "eas_plus.h"
 
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+#include <trace/hooks/binder.h>
+#include <drivers/android/binder_internal.h>
+#endif
+
 unsigned int ls_vip_threshold                   =  DEFAULT_VIP_PRIO_THRESHOLD;
 bool vip_enable;
 static bool vip_switch_push;
@@ -20,6 +25,24 @@ static bool vip_switch_push;
 #define NUM_MAXIMUM_TGID 12
 static int *tgid_vip_arr;
 int tgid_vip_status;
+
+int moto_sched_enabled = 0;
+int set_moto_sched_enabled(int enable) {
+	moto_sched_enabled = enable;
+	return 0;
+}
+EXPORT_SYMBOL(set_moto_sched_enabled);
+
+struct msched_ops *moto_sched_ops = NULL;
+void set_moto_sched_ops(struct msched_ops *ops) {
+	moto_sched_ops = ops;
+}
+EXPORT_SYMBOL_GPL(set_moto_sched_ops);
+
+void unregister_moto_sched_ops(void) {
+	moto_sched_ops = NULL;
+}
+EXPORT_SYMBOL_GPL(unregister_moto_sched_ops);
 
 DEFINE_PER_CPU(struct vip_rq, vip_rq);
 unsigned int sum_num_vip_in_cpu(int cpu)
@@ -386,7 +409,16 @@ EXPORT_SYMBOL_GPL(task_is_vip);
 static inline unsigned int vip_task_limit(struct task_struct *p)
 {
 	struct vip_task_struct *vts = &((struct mtk_static_vendor_task *)p->android_vendor_data1)->vip_task;
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	unsigned int limit;
 
+	if (vts->vip_prio > NOT_VIP && vts->vip_prio < WORKER_VIP) {
+		limit = moto_task_get_mvp_limit(p, vts->vip_prio);
+
+		if (limit > 0)
+			return limit;
+	}
+#endif
 	return vts->throttle_time;
 }
 
@@ -941,6 +973,12 @@ inline int get_vip_task_prio(struct task_struct *p)
 		goto out;
 	}
 
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	vip_prio = moto_task_get_mvp_prio(p, true);
+	if (vip_prio > NOT_VIP)
+		goto out;
+#endif
+
 	/* prio = 0 */
 	if (is_VIP_task_group(p) || is_VIP_latency_sensitive(p) || is_VIP_basic(vts) ||
 		(tgid_vip_on() && is_VIP_tgid(p)))
@@ -983,6 +1021,10 @@ void vip_enqueue_task(struct rq *rq, struct task_struct *p)
 	 */
 	if (!vts->total_exec) /* queue after sleep */
 		vts->sum_exec_snapshot = p->se.sum_exec_runtime;
+
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	moto_queue_ux_task(rq, p, 1);
+#endif
 }
 
 /*
@@ -1176,6 +1218,8 @@ void vip_replace_next_task_fair(void *unused, struct rq *rq, struct task_struct 
 	}
 
 	*p = vip;
+
+	trace_sched_vip_replace_next_task_fair(vip, vts, vip_task_limit(vip));
 }
 
 __no_kcsan
@@ -1198,6 +1242,9 @@ void vip_dequeue_task(struct rq *rq, struct task_struct *p)
 
 	if (READ_ONCE(p->__state) != TASK_RUNNING)
 		vts->total_exec = 0;
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	moto_queue_ux_task(rq, p, 0);
+#endif
 }
 
 void init_vip_task_struct(struct task_struct *p)
@@ -1268,6 +1315,30 @@ void init_vip_group(void)
 		__init_vip_group(css);
 	rcu_read_unlock();
 }
+
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+static void binder_set_priority_hook(void *data,
+								struct binder_transaction *bndrtrans, struct task_struct *task)
+{
+	if (unlikely(!vip_enable))
+		return;
+
+	if (bndrtrans && bndrtrans->need_reply) {
+		moto_binder_inherit_ux_type(task);
+	}
+}
+
+static void binder_restore_priority_hook(void *data,
+								struct binder_transaction *bndrtrans, struct task_struct *task)
+{
+	if (unlikely(!vip_enable))
+		return;
+
+	if (bndrtrans) {
+		moto_binder_clear_inherited_ux_type(task);
+	}
+}
+#endif
 
 DEFINE_PER_CPU(struct task_struct *, runnable_vip);
 void vip_push_runnable(struct rq *src_rq)
@@ -1405,6 +1476,16 @@ void register_vip_hooks(void)
 	ret = register_trace_android_rvh_replace_next_task_fair(vip_replace_next_task_fair, NULL);
 	if (ret)
 		pr_info("register replace_next_task_fair hooks failed, returned %d\n", ret);
+
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	ret = register_trace_android_vh_binder_set_priority(binder_set_priority_hook, NULL);
+	if (ret)
+		pr_info("register binder_set_priority hooks failed, returned %d\n", ret);
+
+	ret = register_trace_android_vh_binder_restore_priority(binder_restore_priority_hook, NULL);
+	if (ret)
+		pr_info("register binder_restore_priority hooks failed, returned %d\n", ret);
+#endif
 }
 
 void vip_init(void)

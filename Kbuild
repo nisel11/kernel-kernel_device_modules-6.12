@@ -90,4 +90,6 @@ obj-y += drivers/media/virtio/
 
 obj-y += drivers/video/backlight/
 
+obj-y += drivers/moto/
+
 endif
