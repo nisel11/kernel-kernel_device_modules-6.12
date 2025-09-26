@@ -105,6 +105,7 @@ define_mgk_ddk_ko(
         "//kernel_device_modules-{}/drivers/clk/mediatek:clk-common".format(kernel_version),
     ],
     header_deps = [
+	"//kernel_device_modules-{}/drivers/misc/mediatek/cam_cal:cam_cal_header".format(kernel_version),
         "//kernel_device_modules-{}/drivers/misc/mediatek/imgsensor:imgsensor_kd_header".format(kernel_version),
     ],
     hdrs = glob([

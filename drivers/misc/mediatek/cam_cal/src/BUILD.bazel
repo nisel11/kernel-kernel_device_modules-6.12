@@ -31,6 +31,9 @@ define_mgk_ddk_ko(
         "custom/eeprom_i2c_custom_driver.c",
         "custom/cam_cal_list.c",
     ],
+    ko_deps = [
+	"//kernel_device_modules-{}/drivers/misc/mediatek/imgsensor/src:imgsensor_isp6s".format(kernel_version),
+    ],
     header_deps = [
         "//kernel_device_modules-{}/drivers/misc/mediatek/cam_cal:cam_cal_header".format(kernel_version),
         "//kernel_device_modules-{}/drivers/misc/mediatek/imgsensor:imgsensor_kd_header".format(kernel_version),
