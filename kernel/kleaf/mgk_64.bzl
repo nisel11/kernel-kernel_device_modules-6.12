@@ -2116,6 +2116,15 @@ def get_overlay_modules_list():
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/nfc/nxpI2C:nxp_i2c")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/nfc/nxpese:nxp_ese")
 
+    if "taipei" in DEFCONFIG_OVERLAYS:
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/regulator/sm5109c:sm5109c")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/aw99703_w_mmi:leds_aw99703_w")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/ktd3136_w_mmi:ktd3136_bl_w")
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/backlight/sm5350:sm5350_bl")
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-csot-ft8725-650-fhdp-dphy-vdo-120hz-hbl".format(kernel_version))
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-tm-nt36672c-650-fhdp-dphy-vdo-120hz-hbl".format(kernel_version))
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi-panel-mot-txd-ili7807s-650-fhdp-dphy-vdo-120hz-hbl".format(kernel_version))
+
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
         mgk_64_platform_device_modules.update({"drivers/soc/mediatek/mtk-scpsys-mt6991-ivi.ko":"mt6991"})

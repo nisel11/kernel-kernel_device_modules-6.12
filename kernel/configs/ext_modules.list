@@ -11,4 +11,6 @@
 ../vendor/mediatek/kernel_modules/perf_common_cus
 ../motorola/kernel/modules/drivers/backlight/aw99703_w_mmi
 ../motorola/kernel/modules/drivers/backlight/ktd3136_w_mmi
+../motorola/kernel/modules/drivers/backlight/sm5350
 ../motorola/kernel/modules/drivers/regulator/ocp2138_w_mmi
+../motorola/kernel/modules/drivers/regulator/sm5109c
