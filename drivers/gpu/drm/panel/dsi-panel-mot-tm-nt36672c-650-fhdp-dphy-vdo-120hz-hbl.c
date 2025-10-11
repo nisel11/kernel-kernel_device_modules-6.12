@@ -883,7 +883,7 @@ static int panel_hbm_set_cmdq(struct tianma *ctx, void *dsi, dcs_grp_write_gce c
 		cb(dsi, handle, pTable, para_count);
 	}
 	else
-		pr_info("%s: HBM pTable null, hbm_state:%s", __func__, hbm_state);
+		pr_info("%s: HBM pTable null, hbm_state:%u", __func__, hbm_state);
 
 	return 0;
 }
@@ -959,7 +959,7 @@ static int tianma_get_modes(struct drm_panel *panel,
 	struct drm_display_mode *mode_3;
 
 	mode = drm_mode_duplicate(connector->dev, &default_mode);
-	printk("[%d  %s]disp: mode:\n",__LINE__, __FUNCTION__,mode);
+
 	if (!mode) {
 		dev_err(connector->dev->dev, "failed to add mode %ux%ux@%u\n",
 			default_mode.hdisplay, default_mode.vdisplay,
@@ -971,7 +971,7 @@ static int tianma_get_modes(struct drm_panel *panel,
 	drm_mode_probed_add(connector, mode);
 
 	mode_1 = drm_mode_duplicate(connector->dev, &performance_mode_30hz);
-	printk("[%d  %s]disp mode:%d\n",__LINE__, __FUNCTION__,mode_1);
+
 	if (!mode_1) {
 		dev_err(connector->dev->dev, "failed to add mode %ux%ux@%u\n",
 			performance_mode_30hz.hdisplay,
@@ -1009,7 +1009,7 @@ static int tianma_get_modes(struct drm_panel *panel,
 	drm_mode_probed_add(connector, mode_3);
 	connector->display_info.width_mm = 68;
 	connector->display_info.height_mm = 150;
-	printk("[%d  %s]end\n",__LINE__, __FUNCTION__);
+
 
 	return 1;
 }
@@ -1059,7 +1059,7 @@ static int tianma_probe(struct mipi_dsi_device *dsi)
 	dsi->lanes = 4;
 	dsi->format = MIPI_DSI_FMT_RGB888;
 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST
-			 | MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET
+			 | MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET
 			 | MIPI_DSI_CLOCK_NON_CONTINUOUS;
 
 	backlight = of_parse_phandle(dev->of_node, "backlight", 0);
@@ -1102,7 +1102,7 @@ static int tianma_probe(struct mipi_dsi_device *dsi)
 	return ret;
 }
 
-static int tianma_remove(struct mipi_dsi_device *dsi)
+static void tianma_remove(struct mipi_dsi_device *dsi)
 {
 	struct tianma *ctx = mipi_dsi_get_drvdata(dsi);
 #if defined(CONFIG_MTK_PANEL_EXT)
@@ -1115,8 +1115,6 @@ static int tianma_remove(struct mipi_dsi_device *dsi)
 	mtk_panel_detach(ext_ctx);
 	mtk_panel_remove(ext_ctx);
 #endif
-
-	return 0;
 }
 
 static const struct of_device_id tianma_of_match[] = {
