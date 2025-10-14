@@ -155,3 +155,84 @@ config OVT_CHARGER_DETECT_SUPPORT
 	bool "set ovt charger detect support"
 	help
 		Say Y here if support ovt charger detect.
+
+config NOVA_MTK_CHECK_PANEL
+	bool "set novatech check panel support"
+	help
+		Say Y here if there is support to novatech check panel.
+
+config NOVA_TOUCH_LAST_TIME
+	bool "set novatech touch last time"
+	help
+		Say Y here if there is support to novatech touch last time.
+
+config NVT_LCM_ESD_NOTIFIER
+	bool "set novatech lcm esd notifiers support"
+	help
+		Say Y here if there is support to novatech lcm esd notifier.
+
+config NVT_ESD_RST_SUPPORT
+	bool "set novatech esd reset support"
+	help
+		Say Y here if there is support to novatech esd reset.
+
+config NOVA_CHECK_DEVICE_BOOTMODE
+	bool "set novatech check device bootmode"
+	help
+		Say Y here if there is support to novatech check device bootmode.
+
+config NOVA_NOVATEK_MTK_SPI
+	bool "set novatech mtk spi"
+	help
+		Say Y here if there is support to novatech mtk spi.
+
+config NVT_ESD_RECOVERY_SUPPORT
+	bool "set novatech eds recovery support"
+	help
+		Say Y here if there is support to novatech eds recovery.
+
+config STOWED_MODE_SUPPORT
+	bool "set novatech stowed mode support"
+	help
+		Say Y here if there is support to novatech stowed mode support.
+
+config INPUT_NOVA_0FLASH_MMI_ENABLE_DOUBLE_TAP
+	bool "set novatech double tap"
+	help
+		Say Y here if there is support to novatech double tap.
+
+config ILITEK_MTK_CHECK_PANEL
+	bool "set ilitek mtk check panel"
+	help
+		Say Y here if there is support to ilitek mtk check panel.
+
+config ILITEK_CHARGER
+	bool "set ilitek charger support"
+	help
+		Say Y here if there is support to ilitek charger.
+
+config INPUT_ILI_SET_TOUCH_STATE
+	bool "set ilitek set touch state support"
+	help
+		Say Y here if there is support to ilitek set touch state.
+
+config ILITEK_RESUME_BY_DDI
+	bool "set ilitek resume by DDI"
+	help
+		Say Y here if there is support to ilitek resume by DDI.
+
+config ILITEK_STOWED_MODE_SUPPORT
+	bool "set ilitek stowed mode support"
+	help
+		Say Y here if there is support to ilitek stowed mode.
+
+config INPUT_ILI_ENABLE_DOUBLE_TAP
+	bool "set ilitek double tap"
+	help
+		Say Y here if there is support to ilitek double tap.
+
+config ILI_TOUCH_LAST_TIME
+	bool "set ilitek touch last time"
+	help
+		Say Y here if there is support to ilitek touch last time.
+
