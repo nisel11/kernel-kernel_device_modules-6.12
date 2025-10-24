@@ -8,6 +8,10 @@
 
 extern bool vip_enable;
 
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+extern int moto_sched_enabled;
+#endif
+
 #define VIP_TIME_SLICE              (3 * NSEC_PER_MSEC)
 #define VIP_TIME_LIMIT_DEFAULT      (4 * VIP_TIME_SLICE)
 #define VIP_TIME_LIMIT_MAX          (125 * VIP_TIME_LIMIT_DEFAULT)

@@ -2222,7 +2222,11 @@ static void mtk_find_best_candidates(struct cpumask *candidates, struct task_str
 #endif // CONFIG_MTK_THERMAL_AWARE_SCHEDULING
 			track_sched_cpu_util(p, cpu, min_cap, max_cap);
 
+#if !IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
 			if (!is_vip) {
+#else
+			if (!is_vip || cpumask_empty(&vip_candidate)) {
+#endif
 				if (!cpumask_test_cpu(cpu, p->cpus_ptr))
 					continue;
 
@@ -2429,6 +2433,10 @@ void mtk_find_energy_efficient_cpu(void *data, struct task_struct *p, int prev_c
 	bool is_vip = false;
 	int vip_prio = NOT_VIP;
 	struct cpumask vip_candidate;
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	int min_num_vip_cpu = -1;
+	unsigned int num_vip = 0, min_num_vip_in_cpu = UINT_MAX;
+#endif
 #if IS_ENABLED(CONFIG_MTK_SCHED_VIP_TASK)
 	struct vip_task_struct *vts = &((struct mtk_static_vendor_task *)p->android_vendor_data1)->vip_task;
 
@@ -2457,7 +2465,12 @@ void mtk_find_energy_efficient_cpu(void *data, struct task_struct *p, int prev_c
 
 	pd = rcu_dereference(rd->pd);
 #if IS_ENABLED(CONFIG_MTK_SCHED_VIP_TASK)
-	if (is_vip) {
+#if !IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+  	if (is_vip) {
+#else
+	cpumask_clear(&vip_candidate);
+	if (unlikely(!moto_sched_enabled) && is_vip) {
+#endif
 		if (vip_in_gh)
 			mtk_get_gear_indicies(p, &order_index, &end_index, &reverse, latency_sensitive);
 		vip_candidate = find_min_num_vip_cpus(pd, p, vip_prio, &allowed_cpu_mask,
@@ -2649,6 +2662,27 @@ fail:
 
 	rcu_read_lock();
 
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	if (likely(moto_sched_enabled) && is_vip && pd) {
+		for (; pd; pd = pd->next) {
+			cpumask_and(cpus, perf_domain_span(pd), &allowed_cpu_mask);
+			for_each_cpu(cpu, cpus) {
+				num_vip = sum_num_vip_in_cpu(cpu);
+				if (min_num_vip_in_cpu > num_vip) {
+					min_num_vip_cpu = cpu;
+					min_num_vip_in_cpu = num_vip;
+				}
+			}
+		}
+
+		if (min_num_vip_cpu != -1) {
+			*new_cpu = min_num_vip_cpu;
+			backup_reason = LB_BACKUP_VIP;
+			goto backup_unlock;
+		}
+	}
+#endif
+
 #if IS_ENABLED(CONFIG_MTK_SCHED_VIP_TASK)
 	if (is_vip) {
 		struct cpumask temp_mask;
@@ -2793,6 +2827,12 @@ done:
 			.cpuctl_grp_id         = sched_cgroup_state(p, cpu_cgrp_id),
 			.cpuset_grp_id         = sched_cgroup_state(p, cpuset_cgrp_id),
 			.nr_candidates         = weight,
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+			/* Count mtk+moto vip tasks */
+			.nr_vip           = is_vip ? sum_num_vip_in_cpu(*new_cpu) : -1,
+			/* Mtk vip task is start from WORKER_VIP, count mtk vip tasks */
+			.nr_mtk_vip       = is_vip ? get_num_higher_prio_vip(*new_cpu, WORKER_VIP - 1) : -1,
+#endif
 		};
 
 		if (eenv.dpt_v2_support) {

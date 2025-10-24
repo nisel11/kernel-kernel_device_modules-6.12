@@ -41,6 +41,10 @@ struct trace_info_sched_select_task_rq {
 	int cpuctl_grp_id;
 	int cpuset_grp_id;
 	int nr_candidates;
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+	int nr_vip;
+	int nr_mtk_vip;
+#endif
 };
 #endif
 
@@ -403,6 +407,10 @@ TRACE_EVENT(sched_select_task_rq,
 		__field(int, cpuctl_grp_id)
 		__field(int, cpuset_grp_id)
 		__field(int, nr_candidates)
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+		__field(int, nr_vip)
+		__field(int, nr_mtk_vip)
+#endif
 	),
 
 	TP_fast_assign(
@@ -431,10 +439,19 @@ TRACE_EVENT(sched_select_task_rq,
 		__entry->cpuctl_grp_id       = info->cpuctl_grp_id;
 		__entry->cpuset_grp_id       = info->cpuset_grp_id;
 		__entry->nr_candidates       = info->nr_candidates;
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+		__entry->nr_vip         = info->nr_vip;
+		__entry->nr_mtk_vip     = info->nr_mtk_vip;
+#endif
 	),
 
+#if !IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
 	TP_printk(
 		"pid=%4d 32-bit=%d in_irq=%d policy=0x%08x backup_reason=0x%04x pre-cpu=%d target=%d util=%d util_est=%d uclamp=%d cpu_util=%lu cpu_util_est=%lu coef1_util=%lu coef1_util_est=%lu coef2_util=%lu coef2_util_est=%lu vip_prio=%d mask=0x%lx eff_softmask=0x%lx latency_sensitive=%d sync=%d runnable_boost=%d cpuctl=%d cpuset=%d nr_candidates=%d",
+#else
+	TP_printk(
+		"pid=%4d 32-bit=%d in_irq=%d policy=0x%08x backup_reason=0x%04x pre-cpu=%d target=%d util=%d util_est=%d uclamp=%d cpu_util=%lu cpu_util_est=%lu coef1_util=%lu coef1_util_est=%lu coef2_util=%lu coef2_util_est=%lu vip_prio=%d mask=0x%lx eff_softmask=0x%lx latency_sensitive=%d sync=%d runnable_boost=%d cpuctl=%d cpuset=%d nr_candidates=%d nr_vip=%d nr_mtk_vip=%d",
+#endif
 		__entry->pid,
 		__entry->compat_thread,
 		__entry->in_irq,
@@ -459,7 +476,13 @@ TRACE_EVENT(sched_select_task_rq,
 		__entry->runnable_boost,
 		__entry->cpuctl_grp_id,
 		__entry->cpuset_grp_id,
+#if !IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
 		__entry->nr_candidates)
+#else
+		__entry->nr_candidates,
+		__entry->nr_vip,
+		__entry->nr_mtk_vip)
+#endif
 );
 
 TRACE_EVENT(sched_effective_mask,
