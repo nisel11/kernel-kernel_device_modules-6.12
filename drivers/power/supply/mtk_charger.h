@@ -740,6 +740,10 @@ struct mtk_charger {
 	/* battery control (bc) */
 	bool bc_enable;
 	bool bc_disable_charging;
+
+	/*Battery info*/
+	unsigned long		manufacturing_date;
+	unsigned long		first_usage_date;
 };
 
 static inline int mtk_chg_alg_notify_call(struct mtk_charger *info,
