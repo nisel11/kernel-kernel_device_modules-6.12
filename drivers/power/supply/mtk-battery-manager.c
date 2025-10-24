@@ -1186,10 +1186,10 @@ static int bs_psy_get_property(struct power_supply *psy,
 
 		if (bm->gm1 != NULL)
 			if(!bm->gm1->bat_plug_out)
-				qmax += bm_update_psy_property(bm->gm1, QMAX_DESIGN);
+				qmax += bm_update_psy_property(bm->gm1, QMAX);
 		if (bm->gm2 != NULL)
 			if(!bm->gm2->bat_plug_out)
-				qmax += bm_update_psy_property(bm->gm2, QMAX_DESIGN);
+				qmax += bm_update_psy_property(bm->gm2, QMAX);
 
 		val->intval = qmax * 100;
 		ret = 0;
@@ -1198,10 +1198,10 @@ static int bs_psy_get_property(struct power_supply *psy,
 
 		if (bm->gm1 != NULL)
 			if(!bm->gm1->bat_plug_out)
-				qmax += bm_update_psy_property(bm->gm1, QMAX_DESIGN);
+				qmax += bm_update_psy_property(bm->gm1, QMAX);
 		if (bm->gm2 != NULL)
 			if(!bm->gm2->bat_plug_out)
-				qmax += bm_update_psy_property(bm->gm2, QMAX_DESIGN);
+				qmax += bm_update_psy_property(bm->gm2, QMAX);
 
 		val->intval = bs_data->bat_capacity * qmax;
 		break;
