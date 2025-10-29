@@ -167,14 +167,14 @@
 				<PINMUX_GPIO83__FUNC_MSDC1_CMD>;
 			input-enable;
 			drive-strength = <3>;
-			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
 			input-schmitt-enable = <1>;
 		};
 
 		pins_clk {
 		    input-enable;
 			pinmux = <PINMUX_GPIO82__FUNC_MSDC1_CLK>;
-			drive-strength = <3>;
+			drive-strength = <7>;
 			bias-pull-down = <MTK_PUPD_SET_R1R0_10>;
 			input-schmitt-enable = <1>;
 		};
