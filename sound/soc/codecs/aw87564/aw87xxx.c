@@ -1873,7 +1873,9 @@ static int aw87xxx_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	list_add(&aw87xxx->list, &g_aw87xxx_list);
 	mutex_unlock(&g_aw87xxx_mutex_lock);
 
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
 	audiopa_set_type(AUDIOPA_AW87564);
+#endif
 
 	AW_DEV_LOGI(aw87xxx->dev, "succeed, dev_index=[%d], g_aw87xxx_dev_cnt= [%d]",
 			aw87xxx->dev_index, g_aw87xxx_dev_cnt);

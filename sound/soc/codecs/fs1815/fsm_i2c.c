@@ -551,7 +551,9 @@ static int fsm_i2c_probe(struct i2c_client *i2c)
 			pr_err("firmware init failed:%d, retry later",ret);
 		}
 	}
-    audiopa_set_type(AUDIOPA_FS1815);
+#ifdef CONFIG_SND_SOC_BOGOTA_MULTI_AUDIO_PA
+	audiopa_set_type(AUDIOPA_FS1815);
+#endif
 	dev_info(&i2c->dev, "i2c probe completed");
 
 	return 0;
