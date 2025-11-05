@@ -113,6 +113,7 @@ struct mtk_dsi_driver_data {
 	const u32 dsi_cmdq_size;
 	const u32 dsi_cmdq_page;
 	bool dsi_irq_ts_debug;
+	bool support_frame_tb_v5;
 };
 
 struct mtk_dsi {
