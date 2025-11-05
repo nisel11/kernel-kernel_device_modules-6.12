@@ -146,11 +146,13 @@ define_mgk_ddk_ko(
         "//kernel_device_modules-{}/sound/soc/mediatek/common:mtk-sp-spk-amp".format(kernel_version),
         "//kernel_device_modules-{}/sound/soc/codecs/aw87564:snd-soc-aw87564".format(kernel_version),
         "//kernel_device_modules-{}/sound/soc/codecs/fs1815:snd-soc-fs1815".format(kernel_version),
+        "//kernel_device_modules-{}/sound/soc/codecs/aw87390:snd-soc-aw87390".format(kernel_version),
     ],
     header_deps = [
         "//kernel_device_modules-{}/sound/soc/mediatek/common:ddk_public_headers".format(kernel_version),
         "//kernel_device_modules-{}/sound/soc/codecs/aw87564:ddk_public_headers".format(kernel_version),
         "//kernel_device_modules-{}/sound/soc/codecs/fs1815:ddk_public_headers".format(kernel_version),
+        "//kernel_device_modules-{}/sound/soc/codecs/aw87390:ddk_public_headers".format(kernel_version),
     ],
 )
 

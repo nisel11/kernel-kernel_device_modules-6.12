@@ -17,6 +17,7 @@ config DEVICE_MODULES_SND_SOC_ALL_CODECS
 	imply SND_SOC_AW883XX
 	imply SND_SOC_AW87564
 	imply SND_SOC_FS1815
+	imply SND_SOC_AW87XXX
 	imply SND_SOC_TFA9874
         imply SND_SOC_RT5509
         imply SND_SOC_FS16XX
@@ -256,5 +257,17 @@ config SND_SOC_BOGOTA_MULTI_AUDIO_PA
 
 config BOGOTA_AUDIO
 	tristate "bogota on-board mic power supply 2.5v"
+
+config SND_SOC_AW87XXX_KERNEL
+	tristate "SoC Audio for awinic AW87XXX Smart K PA"
+	depends on I2C
+	help
+	  This option enables support for AW87XXX Smart K PA.
+
+config SND_SOC_AW87XXX
+	tristate "SoC Audio for awinic AW87XXX Smart K PA"
+	depends on I2C
+	help
+	  This option enables support for AW87XXX Smart K PA.
 
 endmenu
