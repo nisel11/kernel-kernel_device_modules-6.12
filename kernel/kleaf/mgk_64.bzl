@@ -2140,6 +2140,7 @@ def get_overlay_modules_list():
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/power/supply:moto_chg_tcmd".format(kernel_version))
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/sound/soc/codecs/aw87390:snd-soc-aw87390".format(kernel_version))
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/misc/mediatek/flashlight:flashlights-taipei-pwm".format(kernel_version))
+        mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/nfc/sec_nfc:sec_nfc")
 
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
