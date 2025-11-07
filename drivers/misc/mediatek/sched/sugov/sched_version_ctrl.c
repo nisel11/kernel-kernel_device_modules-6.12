@@ -140,7 +140,11 @@ int init_sched_ctrl(void)
 		_updown_migration_enable = false;
 		_skip_hiIRQ_enable = false;
 		_rt_aggre_preempt_enable = false;
+#if IS_ENABLED(CONFIG_SCHED_MOTO_UNFAIR)
+		_vip_enable = true;
+#else
 		_vip_enable = false;
+#endif
 		_post_init_util_ctl = false;
 		_percore_l3_bw = false;
 		_dpt_v2_enable = false;
