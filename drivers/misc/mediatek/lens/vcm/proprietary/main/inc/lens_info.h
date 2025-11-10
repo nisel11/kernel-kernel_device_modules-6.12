@@ -65,6 +65,10 @@
 #define AFDRV_GT9772AF "GT9772AF"
 #define AFDRV_GT9768AF "GT9768AF"
 
+//Begin: Add lens driver name for Bogota
+#define MOT_BOGOTA_AFDRV_GT9764 "MOT_BOGOTA_GT9764AF"
+//End
+
 #define CONVERT_CCU_TIMESTAMP 0x1000
 
 /* Structures */

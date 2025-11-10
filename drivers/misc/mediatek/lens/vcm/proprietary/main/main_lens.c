@@ -79,6 +79,10 @@ static struct stAF_OisPosInfo OisPosInfo;
 /* ------------------------- */
 
 static struct stAF_DrvList g_stAF_DrvList[MAX_NUM_OF_LENS] = {
+#if defined(CONFIG_MOT_BOGOTA_CAMERA_PROJECT)
+	{1, MOT_BOGOTA_AFDRV_GT9764, MOT_BOGOTA_GT9764_SetI2CClient, MOT_BOGOTA_GT9764_Ioctl,
+	MOT_BOGOTA_GT9764_Release, MOT_BOGOTA_GT9764_GetFileName, NULL},
+#else
 	{1, AFDRV_DW9718TAF, DW9718TAF_SetI2Cclient, DW9718TAF_Ioctl,
 	 DW9718TAF_Release, DW9718TAF_GetFileName, NULL},
 	{1, AFDRV_GT9772AF, GT9772AF_SetI2Cclient, GT9772AF_Ioctl,
@@ -133,6 +137,7 @@ static struct stAF_DrvList g_stAF_DrvList[MAX_NUM_OF_LENS] = {
 	 LC898229AF_Release, LC898229AF_GetFileName, NULL},
 	{1, AFDRV_WV511AAF, WV511AAF_SetI2Cclient, WV511AAF_Ioctl,
 	 WV511AAF_Release, WV511AAF_GetFileName, NULL},
+#endif
 };
 
 static struct stAF_DrvList *g_pstAF_CurDrv;

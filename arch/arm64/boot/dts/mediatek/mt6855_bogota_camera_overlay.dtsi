@@ -218,7 +218,7 @@
 			drive-strength = <3>;
 		};
 	};
-	/* camera_pins_cam0_af_0: vcamaf0@vcam0 {
+	camera_pins_cam0_af_0: vcamaf0@vcam0 {
 		pins_cmd_dat {
 			pinmux = <PINMUX_GPIO6__FUNC_GPIO6>;
 			slew-rate = <1>;
@@ -231,7 +231,7 @@
 			slew-rate = <1>;
 			output-high;
 		};
-	}; */
+	};
 	camera_pins_default: camdefault {
 	};
 	flash_en_pin0: flash_en_pin0 {
@@ -312,7 +312,7 @@
 	cam0_pin_rst = "gpio";
 	cam0_pin_vcama = "gpio";
 	cam0_pin_vcamd = "gpio";
-	//cam0_pin_vcamaf = "gpio";
+	cam0_pin_vcamaf = "gpio";
 	cam0_pin_vcamio = "regulator";
 
 	cam1_pin_mclk = "mclk";
@@ -422,7 +422,7 @@
 /* CAMERA TZ config end */
 
 /* CAMERA AF */
-/* &i2c2 {
+&i2c2 {
 	camera_main_af_mtk:camera_main_af@0c {
 		compatible = "mediatek,camera_main_af";
 		reg = <0x0C>;
@@ -434,7 +434,7 @@
 	pinctrl-0 = <&camera_pins_cam0_af_1>;
 	pinctrl-1 = <&camera_pins_cam0_af_0>;
 	status = "okay";
-}; */
+};
 
 //&i2c8 {
 //	camera_main_af_mtk:camera_main_af@72 {
