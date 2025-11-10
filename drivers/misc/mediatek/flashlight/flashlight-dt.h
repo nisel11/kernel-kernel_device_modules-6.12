@@ -25,4 +25,12 @@
 
 #define AW3644_DTNAME_I2C "mediatek,strobe_main"
 #define AW3644_DTNAME     "mediatek,flashlights_aw3644"
+
+#if defined(CONFIG_MOT_BOGOTA_CAMERA_PROJECT)
+#define BOGOTA_AW36515_DTNAME_I2C "mediatek,strobe_main"
+#define BOGOTA_AW36515_DTNAME     "mediatek,flashlights_aw36515"
+
+#define OCP81375_DTNAME_I2C "mediatek,strobe_main"
+#define OCP81375_DTNAME    "mediatek,flashlights_ocp81375"
+#endif
 #endif /* _FLASHLIGHT_DT_H */

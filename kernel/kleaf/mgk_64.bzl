@@ -2116,6 +2116,8 @@ def get_overlay_modules_list():
         mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/sound/soc/codecs/fs1815:snd-soc-fs1815".format(kernel_version))
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/nfc/nxpI2C:nxp_i2c")
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/nfc/nxpese:nxp_ese")
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/misc/mediatek/flashlight:flashlights-bogota-aw36515".format(kernel_version))
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/misc/mediatek/flashlight:flashlights-bogota-ocp81375".format(kernel_version))
 
     if "taipei" in DEFCONFIG_OVERLAYS:
         mgk_64_kleaf_modules.append("//motorola/kernel/modules/drivers/regulator/sm5109c:sm5109c")
