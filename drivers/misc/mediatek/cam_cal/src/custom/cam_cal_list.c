@@ -21,6 +21,7 @@ extern unsigned int mot_bogota_sc820_read_region(struct i2c_client *client, unsi
 
 struct stCAM_CAL_LIST_STRUCT g_camCalList[] = {
 #if defined(CONFIG_MOT_BOGOTA_CAMERA_PROJECT)
+	{MOT_BOGOTA_IMX882_SENSOR_ID, 0xA0, Common_read_region, MAX_EEPROM_SIZE_16K},
 	{MOT_BOGOTA_GC08A8_SENSOR_ID, 0x62, mot_bogota_gc08a8_read_region},  //otp
 	{MOT_BOGOTA_SC820_SENSOR_ID, 0x6C, mot_bogota_sc820_read_region},
 #else
