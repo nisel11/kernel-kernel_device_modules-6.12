@@ -20,6 +20,9 @@ define_mgk_ddk_ko(
         "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/lens/vcm/proprietary/main/common/lc898122af",
         "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/lens/vcm/proprietary/main/common/lc898212xdaf/inc",
         "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/lens/vcm/proprietary/main/common/mot_bogota_gt9764af",
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/lens/vcm/proprietary/main/common/mot_taipei_aw86006ois",
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/lens/vcm/proprietary/main/common/mot_taipei_aw86006af",
+        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/lens/vcm/proprietary/main/common/mot_taipei_aw86006vcmyovaaf",
     ],
     out = "mainaf.ko",
 )

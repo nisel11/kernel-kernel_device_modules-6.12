@@ -79,6 +79,10 @@ static struct stAF_OisPosInfo OisPosInfo;
 /* ------------------------- */
 
 static struct stAF_DrvList g_stAF_DrvList[MAX_NUM_OF_LENS] = {
+#if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
+	{1, MOT_TAIPEI_AFDRV_DW9714, MOT_TAIPEI_DW9714_SetI2Cclient, MOT_TAIPEI_DW9714_Ioctl,
+	MOT_TAIPEI_DW9714_Release, MOT_TAIPEI_DW9714_GetFileName, NULL},
+#else
 	{1, AFDRV_DW9718TAF, DW9718TAF_SetI2Cclient, DW9718TAF_Ioctl,
 	 DW9718TAF_Release, DW9718TAF_GetFileName, NULL},
 	{1, AFDRV_LC898212XDAF_F, LC898212XDAF_F_SetI2Cclient,
@@ -103,6 +107,7 @@ static struct stAF_DrvList g_stAF_DrvList[MAX_NUM_OF_LENS] = {
 	{1, AFDRV_BU64748AF, bu64748af_SetI2Cclient_Main2,
 	 bu64748af_Ioctl_Main2, bu64748af_Release_Main2,
 	 bu64748af_GetFileName_Main2, NULL},
+#endif
 };
 
 static struct stAF_DrvList *g_pstAF_CurDrv;

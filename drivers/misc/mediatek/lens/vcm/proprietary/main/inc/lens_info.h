@@ -64,7 +64,12 @@
 #define AFDRV_DW9718TAF "DW9718TAF"
 #define AFDRV_GT9772AF "GT9772AF"
 #define AFDRV_GT9768AF "GT9768AF"
-
+//Begin: Add lens driver name for Taipei
+#define MOT_TAIPEI_AFDRV_AW86006 "MOT_TAIPEI_AW86006AF"
+//End
+//Begin: Add lens driver name for Taipei
+#define MOT_TAIPEI_AFDRV_AW86006VCMYOVA "MOT_TAIPEI_AW86006VCMYOVAAF"
+//End
 //Begin: Add lens driver name for Bogota
 #define MOT_BOGOTA_AFDRV_GT9764 "MOT_BOGOTA_GT9764AF"
 //End

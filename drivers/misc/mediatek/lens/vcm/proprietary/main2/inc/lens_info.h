@@ -55,6 +55,9 @@
 #define AFDRV_MT9P017AF "MT9P017AF"
 #define AFDRV_OV8825AF "OV8825AF"
 #define AFDRV_WV511AAF "WV511AAF"
+//Begin: Add lens driver name for Taipei
+#define MOT_TAIPEI_AFDRV_DW9714 "MOT_TAIPEI_DW9714AF"
+//End
 
 /* Structures */
 struct stAF_MotorInfo {

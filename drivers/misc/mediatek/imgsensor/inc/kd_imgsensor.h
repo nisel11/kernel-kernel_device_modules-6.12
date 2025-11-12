@@ -123,6 +123,18 @@
 /************************************************************************
  *
  ************************************************************************/
+
+//+Begin: Add sensor id for TAIPEI
+#define MOT_TAIPEI_S5KJNS_SENSOR_ID                        0x38ee
+#define SENSOR_DRVNAME_MOT_TAIPEI_S5KJNS_MIPI_RAW          "mot_taipei_s5kjns_mipi_raw"
+#define MOT_TAIPEI_HI1634Q_SENSOR_ID                       0x1634
+#define SENSOR_DRVNAME_MOT_TAIPEI_HI1634Q_MIPI_RAW         "mot_taipei_hi1634q_mipi_raw"
+#define MOT_TAIPEI_S5K3P9SP04_SENSOR_ID                    0x3109
+#define SENSOR_DRVNAME_MOT_TAIPEI_S5K3P9SP04_MIPI_RAW      "mot_taipei_s5k3p9sp04_mipi_raw"
+#define MOT_TAIPEI_S5K4H7_SENSOR_ID                        0x487b
+#define SENSOR_DRVNAME_MOT_TAIPEI_S5K4H7_MIPI_RAW          "mot_taipei_s5k4h7_mipi_raw"
+//+end
+
   /* Bogota */
 #define MOT_BOGOTA_IMX882_SENSOR_ID                       0x8202
 #define SENSOR_DRVNAME_MOT_BOGOTA_IMX882_MIPI_RAW        "mot_bogota_imx882_mipi_raw"

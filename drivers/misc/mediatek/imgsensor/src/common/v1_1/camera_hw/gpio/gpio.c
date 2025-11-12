@@ -24,10 +24,16 @@ struct GPIO_PINCTRL gpio_pinctrl_list_cam[
 	//{"ldo_vcamaf_1"},
 	//{"ldo_vcamaf_0"},
 //#endif
+#if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
+	{"ldo_vcamaf_1"},
+	{"ldo_vcamaf_0"},
+#endif
 	{"ldo_vcamd_1"},
 	{"ldo_vcamd_0"},
+#if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
 	{"ldo_vcamd1_1"},
 	{"ldo_vcamd1_0"},
+#endif
 	{"ldo_vcamio_1"},
 	{"ldo_vcamio_0"},
 	{"avdd1_gpio_1"},

@@ -16,6 +16,9 @@ static const int regulator_voltage[] = {
 	REGULATOR_VOLTAGE_1500,
 	REGULATOR_VOLTAGE_1800,
 	REGULATOR_VOLTAGE_1804,
+#if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
+	REGULATOR_VOLTAGE_2200,
+#endif
 	REGULATOR_VOLTAGE_2500,
 	REGULATOR_VOLTAGE_2800,
 	REGULATOR_VOLTAGE_2900,
@@ -24,6 +27,7 @@ static const int regulator_voltage[] = {
 struct REGULATOR_CTRL regulator_control[REGULATOR_TYPE_MAX_NUM] = {
 	{"vcama"},
 	{"vcama1"},
+	{"vcamafvdd"},
 	{"vcamaf"},
 	{"vcamd"},
 	{"vcamd1"},

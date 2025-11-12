@@ -28,7 +28,7 @@ filegroup(
 ## ddk ko
 
 # driver list to included
-config_cust_kernel_imgsensor = "mot_bogota_imx882_mipi_raw mot_bogota_gc32e1_mipi_raw mot_bogota_gc08a8_mipi_raw mot_bogota_sc820_mipi_raw"
+config_cust_kernel_imgsensor = "mot_bogota_imx882_mipi_raw mot_bogota_gc32e1_mipi_raw mot_bogota_gc08a8_mipi_raw mot_bogota_sc820_mipi_raw mot_taipei_s5kjns_mipi_raw mot_taipei_hi1634q_mipi_raw mot_taipei_s5k3p9sp04_mipi_raw mot_taipei_s5k4h7_mipi_raw"
 
 # common v1_1 code version
 
