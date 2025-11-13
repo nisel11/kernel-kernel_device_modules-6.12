@@ -8,6 +8,7 @@
 #include <linux/kernel.h>
 
 typedef void (*record_opp)(const u8 opp);
+typedef void (*ap_ccf)(const bool enable);
 
 #if IS_ENABLED(CONFIG_MTK_MMDVFS)
 
@@ -40,16 +41,23 @@ int mmdvfs_tracing_mark_write(char *fmt, ...);
 
 int register_mmdvfs_notifier(struct notifier_block *nb);
 int unregister_mmdvfs_notifier(struct notifier_block *nb);
+int mmdvfs_set_ccf_enable_mutex(bool lock);
+int mmdvfs_set_vcp_cb_ready(bool enable);
 int mmdvfs_ap_ccf_enable(bool enable);
 int mmdvfs_set_force_step(int force_step);
 int mmdvfs_set_vote_step(int vote_step);
 void mmdvfs_debug_record_opp_set_fp(record_opp fp);
+void mmdvfs_ap_ccf_enable_notifier_set_fp(ap_ccf fp);
 void mtk_mmdvfs_aov_enable(bool enable);
 #else
 static inline int register_mmdvfs_notifier(struct notifier_block *nb)
 { return -EINVAL; }
 static inline int unregister_mmdvfs_notifier(struct notifier_block *nb)
 { return -EINVAL; }
+static inline int mmdvfs_set_ccf_enable_mutex(bool lock)
+{ return 0; }
+static inline int mmdvfs_set_vcp_cb_ready(bool enable)
+{ return 0; }
 static inline int mmdvfs_ap_ccf_enable(bool enable)
 { return 0; }
 static inline int mmdvfs_set_force_step(int new_force_step)
@@ -57,6 +65,7 @@ static inline int mmdvfs_set_force_step(int new_force_step)
 static inline int mmdvfs_set_vote_step(int new_force_step)
 { return 0; }
 static inline void mmdvfs_debug_record_opp_set_fp(record_opp fp) {}
+static inline void mmdvfs_ap_ccf_enable_notifier_set_fp(ap_ccf fp) {}
 static inline void mtk_mmdvfs_aov_enable(bool enable) {}
 #endif /* CONFIG_MTK_MMDVFS */
 
