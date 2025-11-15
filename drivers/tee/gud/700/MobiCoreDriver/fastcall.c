@@ -531,7 +531,11 @@ int fc_register_buffer(struct page **pages, struct tee_mmu *mmu, u64 tag)
 	if (xen_domain() && !protocol_is_fe()) {
 		phys_addr_t phys = virt_to_phys(mmu->pmd_table.addr);
 
-		ret = fc_register_shm(phys, mmu->nr_pages, &mmu->handle);
+		/* nr_pages is the number of pages in NWd.
+		 * we need the number of TEE pages.
+		 * So we apply the RATIO between NWd and SWd
+		 */
+		ret = fc_register_shm(phys, mmu->nr_pages * RATIO_PAGE_SIZE, &mmu->handle);
 	} else {
 		mmu->handle = virt_to_phys(mmu->pmd_table.addr);
 	}

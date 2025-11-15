@@ -362,6 +362,7 @@ static int irq_bh_worker(void *arg)
 				i++;
 			}
 		}
+		logging_run();
 	}
 	return 0;
 }
@@ -417,7 +418,8 @@ int tee_set_affinity(cpumask_t *old_affinity)
 		if (cpu < nr_cpu_ids)
 			cpumask_set_cpu(cpu, &mask);
 		else
-			mc_dev_warn("Invalid CPU %u (max=%d)\n", cpu, nr_cpu_ids);
+			mc_dev_warn("Invalid CPU %u (max=%d)\n",
+				    cpu, nr_cpu_ids);
 	}
 	l_ctx.stat_set_affinity++;
 	if (!cpumask_subset(&local_old_affinity, &mask)) {
@@ -1452,6 +1454,41 @@ int nq_start(void)
 	/* Init TEE workers wait queue */
 	init_waitqueue_head(&l_ctx.workers_wq);
 
+	/* Init TEE workers */
+	atomic_set(&l_ctx.workers_started, 0);
+	atomic_set(&l_ctx.workers_run, 0);
+	l_ctx.tee_scheduler_run = true;
+
+	for (cnt = 0; cnt < NQ_TEE_WORKER_THREADS; cnt++) {
+#ifdef MTK_ADAPTED
+		ret = snprintf(worker_name, 13, "tee_worker/%d", cnt);
+		if (ret < 0) {
+			mc_dev_info("Failed to create worker name");
+			return ret;
+		}
+#else
+		snprintf(worker_name, 13, "tee_worker/%d", cnt);
+#endif
+		l_ctx.tee_worker[cnt] = kthread_create(tee_worker,
+						       (void *)((uintptr_t)cnt),
+						       "%s", worker_name);
+
+		if (IS_ERR(l_ctx.tee_worker[cnt])) {
+			ret = PTR_ERR(l_ctx.tee_worker[cnt]);
+			mc_dev_err(ret, "tee_worker thread creation failed");
+			logging_stop();
+			return ret;
+		}
+	}
+
+	/* Ensure all tee_workers creation is complete to avoid a
+	 * potential timing issue in case SWd asking for threads
+	 * (in case of Embedded/StartOnBoot drivers
+	 * preventing tee_wait_infinite from blocking)
+	 */
+	for (cnt = 0; cnt < NQ_TEE_WORKER_THREADS; cnt++)
+		wake_up_process(l_ctx.tee_worker[cnt]);
+
 	/* Setup S-SIQ interrupt handler and its bottom-half */
 	l_ctx.irq_bh_thread_run = true;
 	l_ctx.irq_bh_thread = kthread_run(irq_bh_worker, NULL, "tee_irq_bh");
@@ -1518,41 +1555,6 @@ int nq_start(void)
 		logging_stop();
 		return ret;
 	}
-
-	/* Init TEE workers */
-	atomic_set(&l_ctx.workers_started, 0);
-	atomic_set(&l_ctx.workers_run, 0);
-	l_ctx.tee_scheduler_run = true;
-
-	for (cnt = 0; cnt < NQ_TEE_WORKER_THREADS; cnt++) {
-#ifdef MTK_ADAPTED
-		ret = snprintf(worker_name, 13, "tee_worker/%d", cnt);
-		if (ret < 0) {
-			mc_dev_info("Failed to create worker name");
-			return ret;
-		}
-#else
-		snprintf(worker_name, 13, "tee_worker/%d", cnt);
-#endif
-		l_ctx.tee_worker[cnt] = kthread_create(tee_worker,
-						       (void *)((uintptr_t)cnt),
-						       "%s", worker_name);
-
-		if (IS_ERR(l_ctx.tee_worker[cnt])) {
-			ret = PTR_ERR(l_ctx.tee_worker[cnt]);
-			mc_dev_err(ret, "tee_worker thread creation failed");
-			logging_stop();
-			return ret;
-		}
-	}
-
-	/* Ensure all tee_workers creation is complete to avoid a
-	 * potential timing issue in case SWd asking for threads
-	 * (in case of Embedded/StartOnBoot drivers
-	 * preventing tee_wait_infinite from blocking)
-	 */
-	for (cnt = 0; cnt < NQ_TEE_WORKER_THREADS; cnt++)
-		wake_up_process(l_ctx.tee_worker[cnt]);
 
 	/* Create worker debugfs entry */
 	debugfs_create_file("workers_counters", 0600, g_ctx.debug_dir, NULL,

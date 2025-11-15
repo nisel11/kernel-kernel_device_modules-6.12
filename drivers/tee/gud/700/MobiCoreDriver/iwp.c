@@ -801,8 +801,6 @@ int iwp_open_session(
 	if (ta_mmu) {
 		/* Convert UUID */
 		mcuuid_to_tee_uuid(uuid, &op_iws->target_uuid);
-		/* Make sure the daemon had time to at least start */
-		mc_admin_wait_for_daemon();
 	} else if (!protocol_is_fe()) {
 		obj = tee_object_select(uuid);
 		if (IS_ERR(obj))

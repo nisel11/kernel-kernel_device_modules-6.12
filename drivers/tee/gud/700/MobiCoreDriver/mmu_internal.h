@@ -39,6 +39,11 @@
  */
 #define PMD_ENTRIES_MAX	512
 
+/*
+ * Number of Kinibi pages per Linux page
+ */
+#define RATIO_PAGE_SIZE        (PAGE_SIZE / KINIBI_PAGE_SIZE)
+
 struct tee_deleter {
 	void *object;
 	void (*delete)(void *object);

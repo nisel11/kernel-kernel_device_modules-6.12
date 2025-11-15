@@ -70,8 +70,6 @@ MODULE_IMPORT_NS(DMA_BUF);
 #include "mmu_internal.h"
 #include "fastcall.h"
 
-#define RATIO_PAGE_SIZE		(PAGE_SIZE / KINIBI_PAGE_SIZE)
-
 #define PHYS_48BIT_MASK		(BIT(48) - 1)
 
 /* Common */
@@ -576,8 +574,8 @@ static struct tee_mmu *mmu_create_instance(struct mm_struct *mm,
 		}
 	}
 	/* Get an array to store page pointers */
-	all_pages = kmalloc_array(mmu->nr_pages, sizeof(struct page *),
-				  GFP_KERNEL);
+	all_pages = kvmalloc_array(mmu->nr_pages, sizeof(struct page *),
+				   GFP_KERNEL);
 	if (!all_pages) {
 		ret = -ENOMEM;
 		goto end;
@@ -805,7 +803,7 @@ end:
 #else
 			release_pages(all_pages, mmu->pages_locked);
 #endif
-			kfree(all_pages);
+			kvfree(all_pages);
 		}
 
 		mmu->pages_locked = 0;
@@ -833,7 +831,7 @@ static inline int tee_mmu_register_buffer(struct tee_mmu	*mmu,
 	all_pages = mmu->all_pages;
 	if (all_pages) {
 		ret = fc_register_buffer(all_pages, mmu, buf->tag);
-		kfree(all_pages);
+		kvfree(all_pages);
 		mmu->all_pages = NULL;
 		if (ret) {
 			tee_mmu_free(mmu);
