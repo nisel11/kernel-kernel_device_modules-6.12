@@ -23,6 +23,7 @@
 	moto_wlc: moto_wlc { };
 	flashlights_devonf: flashlights_devonf { };
 	flashlights_cancunf: flashlights_cancunf { };
+	flashlights_taipei: flashlights_taipei { };
 	swtp: swtp {
 		compatible = "mediatek, swtp-eint";
 	};

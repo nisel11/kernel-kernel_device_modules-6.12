@@ -483,8 +483,8 @@
 };
 /* CAMERA EEPROM end */
 /* CAMERA Flashlight */
-&flashlights_cancunf {
-	compatible = "mediatek,flashlights_cancunf_pwm";
+&flashlights_taipei {
+	compatible = "mediatek,flashlights_taipei_pwm";
 	pinctrl-names = "default",
 		"flashlight_gpio_high",
 		"flashlight_gpio_low",
