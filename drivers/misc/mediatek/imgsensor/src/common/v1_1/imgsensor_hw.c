@@ -19,12 +19,12 @@ char * const imgsensor_hw_pin_names[] = {
 	"rst",
 	"vcama",
 	"vcama1",
+#if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
 	"vcamafvdd",
+#endif
 	"vcamaf",
 	"vcamd",
-#if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
 	"vcamd1", //oisvdd
-#endif
 	"vcamio",
 	"vcama1_gpio",
 	"mipi_switch_en",
