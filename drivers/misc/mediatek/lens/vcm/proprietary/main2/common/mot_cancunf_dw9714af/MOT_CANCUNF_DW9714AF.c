@@ -157,7 +157,7 @@ static inline int setAFMacro(unsigned long a_u4Position)
 }
 
 /* ////////////////////////////////////////////////////////////// */
-long MOT_TAIPEI_DW9714AF_Ioctl(struct file *a_pstFile, unsigned int a_u4Command,
+long MOT_CANCUNF_DW9714AF_Ioctl(struct file *a_pstFile, unsigned int a_u4Command,
 		    unsigned long a_u4Param)
 {
 	long i4RetValue = 0;
@@ -194,7 +194,7 @@ long MOT_TAIPEI_DW9714AF_Ioctl(struct file *a_pstFile, unsigned int a_u4Command,
 /* 2.Shut down the device on last close. */
 /* 3.Only called once on last time. */
 /* Q1 : Try release multiple times. */
-int MOT_TAIPEI_DW9714AF_Release(struct inode *a_pstInode, struct file *a_pstFile)
+int MOT_CANCUNF_DW9714AF_Release(struct inode *a_pstInode, struct file *a_pstFile)
 {
 	LOG_INF("Start\n");
 
@@ -236,7 +236,7 @@ int MOT_TAIPEI_DW9714AF_Release(struct inode *a_pstInode, struct file *a_pstFile
 	return 0;
 }
 
-int MOT_TAIPEI_DW9714AF_PowerDown(struct i2c_client *pstAF_I2Cclient,
+int MOT_CANCUNF_DW9714AF_PowerDown(struct i2c_client *pstAF_I2Cclient,
 			int *pAF_Opened)
 {
 	g_pstAF_I2Cclient = pstAF_I2Cclient;
@@ -252,7 +252,7 @@ int MOT_TAIPEI_DW9714AF_PowerDown(struct i2c_client *pstAF_I2Cclient,
 	return 0;
 }
 
-int MOT_TAIPEI_DW9714AF_SetI2Cclient(struct i2c_client *pstAF_I2Cclient,
+int MOT_CANCUNF_DW9714AF_SetI2Cclient(struct i2c_client *pstAF_I2Cclient,
 			  spinlock_t *pAF_SpinLock, int *pAF_Opened)
 {
 	g_pstAF_I2Cclient = pstAF_I2Cclient;
@@ -264,7 +264,7 @@ int MOT_TAIPEI_DW9714AF_SetI2Cclient(struct i2c_client *pstAF_I2Cclient,
 	return 1;
 }
 
-int MOT_TAIPEI_DW9714AF_GetFileName(unsigned char *pFileName)
+int MOT_CANCUNF_DW9714AF_GetFileName(unsigned char *pFileName)
 {
 	#if SUPPORT_GETTING_LENS_FOLDER_NAME
 	char FilePath[256];

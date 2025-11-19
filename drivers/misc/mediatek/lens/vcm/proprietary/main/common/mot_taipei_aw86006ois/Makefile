@@ -1,1 +1,0 @@
-obj-y += MOT_TAIPEI_AW86006OIS.o

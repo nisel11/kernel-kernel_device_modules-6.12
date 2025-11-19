@@ -103,6 +103,7 @@ define_mgk_ddk_ko(
     ] + glob(v1_1_subdrvs_c),  # Build subdrivers
     ko_deps = [
         "//kernel_device_modules-{}/drivers/clk/mediatek:clk-common".format(kernel_version),
+        "//kernel_device_modules-{}/drivers/misc/mediatek/lens/vcm/proprietary/main:mainaf".format(kernel_version),
     ],
     header_deps = [
 	"//kernel_device_modules-{}/drivers/misc/mediatek/cam_cal:cam_cal_header".format(kernel_version),

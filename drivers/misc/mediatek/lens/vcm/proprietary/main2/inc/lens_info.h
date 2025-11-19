@@ -56,7 +56,7 @@
 #define AFDRV_OV8825AF "OV8825AF"
 #define AFDRV_WV511AAF "WV511AAF"
 //Begin: Add lens driver name for Taipei
-#define MOT_TAIPEI_AFDRV_DW9714 "MOT_TAIPEI_DW9714AF"
+#define MOT_CANCUNF_AFDRV_DW9714 "MOT_CANCUNF_DW9714AF"
 //End
 
 /* Structures */

@@ -15,6 +15,6 @@
 # Makefile for misc devices that really don't fit anywhere else.
 #
 
-obj-y += MOT_TAIPEI_DW9714AF.o
+obj-y += MOT_CANCUNF_DW9714AF.o
 
 

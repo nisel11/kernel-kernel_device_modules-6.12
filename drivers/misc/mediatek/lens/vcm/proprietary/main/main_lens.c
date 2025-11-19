@@ -93,8 +93,8 @@ static struct stAF_DrvList g_stAF_DrvList[MAX_NUM_OF_LENS] = {
 	{1, MOT_BOGOTA_AFDRV_GT9764, MOT_BOGOTA_GT9764_SetI2CClient, MOT_BOGOTA_GT9764_Ioctl,
 	MOT_BOGOTA_GT9764_Release, MOT_BOGOTA_GT9764_GetFileName, NULL},
 #elif defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
-	{1, MOT_TAIPEI_AFDRV_AW86006, MOT_TAIPEI_AW86006_SetI2Cclient, MOT_TAIPEI_AW86006_Ioctl,
-        MOT_TAIPEI_AW86006_Release, MOT_TAIPEI_AW86006_GetFileName, NULL},
+	{1, MOT_CANCUNF_AFDRV_AW86006, MOT_CANCUNF_AW86006_SetI2Cclient, MOT_CANCUNF_AW86006_Ioctl,
+        MOT_CANCUNF_AW86006_Release, MOT_CANCUNF_AW86006_GetFileName, NULL},
 #else
 	{1, AFDRV_DW9718TAF, DW9718TAF_SetI2Cclient, DW9718TAF_Ioctl,
 	 DW9718TAF_Release, DW9718TAF_GetFileName, NULL},
@@ -684,7 +684,7 @@ static int AF_i2c_probe(struct i2c_client *client)
 		return i4RetValue;
 	}
 #if defined(CONFIG_MOT_TAIPEI_CAMERA_PROJECT)
-	MOT_TAIPEI_AW86006_OIS_Init(g_pstAF_I2Cclient);
+	aw86006_ois_init(g_pstAF_I2Cclient);
 #endif
 	spin_lock_init(&g_AF_SpinLock);
 

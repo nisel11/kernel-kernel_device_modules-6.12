@@ -24,7 +24,8 @@
 #include <linux/string.h>
 #include <uapi/asm-generic/errno-base.h>
 #include "lens_info.h"
-#include "MOT_TAIPEI_AW86006OIS.h"
+#include "aw86006_ois.h"
+//#include "AW86006AF.h"
 
 #define SOC_OIS_I2C_ADDR		0x69
 
@@ -254,7 +255,7 @@ static inline int AW86006AF_GetVCMInfo(
 	return 0;
 }
 
-long MOT_TAIPEI_AW86006AF_Ioctl(struct file *a_pstFile, uint32_t a_u4Command,
+long MOT_CANCUNF_AW86006AF_Ioctl(struct file *a_pstFile, uint32_t a_u4Command,
 							unsigned long a_u4Param)
 {
 	long ret = 0;
@@ -295,29 +296,29 @@ long MOT_TAIPEI_AW86006AF_Ioctl(struct file *a_pstFile, uint32_t a_u4Command,
 		ret = gyro_offset_cali_run((struct motOISGOffsetResult *) a_u4Param);
 		break;
 	case OISIOC_G_GYRO_OFFSET_SET:
-		if (copy_from_user(pBuff, (void *)a_u4Param, _IOC_SIZE(a_u4Command)) == 0) {
-		    ret = gyro_offset_cali_set((struct motOISGOffsetResult *) pBuff);
+		if(0 == copy_from_user(pBuff, (void *)a_u4Param, _IOC_SIZE(a_u4Command))){
+			ret = gyro_offset_cali_set((struct motOISGOffsetResult *) pBuff);
 		} else {
-			AW_LOGI("OISIOC_G_GYRO_OFFSET_SET copy_from_user failed");
-			ret = -EFAULT;
+			AW_LOGE("OISIOC_G_GYRO_OFFSET_SET copy_from_user failed!\n");
+			ret = -EPERM;
 		}
 		break;
 	case OISIOC_G_HEA:
-		if (copy_from_user(pBuff, (void *)a_u4Param, _IOC_SIZE(a_u4Command)) == 0) {
-		    hea_test_runing = 1;
-		    ret = run_aw86006ois_drawcircle((motOISHeaParam *)pBuff);
-		    hea_test_runing = 0;
+		if(0 == copy_from_user(pBuff, (void *)a_u4Param, _IOC_SIZE(a_u4Command))){
+			hea_test_runing = 1;
+			ret = run_aw86006ois_drawcircle((motOISHeaParam *)pBuff);
+			hea_test_runing = 0;
 		} else {
-			AW_LOGI("OISIOC_G_HEA copy_from_user failed");
-			ret = -EFAULT;
+			AW_LOGE("OISIOC_G_HEA copy_from_user failed!\n");
+			ret = -EPERM;
 		}
 		break;
 	case OISIOC_T_OISMODE:
-		if (copy_from_user(pBuff, (void *)a_u4Param, _IOC_SIZE(a_u4Command)) == 0) {
-		    ret = aw86006_set_ois_mode( *((uint8_t *)pBuff));
+		if(0 == copy_from_user(pBuff, (void *)a_u4Param, _IOC_SIZE(a_u4Command))){
+			ret = aw86006_set_ois_mode( *((uint8_t *)pBuff));
 		} else {
-			AW_LOGI("OISIOC_T_OISMODE copy_from_user failed");
-			ret = -EFAULT;
+			AW_LOGE("OISIOC_G_HEA copy_from_user failed!\n");
+			ret = -EPERM;
 		}
 		break;
 	default:
@@ -337,7 +338,7 @@ long MOT_TAIPEI_AW86006AF_Ioctl(struct file *a_pstFile, uint32_t a_u4Command,
 /* 2.Shut down the device on last close. */
 /* 3.Only called once on last time. */
 /* Q1 : Try release multiple times. */
-int MOT_TAIPEI_AW86006AF_Release(struct inode *a_pstInode, struct file *a_pstFile)
+int MOT_CANCUNF_AW86006AF_Release(struct inode *a_pstInode, struct file *a_pstFile)
 {
 	AW_LOGI("Start");
 
@@ -361,7 +362,7 @@ int MOT_TAIPEI_AW86006AF_Release(struct inode *a_pstInode, struct file *a_pstFil
 	return 0;
 }
 
-int MOT_TAIPEI_AW86006AF_PowerDown(struct i2c_client *pstAF_I2Cclient, int *pAF_Opened)
+int MOT_CANCUNF_AW86006AF_PowerDown(struct i2c_client *pstAF_I2Cclient, int *pAF_Opened)
 {
 	AW_LOGI("Start");
 
@@ -382,7 +383,7 @@ int MOT_TAIPEI_AW86006AF_PowerDown(struct i2c_client *pstAF_I2Cclient, int *pAF_
 	return 0;
 }
 
-int MOT_TAIPEI_AW86006AF_SetI2Cclient(struct i2c_client *pstAF_I2Cclient,
+int MOT_CANCUNF_AW86006AF_SetI2Cclient(struct i2c_client *pstAF_I2Cclient,
 				spinlock_t *pAF_SpinLock, int *pAF_Opened)
 {
 	AW_LOGI("Start");
@@ -406,7 +407,7 @@ int MOT_TAIPEI_AW86006AF_SetI2Cclient(struct i2c_client *pstAF_I2Cclient,
 	return 1;
 }
 
-int MOT_TAIPEI_AW86006AF_GetFileName(uint8_t *pFileName)
+int MOT_CANCUNF_AW86006AF_GetFileName(uint8_t *pFileName)
 {
 	#if SUPPORT_GETTING_LENS_FOLDER_NAME
 	char FilePath[256];

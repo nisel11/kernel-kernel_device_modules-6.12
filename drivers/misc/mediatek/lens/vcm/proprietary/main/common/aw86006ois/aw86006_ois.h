@@ -1,5 +1,5 @@
-#ifndef MOT_TAIPEI_AW86006OIS_H
-#define MOT_TAIPEI_AW86006OIS_H
+#ifndef AW86006_OIS_H
+#define AW86006_OIS_H
 
 #include <linux/version.h>
 
