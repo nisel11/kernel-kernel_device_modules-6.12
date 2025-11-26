@@ -1131,13 +1131,13 @@ static int bs_psy_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CYCLE_COUNT: //sum(cycle * qmax) / sum(qmax)
 		if (bm->gm1 != NULL)
 			if(!bm->gm1->bat_plug_out) {
-				cycle += (bm->gm1->bat_cycle + 1) *
+				cycle += bm->gm1->bat_cycle *
 					bm_update_psy_property(bm->gm1, QMAX_DESIGN);
 				qmax += bm_update_psy_property(bm->gm1, QMAX_DESIGN);
 			}
 		if (bm->gm2 != NULL)
 			if(!bm->gm2->bat_plug_out) {
-				cycle += (bm->gm2->bat_cycle + 1) *
+				cycle += bm->gm2->bat_cycle *
 					bm_update_psy_property(bm->gm2, QMAX_DESIGN);
 				qmax += bm_update_psy_property(bm->gm2, QMAX_DESIGN);
 			}
