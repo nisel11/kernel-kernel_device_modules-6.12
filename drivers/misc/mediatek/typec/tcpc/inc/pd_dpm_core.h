@@ -211,11 +211,6 @@ extern bool mmi_dfp_notify_pe_startup(
 	struct pd_port *pd_port, struct svdm_svid_data *svid_data);
 #endif /* CONFIG_SUPPORT_MMI_ADAPTER */
 
-static inline int pd_dpm_check_vbus_valid(struct pd_port *pd_port)
-{
-	return tcpci_check_vbus_valid(pd_port->tcpc);
-}
-
 static inline int pd_dpm_sink_vbus(struct pd_port *pd_port, bool en)
 {
 	int mv = en ? TCPC_VBUS_SINK_5V : TCPC_VBUS_SINK_0V;
