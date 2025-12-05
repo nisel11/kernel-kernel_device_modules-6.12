@@ -304,6 +304,8 @@ static int charger_cooling_probe(struct platform_device *pdev)
 			i, master_charger_state_to_current_limit[i]);
 	}
 
+#ifdef CONFIG_MOTO_CHG_WT6670F_SUPPORT
+#ifdef CONFIG_MOTO_DISCRETE_CHARGE_PUMP_SUPPORT
 	charger_cdev->thermal_charger_pump_support = of_property_read_bool(np, "mmi,thermal-charger-pump-support");
 	if (charger_cdev->thermal_charger_pump_support) {
 		charger_cdev->q_chg_psy = power_supply_get_by_name("mmi_chrg_manager");
@@ -313,6 +315,8 @@ static int charger_cooling_probe(struct platform_device *pdev)
 		}
 	}
 	pr_info("%s: thermal-charger-pump-support = %d \n", __func__, charger_cdev->thermal_charger_pump_support);
+#endif // CONFIG_MOTO_DISCRETE_CHARGE_PUMP_SUPPORT
+#endif // CONFIG_MOTO_CHG_WT6670F_SUPPORT
 
 	ret = sysfs_create_group(kernel_kobj, &charger_cooler_attr_group);
 	if (ret) {

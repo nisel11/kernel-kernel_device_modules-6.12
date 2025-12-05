@@ -343,4 +343,10 @@ config MOTO_SUPPORT_MTK_LPD
 	help
 	  This is to enable MOTO supports of mtk lpd feature.
 
+config MOTO_DISCRETE_CHARGE_PUMP_SUPPORT
+	bool "Enable discrete charger pumpfor Moto"
+	default n
+	help
+	  This is to enable MOTO supports of charger pump.
+
 source "$(KCONFIG_EXT_PREFIX)drivers/power/supply/ufcs/Kconfig"
