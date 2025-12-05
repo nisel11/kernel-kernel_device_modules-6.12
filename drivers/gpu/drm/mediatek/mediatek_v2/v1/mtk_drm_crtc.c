@@ -6976,34 +6976,6 @@ static unsigned int overlap_to_bw(struct drm_crtc *crtc, unsigned int bw_base,
 	return bw;
 }
 
-/* to handle larb unbanlanced bw */
-static void update_bw_by_emi_hrt_ratio(struct drm_crtc *crtc,
-				unsigned int frame_weight,
-				struct mtk_drm_private *priv,
-				struct mtk_drm_lyeblob_ids *lyeblob_ids,
-				unsigned int *bw) {
-	unsigned int new_bw = 0;
-	unsigned int old_bw = *bw;
-	unsigned int larb_ratio = 20;
-	unsigned int bw_base = mtk_drm_primary_frame_bw(crtc);
-	unsigned int max_larb_bw = overlap_to_bw(crtc, bw_base, frame_weight, lyeblob_ids);
-
-	if (old_bw != max_larb_bw)
-		larb_ratio = (max_larb_bw * 2 - old_bw) * 10 / (old_bw - max_larb_bw);
-
-	if (10 <= larb_ratio && larb_ratio < 15)
-		new_bw = max_larb_bw * 100 / 70;
-	else if (15 <= larb_ratio && larb_ratio < 20)
-		new_bw = max_larb_bw * 100 / 65;
-	else if (20 <= larb_ratio)
-		new_bw = max_larb_bw * 100 / 60;
-
-	if (new_bw > old_bw) {
-		*bw = new_bw;
-		DDPMSG("%s, update bw from %d to %d\n", __func__, old_bw, new_bw);
-	}
-}
-
 void mtk_disp_set_module_hrt(struct mtk_drm_crtc *mtk_crtc, unsigned int bw_base,
 	struct cmdq_pkt *handle, enum mtk_ddp_io_cmd event)
 {
@@ -7077,11 +7049,6 @@ static void mtk_crtc_update_hrt_state(struct drm_crtc *crtc,
 		DDPPR_ERR("%s priv is null\n", __func__);
 		return;
 	}
-
-	// consider emi hrt ratio to avoid unbalanced throughput for emi channel
-	//update_bw_by_emi_hrt_ratio(priv, &bw);
-	if (priv->data->mmsys_id == MMSYS_MT6855 && lyeblob_ids)
-		update_bw_by_emi_hrt_ratio(crtc, frame_weight, priv, lyeblob_ids, &bw);
 
 	/* can't access backup slot since top clk off */
 	if (priv->power_state == false)
