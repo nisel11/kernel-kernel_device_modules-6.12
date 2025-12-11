@@ -744,6 +744,9 @@ struct mtk_charger {
 	/*Battery info*/
 	unsigned long		manufacturing_date;
 	unsigned long		first_usage_date;
+
+	bool fcnt_charge_support;
+	bool fcnt_schedule_chg;
 };
 
 static inline int mtk_chg_alg_notify_call(struct mtk_charger *info,
