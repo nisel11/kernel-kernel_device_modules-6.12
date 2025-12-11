@@ -69,6 +69,7 @@ enum adapter_event {
 	MTK_UFCS_ATTACH,
 	MTK_UFCS_FAIL,
 	MMI_PD30_VDM_VERIFY,
+	MMI_TYPEC_CID_STATE,
 };
 
 enum adapter_property {

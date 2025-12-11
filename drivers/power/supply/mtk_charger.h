@@ -500,6 +500,7 @@ struct mmi_params {
 	int			real_charger_type;
 	struct work_struct		notify_power_event_work;
 	struct mutex		power_info_lock;
+	bool			cid_state;
 };
 /*moto mmi Functionality end*/
 
