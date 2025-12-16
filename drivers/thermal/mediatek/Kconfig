@@ -134,4 +134,10 @@ config MTK_FAN_THERMAL
 	  This option depends on MTK_PWM which is
 	  MTK pwm driver.
 
+config MOTO_THERMAL_CHARGER_STATE_NUM
+	int "Set MOTO charger cooling state number"
+	default 9
+	help
+	  This is to set MOTO charger cooling state number.
+
 endif
