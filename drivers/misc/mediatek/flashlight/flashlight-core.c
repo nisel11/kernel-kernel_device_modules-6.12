@@ -1798,6 +1798,7 @@ static int fl_uninit(void)
 	return 0;
 }
 
+#ifdef CONFIG_MTK_FLASHLIGHT_PT
 static int fl_parse_dt(struct device *dev)
 {
 	struct device_node *np;
@@ -1819,6 +1820,7 @@ static int fl_parse_dt(struct device *dev)
 
 	return 0;
 }
+#endif
 
 static int flashlight_probe(struct platform_device *pdev)
 {
@@ -1929,7 +1931,9 @@ static int flashlight_probe(struct platform_device *pdev)
 		goto err_create_torch_device_file;
 	}
 
+#ifdef CONFIG_MTK_FLASHLIGHT_PT
 	fl_parse_dt(&pdev->dev);
+#endif
 
 	/* init flashlight */
 	fl_init();
