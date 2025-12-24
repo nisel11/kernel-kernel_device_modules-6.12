@@ -39,4 +39,10 @@ config SCHED_MOTO_UNFAIR
       This feature will allow the scheduler to maintain more detailed
       mvp scheduling.
 
+config MOTO_HIDDEN_SSID_MAX_NUM_16
+    tristate "moto hidden ssid max number set to 16"
+    default n
+    help
+      This feature will set hidden ssid max number as 16
+
 endmenu
