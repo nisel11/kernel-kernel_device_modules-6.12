@@ -243,15 +243,11 @@ static int is_skb_gro(struct sk_buff *skb)
 	else if (packet_type == IPV6_VERSION)
 		protocol = ipv6_hdr(skb)->nexthdr;
 
-	if (protocol == IPPROTO_TCP) {
+	/* TCP/UDP limited do GRO */
+	if (g_cur_dl_speed > 300000000LL) //>300Mbps
 		return 1;
-	} else if (protocol == IPPROTO_UDP) {
-		/* UDP always do GRO */
-		if (g_cur_dl_speed > 300000000LL) //>300Mbps
-			return 1;
-	}
-
-	return 0;
+	else
+		return 0;
 }
 
 static inline unsigned int napi_gro_list_flush(struct ccmni_instance *ccmni)
