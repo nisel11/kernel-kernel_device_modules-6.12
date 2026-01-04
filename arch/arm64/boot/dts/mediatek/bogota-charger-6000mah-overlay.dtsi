@@ -259,6 +259,7 @@
 
 &pd_adapter{
 	ita_min = <1000>;
+	adapter-name = "pd_adapter";
 };
 
 &pe5 {

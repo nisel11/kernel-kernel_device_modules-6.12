@@ -158,6 +158,11 @@ static int pd_tcp_notifier_call(struct notifier_block *nb,
 
 	dev_info(info->dev, "%s event = %lu, idx = %d\n", __func__, event, idx);
 
+	if (IS_ERR_OR_NULL(adapter)) {
+		dev_err(info->dev, "%s The adapter is not ready....\n", __func__);
+		return NOTIFY_DONE;
+	}
+
 	switch (event) {
 	case TCP_NOTIFY_PD_STATE:
 		dev_info(info->dev, "%s pd state = %d\n",
@@ -795,6 +800,23 @@ static int mtk_pd_adapter_probe(struct platform_device *pdev)
 	}
 	platform_set_drvdata(pdev, info);
 
+	ret = of_property_read_string(np, "adapter-name", &adapter_name);
+	if (ret < 0) {
+		dev_notice(info->dev,
+			   "%s read adapter-name property fail(%d)\n",
+			   __func__, ret);
+		adapter_name = "pd_adapter";
+	}
+	info->adapter = adapter_device_register(adapter_name, info->dev, info,
+						&adapter_ops, NULL);
+	if (IS_ERR(info->adapter)) {
+		ret = PTR_ERR(info->adapter);
+		dev_notice(info->dev, "%s get %s fail(%d)\n",
+				      __func__, adapter_name, ret);
+		goto out;
+	}
+	adapter_dev_set_drvdata(info->adapter, info);
+
 	for (i = 0; i < info->nr_port; i++) {
 		ret = snprintf(name, sizeof(name), "type_c_port%d", i);
 		if (ret >= sizeof(name))
@@ -823,23 +845,6 @@ static int mtk_pd_adapter_probe(struct platform_device *pdev)
 	}
 
 	info->force_cv = of_property_read_bool(np, "force-cv");
-
-	ret = of_property_read_string(np, "adapter-name", &adapter_name);
-	if (ret < 0) {
-		dev_notice(info->dev,
-			   "%s read adapter-name property fail(%d)\n",
-			   __func__, ret);
-		adapter_name = "pd_adapter";
-	}
-	info->adapter = adapter_device_register(adapter_name, info->dev, info,
-						&adapter_ops, NULL);
-	if (IS_ERR(info->adapter)) {
-		ret = PTR_ERR(info->adapter);
-		dev_notice(info->dev, "%s get %s fail(%d)\n",
-				      __func__, adapter_name, ret);
-		goto out;
-	}
-	adapter_dev_set_drvdata(info->adapter, info);
 
 	dev_info(info->dev, "%s successfully\n", __func__);
 
