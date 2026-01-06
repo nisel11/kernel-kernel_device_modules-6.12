@@ -1076,7 +1076,11 @@ static int bm_update_psy_property(struct mtk_battery *gm, enum bm_psy_prop prop)
 		ret_val = gm->tbat_precise;
 		break;
 	case QMAX_DESIGN:
+#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
+		ret_val = gm->fg_cust_data.mmi_typical_capacity * 10;
+#else
 		ret_val = gm->fg_table_cust_data.fg_profile[0].q_max * 10;
+#endif
 		break;
 	case QMAX:
 		ret_val = gm->daemon_data.qmxa_t_0ma;

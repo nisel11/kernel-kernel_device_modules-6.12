@@ -349,4 +349,11 @@ config MOTO_DISCRETE_CHARGE_PUMP_SUPPORT
 	help
 	  This is to enable MOTO supports of charger pump.
 
+config BATTERY_TYPICAL_CAPACITY_SUPPORT
+	bool "support show the typical value of battery capacity"
+	default y
+	help
+	  This is to enable MOTO supports of
+	  showing the typical value of battery capacity.
+
 source "$(KCONFIG_EXT_PREFIX)drivers/power/supply/ufcs/Kconfig"

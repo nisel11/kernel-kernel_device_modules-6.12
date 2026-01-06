@@ -497,6 +497,9 @@ struct fuel_gauge_custom_data {
 	int q_max_L_current;
 	int q_max_H_current;
 	int q_max_sys_voltage;
+#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
+	int mmi_typical_capacity;
+#endif
 
 	int pseudo1_en;
 	int pseudo100_en;

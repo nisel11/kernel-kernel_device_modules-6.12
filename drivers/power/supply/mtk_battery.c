@@ -2357,6 +2357,12 @@ void fg_custom_init_from_dts(struct platform_device *dev,
 	fg_read_dts_val(gm, np, "TEMPERATURE_TB1",
 		&(fg_table_cust_data->temperature_tb1), 1);
 
+#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
+	/* Typical values of battery capacity */
+	fg_read_dts_val(gm, np, "mmi-typical-capacity",
+		&(fg_cust_data->mmi_typical_capacity), 1);
+#endif
+
 	for (i = 0; i < MAX_TABLE; i++) {
 		struct fuelgauge_profile_struct *p;
 

@@ -364,6 +364,7 @@
 	curr-measure-20a = <(0)>;
 	unit-multiple = <(1)>;
 	charge-pseudo-full-level = <9000>;
+	mmi-typical-capacity = <5200>;
 
 	/* battery prop */
 	g-temperature = <(50) (25) (10) (0) (-10) (-25) (-30) (-35) (-40) (-45)>;

@@ -354,6 +354,7 @@
 	vir-oldocv-diff-emb-lt = <3000>; /*0.1mv*/
 	curr-measure-20a = <(0)>;
 	unit-multiple = <(1)>;
+	mmi-typical-capacity = <6000>;
 
 	/* battery prop */
 	g-temperature = <(50) (25) (10) (0) (-10) (-25) (-30) (-35) (-40) (-45)>;
