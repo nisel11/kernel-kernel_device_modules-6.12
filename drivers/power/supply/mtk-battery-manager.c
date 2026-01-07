@@ -1076,11 +1076,7 @@ static int bm_update_psy_property(struct mtk_battery *gm, enum bm_psy_prop prop)
 		ret_val = gm->tbat_precise;
 		break;
 	case QMAX_DESIGN:
-#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
-		ret_val = gm->fg_cust_data.mmi_typical_capacity * 10;
-#else
 		ret_val = gm->fg_table_cust_data.fg_profile[0].q_max * 10;
-#endif
 		break;
 	case QMAX:
 		ret_val = gm->daemon_data.qmxa_t_0ma;
@@ -1281,12 +1277,21 @@ static int bs_psy_get_property(struct power_supply *psy,
 			break;
 		}
 
+#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
+		if (bm->gm1 != NULL)
+			if(!bm->gm1->bat_plug_out)
+				qmax += bm->gm1->mmi_typical_capacity * 10;
+		if (bm->gm2 != NULL)
+			if(!bm->gm2->bat_plug_out)
+				qmax += bm->gm2->mmi_typical_capacity * 10;
+#else
 		if (bm->gm1 != NULL)
 			if(!bm->gm1->bat_plug_out)
 				qmax += bm_update_psy_property(bm->gm1, QMAX_DESIGN);
 		if (bm->gm2 != NULL)
 			if(!bm->gm2->bat_plug_out)
 				qmax += bm_update_psy_property(bm->gm2, QMAX_DESIGN);
+#endif
 
 		q_max_uah = qmax * 100;
 		if (q_max_uah <= 100000) {

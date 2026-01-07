@@ -497,9 +497,6 @@ struct fuel_gauge_custom_data {
 	int q_max_L_current;
 	int q_max_H_current;
 	int q_max_sys_voltage;
-#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
-	int mmi_typical_capacity;
-#endif
 
 	int pseudo1_en;
 	int pseudo100_en;
@@ -1203,6 +1200,11 @@ struct mtk_battery {
 	/*battery full*/
 	bool is_force_full;
 	int charge_power_sel;
+
+#ifdef CONFIG_BATTERY_TYPICAL_CAPACITY_SUPPORT
+	/*battery typical capacity*/
+	int mmi_typical_capacity;
+#endif
 
 	/*battery status*/
 	int vbat0_flag;
