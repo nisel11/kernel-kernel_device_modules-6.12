@@ -511,6 +511,38 @@ static void suspend_show_detailed_wakeup_reason
 {
 }
 
+static int extract_subsys_name(const char *input, char *out, size_t out_size)
+{
+	const char *first, *second, *third;
+	size_t len;
+
+	if (!input || !out || out_size == 0)
+		return -EINVAL;
+
+	first = strchr(input, '_');
+	if (!first)
+		return -ENODATA;
+
+	second = strchr(first + 1, '_');
+	if (!second)
+		return -ENODATA;
+
+	third = strchr(second + 1, '_');
+	if (!third)
+		return -ENODATA;
+
+	len = third - first - 1;
+	if (len == 0)
+		return -ENODATA;
+
+	if (len >= out_size)
+		return -EOVERFLOW;
+
+	strscpy(out, first + 1, out_size);
+
+	return 0;
+}
+
 static int lpm_show_message(int type, const char *prefix, void *data)
 {
 	struct lpm_spm_wake_status *wakesrc = log_help.wakesrc;
@@ -677,6 +709,11 @@ static int lpm_show_message(int type, const char *prefix, void *data)
 						strlen(wakesrc_str[i]));
 
 				wr = WR_WAKE_SRC;
+				char wake_source[32];
+				if (extract_subsys_name(wakesrc_str[i], wake_source, sizeof(wake_source)) == 0) {
+					set_wakeup_source(wake_source);
+					set_wakeup_index(i);
+				}
 			}
 		}
 		WARN_ON(strlen(buf) >= LOG_BUF_SIZE);
@@ -737,6 +774,8 @@ static int lpm_show_message(int type, const char *prefix, void *data)
 		if (type == LPM_ISSUER_SUSPEND && lpm_spm_base) {
 			/* calculate 26M off percentage in suspend period */
 			if (wakesrc->timer_out != 0) {
+				set_26M_off_time(PCM_TICK_TO_SEC(plat_mmio_read(SPM_BK_VTCXO_DUR)));
+				set_AP_sleep_time(PCM_TICK_TO_SEC(wakesrc->timer_out));
 				spm_26M_off_pct =
 					(100 * plat_mmio_read(SPM_BK_VTCXO_DUR))
 							/ wakesrc->timer_out;

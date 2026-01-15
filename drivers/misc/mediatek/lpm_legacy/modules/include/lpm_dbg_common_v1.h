@@ -124,4 +124,13 @@ int spm_common_dbg_dump(void);
 int lpm_dbg_pm_init(void);
 void lpm_dbg_pm_exit(void);
 
+void set_apss_time(u32 time);
+void set_26M_Off_time(u32 time);
+void set_wakesrc_irq(int wake_irq);
+void set_wakesrc_name(char *wakeup_name);
+
+u32 get_sys_lpm_sleep_time(int index);
+u32 get_wakeup_R12_index(void);
+char *get_wakeup_R12_source(void);
+
 #endif /* __MTK_DBG_COMMON_H__ */

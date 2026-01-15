@@ -213,4 +213,9 @@ int spm_common_dbg_dump(void);
 extern void gpio_dump_regs(void);
 #endif
 
+void set_AP_sleep_time(u32 time);
+void set_26M_off_time(u32 time);
+void set_wakeup_index(u32 index);
+void set_wakeup_source(char *source);
+
 #endif /* __MTK_DBG_COMMON_H__ */

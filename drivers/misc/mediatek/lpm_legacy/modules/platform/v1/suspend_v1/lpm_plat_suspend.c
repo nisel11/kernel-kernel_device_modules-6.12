@@ -29,7 +29,6 @@
 #include <linux/hrtimer.h>
 #include <linux/ktime.h>
 
-
 #include <lpm.h>
 #include <lpm_module.h>
 #include <lpm_call.h>
@@ -105,7 +104,88 @@ static void get_md_sleep_time(struct md_sleep_status *md_data)
 		return;
 	}
 }
+
+#define WAKE_NAME_SIZE 32
+enum sub_system_type {
+        APSS = 0,
+        SYS_26M_OFF,
+        MODEM_MD,
+        MODEM_2G,
+        MODEM_3G,
+        MODEM_4G,
+        MODEM_5G_FR1,
+        SUB_SYSTEM_MAX
+};
+
+u32 lpm_sleep_time[SUB_SYSTEM_MAX] = {0};
+char wakesrc_name[WAKE_NAME_SIZE] = "";
+char R12_name[WAKE_NAME_SIZE] = "";
+int irq;
+
+void set_apss_time(u32 time)
+{
+        lpm_sleep_time[APSS] = time;
+}
+EXPORT_SYMBOL(set_apss_time);
+
+void set_26M_Off_time(u32 time)
+{
+        lpm_sleep_time[SYS_26M_OFF] = time;
+        pr_info("%s: 26M time %d \n", __func__, lpm_sleep_time[SYS_26M_OFF]);
+}
+EXPORT_SYMBOL(set_26M_Off_time);
+
+void set_wakesrc_name(char *wakeup_name) {
+        if (wakeup_name != NULL) snprintf(wakesrc_name, WAKE_NAME_SIZE, "%s", wakeup_name);
+        pr_info("%s: %s \n", __func__, wakesrc_name);
+}
+EXPORT_SYMBOL(set_wakesrc_name);
+
+void set_wakesrc_irq(int wake_irq) {
+        irq = wake_irq;
+        pr_info("%s: %d \n", __func__, irq);
+}
+EXPORT_SYMBOL(set_wakesrc_irq);
+
+void get_wakesrc_info (char *wakeup_name, int size, int *wake_irq) {
+        if (wakeup_name != NULL) {
+               snprintf(wakeup_name, size, "%s", wakesrc_name);
+               wakesrc_name[0] = '\0';
+        }
+        *wake_irq = irq;
+        irq = 0;
+        pr_info("%s: irq:%d wakeup name: %s \n", __func__, *wake_irq, wakeup_name);
+}
+
+u32 get_wakeup_R12_index(void) {
+        int r12 = irq;
+        irq = 0;
+        pr_info("%s: irq:%d \n", __func__, r12);
+        return r12;
+}
+EXPORT_SYMBOL(get_wakeup_R12_index);
+
+char *get_wakeup_R12_source(void) {
+        pr_info("%s: wakeup name: %s \n", __func__, wakesrc_name);
+        snprintf(R12_name, WAKE_NAME_SIZE, "%s", wakesrc_name);
+        wakesrc_name[0] = '\0';
+        return R12_name;
+}
+EXPORT_SYMBOL(get_wakeup_R12_source);
+
+u32 get_sys_lpm_sleep_time(int index)
+{
+        u32 time;
+	if (index >= SUB_SYSTEM_MAX)
+		return 0;
+
+	time = lpm_sleep_time[index];
+	lpm_sleep_time[index] = 0;
+	return time;
+}
+EXPORT_SYMBOL(get_sys_lpm_sleep_time);
 #endif
+
 #if IS_ENABLED(CONFIG_MTK_ECCCI_DRIVER)
 static int is_md_sleep_info_valid(struct md_sleep_status *md_data)
 {
@@ -123,6 +203,33 @@ static int is_md_sleep_info_valid(struct md_sleep_status *md_data)
 	return 1;
 }
 
+void reset_md_sleep_info (void) {
+        int i;
+        for (i = MODEM_MD; i < SUB_SYSTEM_MAX; i++) {
+           lpm_sleep_time[i] = 0;
+        }
+}
+
+void record_md_sleep_info(void) {
+        if (!is_md_sleep_info_valid(&before_md_sleep_status)
+		|| !is_md_sleep_info_valid(&after_md_sleep_status)) {
+		pr_info("[name:spm&][SPM] MD sleep info. is not valid");
+		reset_md_sleep_info();
+		return;
+	}
+
+        lpm_sleep_time[MODEM_MD] = (after_md_sleep_status.md_sleep_time -
+				before_md_sleep_status.md_sleep_time) / 1000000;
+	lpm_sleep_time[MODEM_2G] = (after_md_sleep_status.gsm_sleep_time -
+				before_md_sleep_status.gsm_sleep_time) / 1000000;
+	lpm_sleep_time[MODEM_3G] = (after_md_sleep_status.wcdma_sleep_time -
+				before_md_sleep_status.wcdma_sleep_time) / 1000000;
+	lpm_sleep_time[MODEM_4G] = (after_md_sleep_status.lte_sleep_time -
+				before_md_sleep_status.lte_sleep_time) / 1000000;
+	lpm_sleep_time[MODEM_5G_FR1] = (after_md_sleep_status.nr_sleep_time -
+				before_md_sleep_status.nr_sleep_time) / 1000000;
+}
+
 static void log_md_sleep_info(void)
 {
 
@@ -133,12 +240,14 @@ static void log_md_sleep_info(void)
 	if (!is_md_sleep_info_valid(&before_md_sleep_status)
 		|| !is_md_sleep_info_valid(&after_md_sleep_status)) {
 		pr_info("[name:spm&][SPM] MD sleep info. is not valid");
+		reset_md_sleep_info();
 		return;
 	}
 
 	if (GET_RECORD_CNT1(after_md_sleep_status.guard_sleep_cnt1)
 		== GET_RECORD_CNT1(before_md_sleep_status.guard_sleep_cnt1)) {
 		pr_info("[name:spm&][SPM] MD sleep info. is not updated");
+		reset_md_sleep_info();
 		return;
 	}
 
@@ -173,9 +282,17 @@ static void log_md_sleep_info(void)
 			(after_md_sleep_status.nr_sleep_time -
 				before_md_sleep_status.nr_sleep_time) % 10000000 / 1000);
 
+		record_md_sleep_info();
+
 		WARN_ON(strlen(log_buf) >= LOG_BUF_SIZE);
 		pr_info("[name:spm&][SPM] %s", log_buf);
 	}
+	pr_debug("[name:spm&][SPM] modem sleep time: MD/2G/3G/4G/5G_FR1 = %d/%d/%d/%d/%d",
+	                    lpm_sleep_time[MODEM_MD],
+	                    lpm_sleep_time[MODEM_2G],
+	                    lpm_sleep_time[MODEM_3G],
+	                    lpm_sleep_time[MODEM_4G],
+	                    lpm_sleep_time[MODEM_5G_FR1]);
 }
 #endif
 

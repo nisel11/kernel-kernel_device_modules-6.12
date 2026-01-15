@@ -33,4 +33,7 @@ struct lpm_logger_mbrain_dbg_ops *get_lpm_logger_mbrain_dbg_ops(void);
 int register_lpm_logger_mbrain_dbg_ops(struct lpm_logger_mbrain_dbg_ops *ops);
 void unregister_lpm_logger_mbrain_dbg_ops(void);
 
+u32 get_sys_lpm_sleep_time(int index);
+u32 get_wakeup_R12_index(void);
+char *get_wakeup_R12_source(void);
 #endif

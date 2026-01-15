@@ -615,6 +615,18 @@ int lpm_logger_timer_debugfs_init(void)
 	return 0;
 }
 
+#define AP_SLEEP_TIME_IDX	0
+#define SPM26M_SLEEP_TIME_IDX	1
+#define MD_SLEEP_TIME_IDX	2
+#define MD2G_SLEEP_TIME_IDX	3
+#define MD3G_SLEEP_TIME_IDX	4
+#define MD4G_SLEEP_TIME_IDX	5
+#define MD5G_FR_SLEEP_TIME_IDX	6
+#define SLEEP_RECORD_MAX	7
+static u32 lpm_slp_duration[SLEEP_RECORD_MAX];
+static int r12_index;
+static char r12_wakeup_source[32];
+
 #if IS_ENABLED(CONFIG_MTK_ECCCI_DRIVER)
 u32 *md_share_mem;
 struct md_sleep_status before_md_sleep_status;
@@ -720,6 +732,11 @@ void log_md_sleep_info(void)
 	}
 
 	if (after_md_sleep_status.sleep_time >= before_md_sleep_status.sleep_time) {
+		lpm_slp_duration[MD_SLEEP_TIME_IDX] = (after_md_sleep_status.md_sleep_time - before_md_sleep_status.md_sleep_time) / 1000000;
+		lpm_slp_duration[MD2G_SLEEP_TIME_IDX] = (after_md_sleep_status.gsm_sleep_time - before_md_sleep_status.gsm_sleep_time) / 1000000;
+		lpm_slp_duration[MD3G_SLEEP_TIME_IDX] = (after_md_sleep_status.wcdma_sleep_time - before_md_sleep_status.wcdma_sleep_time) / 1000000;
+		lpm_slp_duration[MD4G_SLEEP_TIME_IDX] = (after_md_sleep_status.lte_sleep_time - before_md_sleep_status.lte_sleep_time) / 1000000;
+		lpm_slp_duration[MD5G_FR_SLEEP_TIME_IDX] = (after_md_sleep_status.nr_sleep_time - before_md_sleep_status.nr_sleep_time) / 1000000;
 		pr_info("[name:spm&][SPM] md_slp_duration = %llu (32k)\n",
 			after_md_sleep_status.sleep_time - before_md_sleep_status.sleep_time);
 
@@ -756,6 +773,55 @@ void log_md_sleep_info(void)
 }
 EXPORT_SYMBOL(log_md_sleep_info);
 #endif
+
+void set_wakeup_index(u32 index)
+{
+	r12_index = index;
+}
+EXPORT_SYMBOL(set_wakeup_index);
+
+void set_wakeup_source(char *source)
+{
+	memset(r12_wakeup_source, 0, sizeof(r12_wakeup_source));
+	snprintf(r12_wakeup_source, sizeof(r12_wakeup_source), "%s", source);
+}
+EXPORT_SYMBOL(set_wakeup_source);
+
+void set_26M_off_time(u32 time)
+{
+	lpm_slp_duration[SPM26M_SLEEP_TIME_IDX] = time;
+}
+EXPORT_SYMBOL(set_26M_off_time);
+
+void set_AP_sleep_time(u32 time)
+{
+	lpm_slp_duration[AP_SLEEP_TIME_IDX] = time;
+}
+EXPORT_SYMBOL(set_AP_sleep_time);
+
+u32 get_sys_lpm_sleep_time(int index)
+{
+	if (index >= SLEEP_RECORD_MAX)
+		return 0;
+
+	u32 time = lpm_slp_duration[index];
+	lpm_slp_duration[index] = 0;
+	return time;
+}
+EXPORT_SYMBOL(get_sys_lpm_sleep_time);
+
+u32 get_wakeup_R12_index(void)
+{
+	return r12_index;
+}
+EXPORT_SYMBOL(get_wakeup_R12_index);
+
+char *get_wakeup_R12_source(void)
+{
+	return r12_wakeup_source;
+}
+EXPORT_SYMBOL(get_wakeup_R12_source);
+
 static int lpm_dbg_logger_event(struct notifier_block *notifier,
 			unsigned long pm_event, void *unused)
 {
