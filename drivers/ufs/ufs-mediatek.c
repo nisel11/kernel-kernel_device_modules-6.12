@@ -50,6 +50,10 @@
 #include "ufshcd-moto-crypto.h"
 #endif
 
+#ifdef CONFIG_UFS_LONGSYS_RT_CP_TIMEOUT
+#include <trace/hooks/ufshcd.h>
+#endif
+
 /* Power Throttling */
 #if IS_ENABLED(CONFIG_MTK_LOW_BATTERY_POWER_THROTTLING)
 #include <mtk_low_battery_throttling.h>
@@ -540,6 +544,18 @@ static void ufs_mtk_dbg_sel_mphy(struct ufs_hba *hba)
 	writel(0x07321300, host->mphy_base + 0x04);
 	writel(0x00000002, host->mphy_base + 0x08);
 }
+
+#ifdef CONFIG_UFS_LONGSYS_RT_CP_TIMEOUT
+static void ufs_longsys_demote_rt_priority_hook(void *data, struct ufs_hba *hba,struct request *rq, struct ufshcd_lrb *lrbp, int *ret)
+{
+	unsigned int ioprio_class = IOPRIO_PRIO_CLASS(req_get_ioprio(rq));
+	struct ufs_dev_info *dev_info = &hba->dev_info;
+
+	if (ioprio_class == IOPRIO_CLASS_RT && dev_info->wmanufacturerid == UFS_VENDOR_LONGSYS)
+		rq->ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
+
+}
+#endif
 
 static void ufs_mtk_dbg_sel_ufshci(struct ufs_hba *hba)
 {
@@ -3374,6 +3390,13 @@ static const struct ufs_hba_variant_ops ufs_hba_mtk_vops = {
 #endif
 };
 
+#ifdef CONFIG_UFS_LONGSYS_RT_CP_TIMEOUT
+static void ufs_longsys_register_hooks(void)
+{
+	register_trace_android_vh_ufs_prepare_command(ufs_longsys_demote_rt_priority_hook, NULL);
+}
+#endif
+
 /**
  * ufs_mtk_probe - probe routine of the driver
  * @pdev: pointer to Platform device handle
@@ -3459,6 +3482,10 @@ skip_phy:
 	 * entering LPM.
 	 */
 	ufs_mtk_dev_vreg_set_lpm(hba, false);
+#ifdef CONFIG_UFS_LONGSYS_RT_CP_TIMEOUT
+	/* Register hook for Longsys feature */
+	ufs_longsys_register_hooks();
+#endif
 
 out:
 	of_node_put(phy_node);
