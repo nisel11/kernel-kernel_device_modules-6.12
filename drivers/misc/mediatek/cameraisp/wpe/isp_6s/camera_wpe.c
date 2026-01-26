@@ -167,7 +167,7 @@ unsigned int ver;
 #define LOG_VRB(format, args...) \
 pr_debug(MyTag "[%s] " format, __func__, ##args)
 
-#define WPE_DEBUG
+//#define WPE_DEBUG
 #ifdef WPE_DEBUG
 #define LOG_DBG(format, args...) \
 pr_info(MyTag "[%s] " format, __func__, ##args)
@@ -175,8 +175,13 @@ pr_info(MyTag "[%s] " format, __func__, ##args)
 #define LOG_DBG(format, args...)
 #endif
 
+//#define WPE_INFO
+#ifdef WPE_INFO
 #define LOG_INF(format, args...) \
 pr_info(MyTag "[%s] " format, __func__, ##args)
+#else
+#define LOG_INF(format, args...)
+#endif
 #define LOG_NOTICE(format, args...) \
 pr_notice(MyTag "[%s] " format, __func__, ##args)
 #define LOG_WRN(format, args...) \

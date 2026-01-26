@@ -162,7 +162,7 @@ int get_cnt;
 #define LOG_VRB(format, args...) \
 pr_debug(MyTag "[%s] " format, __func__, ##args)
 
-#define DIP_DEBUG
+//#define DIP_DEBUG
 #ifdef DIP_DEBUG
 #define LOG_DBG(format, args...) \
 pr_info(MyTag "[%s] " format, __func__, ##args)
@@ -170,8 +170,13 @@ pr_info(MyTag "[%s] " format, __func__, ##args)
 #define LOG_DBG(format, args...)
 #endif
 
+//#define DIP_INFO
+#ifdef DIP_INFO
 #define LOG_INF(format, args...) \
 pr_info(MyTag "[%s] " format, __func__, ##args)
+#else
+#define LOG_INF(format, args...)
+#endif
 #define LOG_NOTICE(format, args...) \
 pr_notice(MyTag "[%s] " format, __func__, ##args)
 #define LOG_WRN(format, args...) \
