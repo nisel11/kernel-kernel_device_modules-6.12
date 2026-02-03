@@ -546,14 +546,22 @@ static void ufs_mtk_dbg_sel_mphy(struct ufs_hba *hba)
 }
 
 #ifdef CONFIG_UFS_LONGSYS_RT_CP_TIMEOUT
-static void ufs_longsys_demote_rt_priority_hook(void *data, struct ufs_hba *hba,struct request *rq, struct ufshcd_lrb *lrbp, int *ret)
+static void ufs_longsys_clear_cp_flag_hook(void *data, struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
 {
-	unsigned int ioprio_class = IOPRIO_PRIO_CLASS(req_get_ioprio(rq));
+	if (!lrbp || !lrbp->ucd_req_ptr || !lrbp->cmd)
+		return;
+
+	struct request *rq = scsi_cmd_to_rq(lrbp->cmd);
 	struct ufs_dev_info *dev_info = &hba->dev_info;
+	unsigned int ioprio_class = IOPRIO_PRIO_CLASS(req_get_ioprio(rq));
 
-	if (ioprio_class == IOPRIO_CLASS_RT && dev_info->wmanufacturerid == UFS_VENDOR_LONGSYS)
-		rq->ioprio = IOPRIO_PRIO_VALUE(IOPRIO_CLASS_NONE, 0);
+	if (ioprio_class == IOPRIO_CLASS_RT && dev_info->wmanufacturerid == UFS_VENDOR_LONGSYS) {
+		struct utp_upiu_req *ucd_req_ptr = lrbp->ucd_req_ptr;
 
+		if (ucd_req_ptr->header.flags & UPIU_CMD_FLAGS_CP){
+			ucd_req_ptr->header.flags &= ~UPIU_CMD_FLAGS_CP;
+		}
+	}
 }
 #endif
 
@@ -3393,7 +3401,7 @@ static const struct ufs_hba_variant_ops ufs_hba_mtk_vops = {
 #ifdef CONFIG_UFS_LONGSYS_RT_CP_TIMEOUT
 static void ufs_longsys_register_hooks(void)
 {
-	register_trace_android_vh_ufs_prepare_command(ufs_longsys_demote_rt_priority_hook, NULL);
+	register_trace_android_vh_ufs_send_command(ufs_longsys_clear_cp_flag_hook, NULL);
 }
 #endif
 

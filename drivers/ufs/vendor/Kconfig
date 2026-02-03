@@ -111,7 +111,7 @@ config UFS_MEDIATEK_MT6893
           This is to be in sync with the perf related changes into it
 
 config UFS_LONGSYS_RT_CP_TIMEOUT
-	bool "Moto fix Longsys UFS CP1 Timeout issue with hooks"
+	bool "Moto fix Longsys UFS CP0 Timeout issue with hooks"
 	depends on SCSI_UFSHCD
 	default n
 	help
