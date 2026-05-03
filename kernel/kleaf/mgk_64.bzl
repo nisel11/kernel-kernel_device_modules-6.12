@@ -1336,6 +1336,7 @@ mgk_64_kleaf_platform_modules = {
     "//kernel_device_modules-{}/drivers/misc/mediatek/cm_mgr:mtk_cm_mgr_mt6858".format(kernel_version): "mt6858",
     "//kernel_device_modules-{}/drivers/misc/mediatek/cm_mgr:mtk_cm_mgr_mt6993".format(kernel_version): "mt6993",
     "//kernel_device_modules-{}/drivers/misc/mediatek/conn_scp:connscp".format(kernel_version): "mt6858 mt6878 mt6886 mt6895 mt6897 mt6899 mt6983 mt6985 mt6989 mt6991 mt6993",
+    "//kernel_device_modules-{}/drivers/misc/mediatek/dcm:mt6781_dcm".format(kernel_version): "mt6781",
     "//kernel_device_modules-{}/drivers/misc/mediatek/dcm:mt6789_dcm".format(kernel_version): "mt6789",
     "//kernel_device_modules-{}/drivers/misc/mediatek/dcm:mt6855_dcm".format(kernel_version): "mt6855",
     "//kernel_device_modules-{}/drivers/misc/mediatek/dcm:mt6858_dcm".format(kernel_version): "mt6858",
