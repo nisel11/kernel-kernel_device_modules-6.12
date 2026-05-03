@@ -109,5 +109,6 @@ define_mgk_ddk_ko(
         "dvfsrc-opp-mt6781.c",
     ],
     hdrs = glob(["**/*.h"]),
+    ko_deps = ["//kernel_device_modules-{}/drivers/memory/mediatek:mtk_dramc".format(kernel_version),],
 )
 
