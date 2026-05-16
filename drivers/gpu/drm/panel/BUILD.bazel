@@ -55,6 +55,8 @@ define_mgk_ddk_ko(
 )
 
 PANELS = [
+    "dsi_panel_k7sr_38_0c_0a_video",
+    "dsi_panel_k7sr_38_0c_0b_video",
     "panel-hx83112b-auo-cmd-60hz-rt5081",
     "panel-hx83112b-auo-vdo-60hz-rt5081",
     "panel-nt35521_hd_dsi_vdo_truly_rt5081",

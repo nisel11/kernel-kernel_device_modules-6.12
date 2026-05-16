@@ -811,3 +811,19 @@ config DRM_PANEL_ALPHA_JDI_NT36672E_VDO_120HZ_FRAMERATEV5
 	  resolution and uses 24-bits RGB per pixel, hblank period of 154 pixels.
 	  Align new framerate cal table. It provides aMIPI DSI interface to host.
 	  interface to host.
+
+config DRM_DSI_PANEL_K7SR_38_0C_0A_VIDEO
+	tristate "Samsung 380C0A DSI video mode panel"
+	depends on OF
+	depends on DRM_MIPI_DSI
+	depends on BACKLIGHT_CLASS_DEVICE
+	help
+	  Say Y here if you want to enable support for 380C0A.
+
+config DRM_DSI_PANEL_K7SR_38_0C_0B_VIDEO
+	tristate "Samsung 380C0B DSI video mode panel"
+	depends on OF
+	depends on DRM_MIPI_DSI
+	depends on BACKLIGHT_CLASS_DEVICE
+	help
+	  Say Y here if you want to enable support for 380C0B.
