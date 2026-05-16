@@ -68,6 +68,7 @@ PLATFORMS = [
     "mt6989",
     "mt6768",
     "mt6761",
+    "mt6781",
     "mt6789",
     "mt6765",
     "mt6833",
@@ -149,27 +150,3 @@ define_mgk_ddk_ko(
         "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/include",
     ],
 ) for p in PLATFORMS]
-
-
-
-define_mgk_ddk_ko(
-    name = "mmqos-mt6781",
-    srcs = [
-        "mmqos-mt6781.c",
-    ],
-    hdrs = glob([
-        "**/*.h",
-    ]),
-    ko_deps =
-        ["//kernel_device_modules-{}/drivers/misc/mediatek/mtk-interconnect:mtk-icc-core".format(kernel_version),
-        "//kernel_device_modules-{}/drivers/interconnect/mediatek:mmqos-common".format(kernel_version)
-        ],
-    copts = [
-        "-I$(src)",
-        "-I$(srctree)/drivers/interconnect",
-        "-I$(DEVICE_MODULES_PATH)/drivers/iommu",
-        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/mtk-interconnect",
-        "-I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/include",
-    ],
-    includes = ["."],
-)
