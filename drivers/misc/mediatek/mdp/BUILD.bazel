@@ -134,6 +134,7 @@ filegroup(
 )
 
 platforms_need_secure = [
+    "mt6781",
     "mt6789",
     "mt6855",
     "mt6893",
