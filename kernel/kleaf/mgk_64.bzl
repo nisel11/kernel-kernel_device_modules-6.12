@@ -1999,6 +1999,10 @@ mgk_64_platform_device_user_modules = {
 
 
 def get_overlay_modules_list():
+    if "fleur" in DEFCONFIG_OVERLAYS:
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi_panel_k7sr_38_0c_0a_video".format(kernel_version))
+        mgk_64_kleaf_device_modules.append("//kernel_device_modules-{}/drivers/gpu/drm/panel:dsi_panel_k7sr_38_0c_0b_video".format(kernel_version))
+
     if "auto.config" in DEFCONFIG_OVERLAYS:
         mgk_64_platform_device_modules.update({"drivers/clk/mediatek/clk-mt6991-ivi.ko":"mt6991"})
         mgk_64_platform_device_modules.update({"drivers/soc/mediatek/mtk-scpsys-mt6991-ivi.ko":"mt6991"})
