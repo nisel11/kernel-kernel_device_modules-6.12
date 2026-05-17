@@ -514,7 +514,7 @@ spinlock_t *get_mtk_mtcmos_lock(void)
 
 static struct provider_clk *__clk_pg_lookup_pvdck(const char *name)
 {
-	struct provider_clk *pvdck = get_all_provider_clks();
+	struct provider_clk *pvdck = get_all_provider_clks(true);
 
 	for (; pvdck->ck != NULL; pvdck++) {
 		if (!strcmp(pvdck->ck_name, name))

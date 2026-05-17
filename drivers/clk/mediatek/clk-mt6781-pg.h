@@ -50,7 +50,7 @@ extern void print_enabled_clks_once(void);
 extern void mtk_wcn_cmb_stub_clock_fail_dump(void);
 extern unsigned int cam_if_on(void);
 extern void mtk_check_subsys_swcg(enum subsys_id id);
-extern struct provider_clk *get_all_provider_clks(void);
+extern struct provider_clk *get_all_provider_clks(bool is_internal);
 extern unsigned int __clk_get_enable_count(struct clk *clk);
 /*
  * Resident in clkdbg-mt6781.c
