@@ -189,6 +189,7 @@ void unload_ko_addr_list(struct module *module)
 
 void init_ko_addr_list_late(void)
 {
+#if 0
 	struct module *mod;
 	struct list_head *p_modules = aee_get_modules();
 	int start = 0;
@@ -212,6 +213,8 @@ void init_ko_addr_list_late(void)
 		}
 		load_ko_addr_list(mod);
 	}
+#endif
+        return;
 }
 #endif
 
