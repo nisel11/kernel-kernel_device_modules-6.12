@@ -1423,6 +1423,7 @@ _mgk_64_kleaf_platform_modules = {
     "//kernel_device_modules-{}/drivers/misc/mediatek/mdp:mdp_drv_mt6895".format(kernel_version): "mt6895",
     "//kernel_device_modules-{}/drivers/misc/mediatek/mdp:mdp_drv_mt6991".format(kernel_version): "mt6991",
     "//kernel_device_modules-{}/drivers/misc/mediatek/memory-amms:memory-amms".format(kernel_version): "mt6781",
+    "//kernel_device_modules-{}/drivers/misc/mediatek/mm_monitor:mm-monitor-platform-mt6781".format(kernel_version): "mt6781",
     "//kernel_device_modules-{}/drivers/misc/mediatek/mm_monitor:mm-monitor-platform-mt6789".format(kernel_version): "mt6789",
     "//kernel_device_modules-{}/drivers/misc/mediatek/mm_monitor:mm-monitor-platform-mt6855".format(kernel_version): "mt6855",
     "//kernel_device_modules-{}/drivers/misc/mediatek/mm_monitor:mm-monitor-platform-mt6895".format(kernel_version): "mt6895",

@@ -39,6 +39,7 @@ define_mgk_ddk_ko(
         "//kernel_device_modules-{}/drivers/memory:mtk-smi".format(kernel_version),
     ] +
     ([":mm-monitor-platform-mt6858"] if glob(["mm-monitor-platform-mt6858.c"]) else []) +
+    ([":mm-monitor-platform-mt6781"] if glob(["mm-monitor-platform-mt6781.c"]) else []) +
     ([":mm-monitor-platform-mt6789"] if glob(["mm-monitor-platform-mt6789.c"]) else []) +
     ([":mm-monitor-platform-mt6855"] if glob(["mm-monitor-platform-mt6855.c"]) else []) +
     ([":mm-monitor-platform-mt6895"] if glob(["mm-monitor-platform-mt6895.c"]) else []) +
