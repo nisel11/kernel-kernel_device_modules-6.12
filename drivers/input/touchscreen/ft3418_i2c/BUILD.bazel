@@ -1,0 +1,70 @@
+load("//build/bazel_mgk_rules:mgk_ddk_ko.bzl", "define_mgk_ddk_ko")
+load("@mgk_info//:kernel_version.bzl","kernel_version",)
+
+package(
+    default_visibility = [
+        "//visibility:public",
+    ],
+)
+
+filegroup(
+	name = "srcs",
+	srcs = glob([
+		"**/Makefile",
+		"**/Kbuild",
+		"**/*.c",
+		"**/*.h",
+	]),
+)
+
+define_mgk_ddk_ko(
+    name = "ft3418_i2c",
+    srcs = [
+        "focaltech_core.c",
+        "focaltech_ex_fun.c",
+        "focaltech_ex_mode.c",
+        "focaltech_gesture.c",
+        "focaltech_esdcheck.c",
+        "focaltech_point_report_check.c",
+        "focaltech_flash.c",
+        "focaltech_i2c.c",
+        "focaltech_upgrade_ft3418.c",
+        "lct/lct_tp_gesture.c",
+        "lct/lct_tp_grip_area.c",
+        "lct/lct_tp_info.c",
+        "lct/lct_tp_palm.c",
+        "lct/lct_tp_selftest.c",
+        "lct/lct_tp_work.c",
+        "lct/tp_common.c",
+        "tpd/mtk_tpd.c",
+        "tpd/tpd_button.c",
+        "tpd/tpd_calibrate.c",
+        "tpd/tpd_debug.c",
+        "tpd/tpd_default.c",
+        "tpd/tpd_misc.c",
+        "tpd/tpd_setting.c",
+        "focaltech_test/focaltech_test.c",
+        "focaltech_test/focaltech_test_ini.c",
+        "focaltech_test/supported_ic/focaltech_test_ft3418.c",
+    ],
+    hdrs = glob(["**/*.h", "**/*.i"]),
+    includes = ["include"],
+    copts = [
+        "-Wall",
+        "-Werror",
+        "-I$(DEVICE_MODULES_PATH)/drivers/input/touchscreen/ft3418_i2c/",
+        "-I$(DEVICE_MODULES_PATH)/drivers/input/touchscreen/ft3418_i2c/lct/",
+        "-I$(DEVICE_MODULES_PATH)/drivers/input/touchscreen/ft3418_i2c/tpd/",
+        "-I$(DEVICE_MODULES_PATH)/drivers/input/touchscreen/ft3418_i2c/focaltech_test/",
+        "-I$(DEVICE_MODULES_PATH)/drivers/input/touchscreen/ft3418_i2c/focaltech_test/supported_ic/",
+        "-I$(DEVICE_MODULES_PATH)/drivers/gpu/drm/mediatek/mediatek_v2/",
+    ],
+    ko_deps = [
+        "//kernel_device_modules-{}/drivers/gpu/drm/mediatek/mediatek_v2:mtk_disp_notify".format(kernel_version),
+        "//kernel_device_modules-{}/drivers/gpu/drm/mediatek/mediatek_v2:mtk_panel_ext".format(kernel_version),
+        "//kernel_device_modules-{}/drivers/i2c/busses:i2c-mt65xx".format(kernel_version),
+    ],
+    header_deps = [
+        "//kernel_device_modules-{}/drivers/gpu/drm/mediatek/mediatek_v2:ddk_public_headers".format(kernel_version),
+    ],
+)
