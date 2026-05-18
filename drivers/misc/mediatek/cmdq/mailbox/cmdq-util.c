@@ -1596,7 +1596,9 @@ int cmdq_util_init(void)
 	if (!np) {
 		cmdq_err("failed to find %s node", CMDQ_CONFIG_NODE_NAME);
 		cmdq_err("error end");
-		return -EINVAL;
+                gce_core_num = 1;
+                first_error_disable[0] = 0;
+		goto skip_dt;
 	}
 
 	ret = of_property_read_u32(np, "gce-core-num", &gce_core_num);
@@ -1617,6 +1619,7 @@ int cmdq_util_init(void)
 
 	of_node_put(np);
 
+skip_dt:
 	for (i = 0; i < gce_core_num; i++) {
 		cmdq_msg("%s i:%u alloc:%u", __func__, i, first_error_disable[i]);
 		if (first_error_disable[i])
