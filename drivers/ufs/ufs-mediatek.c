@@ -3420,7 +3420,19 @@ skip_reset:
 
 skip_phy:
 	/* perform generic probe */
+	struct property *prop = NULL;
+	if (dev->of_node) {
+		prop = of_find_property(dev->of_node, "vcc-supply", NULL);
+		if (prop) {
+			of_remove_property(dev->of_node, prop);
+		}
+	}
+
 	err = ufshcd_pltfrm_init(pdev, &ufs_hba_mtk_vops);
+	if (dev->of_node && prop) {
+		of_add_property(dev->of_node, prop);
+	}
+
 	if (err) {
 		dev_err(dev, "probe failed %d\n", err);
 		goto out;
